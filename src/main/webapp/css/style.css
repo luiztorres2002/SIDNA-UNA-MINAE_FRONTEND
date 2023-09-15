@@ -1,0 +1,21 @@
+body {
+  background-image: url("../images/Pantone.jpg") ;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+    min-height: 100vh;
+}
+img.logo{
+    width: 100px;
+    height: auto;
+}
+
+img.filler{
+    width: 500px;
+    height: auto;    
+}
+
+img.flag{
+    width: 100px;
+    height: auto;    
+}

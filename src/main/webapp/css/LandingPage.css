@@ -1,0 +1,33 @@
+.custom-navbar {
+    background-color: #004976;
+}
+
+.logo{
+    width: 240px;
+    height: 80px;
+}
+
+.my-custom-link {
+    color: white; /* Cambia 'white' al color blanco deseado */
+    font-size: 25px;
+    padding-left: 100px;
+    font-family: Verdana;
+    text-decoration: none;
+}
+
+.SIDNA{
+    display: inline-block;
+    padding-left: 40px;
+    padding-top: 0px;
+    font-family: Verdana;
+    color:white;
+    font-size: 60px;
+}
+
+.custom-footer {
+    background-color: #004976;
+}
+
+h4.custom-footer-content{
+    display: inline-block;
+}
