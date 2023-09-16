@@ -20,6 +20,10 @@ img.flag{
     height: auto;    
 }
 
+.fontAwesome {
+    font-family: Helvetica, 'FontAwesome', sans-serif;
+}
+
 .imagen {
     width: 200px;
     height: 150px;

@@ -32,18 +32,16 @@ class Etiqueta {
     renderBody = () => {
         return `
    <div class="d-flex justify-content-center">
-            <form id="form" style="width: 1500px; margin-top: 20px;"">
+            <form id="form" style="width: 85%; margin-top: 20px;"">
            <div class="input-group mb-3 mt-10" style="display: flex; align-items: center; justify-content: center;">
     <div class="btn-group me-2">
         <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 120px; line-height: 5px;"><span class="font-weight-bold">+</span> Agregar</button>
     </div>
-    <input class="form-control me-2" id="name" type="text" style="width: 200px; margin-left: 700px; height: 38px; border-radius: 5px; border: 1px solid #006ba6;">
+    <input class="form-control me-2 fontAwesome" id="name" type="text" style="width: 200px; margin-left: 700px; height: 38px; border-radius: 5px; border: 1px solid #006ba6;" placeholder="&#xf002; Buscar Etiqueta...">
     <div class="btn-group me-2">
          <button type="button" class="btn btn-custom-outline-success" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-</svg>
-</button>
+            <i class="fas fa-search"></i>
+         </button>
     </div>
 </div>
  <table class="table table-fixed" >
