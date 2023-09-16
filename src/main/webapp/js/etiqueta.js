@@ -14,6 +14,8 @@ class Etiqueta {
         this.dom.querySelector("#categorias #buscar").addEventListener('click', this.search);
 
 
+
+
     }
 
     render = () => {
@@ -31,13 +33,19 @@ class Etiqueta {
         return `
    <div class="d-flex justify-content-center">
             <form id="form" style="width: 1500px; margin-top: 20px;"">
-                <div class="input-group mb-3 mt-10">
-                    <span class="input-group-text ms-20">Nombre</span>
-                    <input class="form-control me-2 ms-20" id="name" type="text" style="width: 600px">
-                    <div class="btn-toolbar">
-                        <div class="btn-group me-2"><button type="button" class="btn btn-primary" id="buscar">Buscar</button></div>
-                        <div class="btn-group me-2"><button type="button" class="btn btn-primary" id="agregar">Agregar</button></div>
-                    </div>
+           <div class="input-group mb-3 mt-10" style="display: flex; align-items: center; justify-content: center;">
+    <div class="btn-group me-2">
+        <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 120px; line-height: 5px;"><span class="font-weight-bold">+</span> Agregar</button>
+    </div>
+    <input class="form-control me-2" id="name" type="text" style="width: 200px; margin-left: 700px; height: 38px; border-radius: 5px; border: 1px solid #006ba6;">
+    <div class="btn-group me-2">
+         <button type="button" class="btn btn-custom-outline-success" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+</svg>
+</button>
+    </div>
+</div>
  <table class="table table-fixed" >
   <thead>
         <tr>
@@ -49,11 +57,13 @@ class Etiqueta {
     </thead>
     <tbody>
         <tr class="disabled-row" >
-            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none">Incendios</td>
+            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none"><li class="list-inline-item">
+                                                <button class="btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
+                                                </li>Incendios</td>
             <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
             <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
                 <div class="toggle-container">
-                    <span class="number">5</span> <!-- Número 5 con margen derecho -->
+                    <span class="number">5</span> 
                     <div class="form-check form-switch toggle-switch">
                         <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" style="background-color: #ffffff; border-color: #000000; background-image: url('data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'-4 -4 8 8\\'><circle r=\\'3\\' fill=\\'%23ff1100\\'/></svg>');">
                         <label class="form-check-label" for="flexSwitchCheckDefault"></label>
@@ -64,11 +74,13 @@ class Etiqueta {
         </tr>
         
         <tr id="fila">
-            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none">Ambiente</td>
+            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none"><li class="list-inline-item">
+                                                <button class="btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
+                                                </li>Ambiente</td>
             <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
             <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
                 <div class="toggle-container">
-                    <span class="number">6</span> <!-- Número 5 con margen derecho -->
+                    <span class="number">6</span> 
                     <div class="form-check form-switch toggle-switch">
                         <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" checked style="background-color: #ffffff; border-color: #000000; background-image: url('data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'-4 -4 8 8\\'><circle r=\\'3\\' fill=\\'%2384bd00\\'/></svg>');">
                         <label class="form-check-label" for="flexSwitchCheckDefault"></label>
@@ -78,11 +90,13 @@ class Etiqueta {
             
         </tr>
         <tr class="disabled-row" id="fila">
-            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none">Denuncia</td>
+            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none"><li class="list-inline-item">
+                                                <button class="btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
+                                                </li>Denuncia</td>
             <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
             <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
                 <div class="toggle-container">
-                    <span class="number">10</span> <!-- Número 5 con margen derecho -->
+                    <span class="number">10</span> 
                     <div class="form-check form-switch toggle-switch">
                         <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" style="background-color: #ffffff; border-color: #000000; background-image: url('data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'-4 -4 8 8\\'><circle r=\\'3\\' fill=\\'%23ff1100\\'/></svg>');">
                         <label class="form-check-label" for="flexSwitchCheckDefault"></label>
@@ -92,11 +106,13 @@ class Etiqueta {
             
         </tr>
         <tr id="fila">
-            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none">Energia</td>
+            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none"><li class="list-inline-item">
+                                                <button class="btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
+                                                </li>Energia</td>
             <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
             <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
                 <div class="toggle-container">
-                    <span class="number">20</span> <!-- Número 5 con margen derecho -->
+                    <span class="number">20</span> 
                     <div class="form-check form-switch toggle-switch">
                         <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" checked style="background-color: #ffffff; border-color: #000000; background-image: url('data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'-4 -4 8 8\\'><circle r=\\'3\\' fill=\\'%23fed141\\'/></svg>');">
                         <label class="form-check-label" for="flexSwitchCheckDefault"></label>
@@ -106,11 +122,13 @@ class Etiqueta {
             
         </tr>
         <tr id="fila">
-            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none">Sostenibilidad</td>
+            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none"> <li class="list-inline-item">
+                                                <button class="btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
+                                                </li>Sostenibilidad</td>
             <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
             <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
                 <div class="toggle-container">
-                    <span class="number">1</span> <!-- Número 5 con margen derecho -->
+                    <span class="number">1</span> 
                     <div class="form-check form-switch toggle-switch">
                         <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" checked style="background-color: #ffffff; border-color: #000000; background-image: url('data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'-4 -4 8 8\\'><circle r=\\'3\\' fill=\\'%23004976\\'/></svg>');">
                         <label class="form-check-label" for="flexSwitchCheckDefault"></label>
@@ -123,23 +141,23 @@ class Etiqueta {
 </table>
 
 <script>
-        // Obtener el elemento del toggle switch
+        
         const toggleSwitch = this.dom.getElementById('flexSwitchCheckDefault');
         const fila = this.dom..getElementById('fila');
 
-        // Función para cambiar la clase de la fila en función del estado del toggle switch
+        
         function actualizarEstadoFila() {
             if (toggleSwitch.checked) {
-                fila.classList.remove('disabled-row'); // Si está marcado, eliminar la clase de fila deshabilitada
+                fila.classList.remove('disabled-row');
             } else {
-                fila.classList.add('disabled-row'); // Si no está marcado, agregar la clase de fila deshabilitada
+                fila.classList.add('disabled-row'); 
             }
         }
 
-        // Escuchar cambios en el toggle switch
+      
         toggleSwitch.addEventListener('change', actualizarEstadoFila);
 
-        // Aplicar el estado de fila al cargar la página
+       
         actualizarEstadoFila();
     </script>
                 </div>
