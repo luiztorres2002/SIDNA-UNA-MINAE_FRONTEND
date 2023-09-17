@@ -3,6 +3,7 @@ class Etiqueta {
     dom;
 
     modal;
+    modalEditar;
 
     state;
 
@@ -10,8 +11,10 @@ class Etiqueta {
         this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A'};
         this.dom = this.render();
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
+        this.modalEditar=new bootstrap.Modal(this.dom.querySelector('#modalEditar'));
         this.dom.querySelector("#categorias #agregar").addEventListener('click', this.createNew);
         this.dom.querySelector("#categorias #buscar").addEventListener('click', this.search);
+        this.dom.querySelector("#categorias #prueba").addEventListener('click', this.editarEtiqueta);
 
 
 
@@ -22,6 +25,7 @@ class Etiqueta {
         const html = `
             ${this.renderBody()}
             ${this.renderModal()}
+            ${this.renderModalEditar()}
         `;
         const rootContent = document.createElement('div');
         rootContent.id = 'categorias';
@@ -36,6 +40,7 @@ class Etiqueta {
            <div class="input-group mb-3 mt-10" style="display: flex; align-items: center; justify-content: center;">
     <div class="btn-group me-2">
         <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 120px; line-height: 5px;"><span class="font-weight-bold">+</span> Agregar</button>
+        <button type="button" class="btn btn-custom-outline-success" id="prueba" style="height: 40px; width: 120px; line-height: 5px;"><span class="font-weight-bold">+</span> Prueba</button>
     </div>
     <input class="form-control me-2 fontAwesome" id="name" type="text" style="width: 200px; margin-left: 700px; height: 38px; border-radius: 5px; border: 1px solid #006ba6;" placeholder="&#xf002; Buscar Etiqueta...">
     <div class="btn-group me-2">
@@ -44,7 +49,7 @@ class Etiqueta {
          </button>
     </div>
 </div>
- <table class="table table-fixed" >
+ <table class="table table-fixed" id="tablaEtiquetas">
   <thead>
         <tr>
         
@@ -56,7 +61,7 @@ class Etiqueta {
     <tbody>
         <tr class="disabled-row" >
             <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none"><li class="list-inline-item">
-                                                <button class="btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
+                                                <button id="editar" class="btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
                                                 </li>Incendios</td>
             <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
             <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
@@ -212,6 +217,38 @@ class Etiqueta {
         `;
     }
 
+    renderModalEditar=()=>{
+        return `
+<div id="modalEditar" class="modal fade" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close d-flex align-items-center justify-content-center" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true" class="ion-ios-close"></span>
+        </button>
+      </div>
+      <div class="modal-body p-4 py-5 p-md-5">
+        <h3 class="text-left mb-3">Editar Etiqueta <button class="btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button> </h3>
+        <ul class="ftco-footer-social p-0 text-center">
+         
+        </ul>
+        <form action="#" class="signup-form">
+         <div class="form-group mb-2">
+            <input type="text" class="form-control" style="border-right-color: white; border-left-color: white; border-top-color: white; border-bottom-color: black">
+        </div>
+
+          <div class="form-group mb-2 align-content-lg-end">
+            <button id="cancel" type="submit" style="background-color: white" class="rounded">Cancelar</button>
+            <button id="save" type="submit" style="background-color: #307c" class="rounded text-light">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+    }
+
     load = () => {
         const form = this.dom.querySelector("#categorias #modal #form");
         const formData = new FormData(form);
@@ -273,6 +310,15 @@ class Etiqueta {
     showModal = async () => {
         // Cargar los datos de la entidad en el formulario del modal
         this.modal.show();
+    }
+
+    showEditar=async ()=>{
+        this.modalEditar.show();
+    }
+
+    editarEtiqueta=()=>{
+        this.reset();
+        this.showEditar();
     }
 
     reset = () => {
