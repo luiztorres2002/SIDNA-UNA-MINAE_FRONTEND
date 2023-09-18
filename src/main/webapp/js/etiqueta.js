@@ -11,14 +11,13 @@ class Etiqueta {
         this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A'};
         this.dom = this.render();
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
-        this.modalEditar=new bootstrap.Modal(this.dom.querySelector('#modalEditar'));
-        this.dom.querySelector("#categorias #agregar").addEventListener('click', this.createNew);
-        this.dom.querySelector("#categorias #buscar").addEventListener('click', this.search);
-        this.dom.querySelector("#categorias #prueba").addEventListener('click', this.editarEtiqueta);
-
-
-
-
+        this.modalEditar = new bootstrap.Modal(this.dom.querySelector('#modalEditar'));
+        this.dom.querySelector("#etiquetas #agregar").addEventListener('click', this.createNew);
+        this.dom.querySelector("#etiquetas #buscar").addEventListener('click', this.search);
+        this.dom.querySelector("#etiquetas #modalEditar #formEdit #cancel").addEventListener('click', this.cancelarEdit);
+        this.dom.querySelector("#etiquetas #modalEditar #formEdit #save").addEventListener('click', this.saveEdit);
+        this.dom.querySelector("#etiquetas #modalEditar #close").addEventListener('click', this.cancelarEdit);
+        this.dom.querySelector("#etiquetas #form #tablaEtiquetas #editar").addEventListener('click', this.editarEtiqueta);
     }
 
     render = () => {
@@ -28,7 +27,7 @@ class Etiqueta {
             ${this.renderModalEditar()}
         `;
         const rootContent = document.createElement('div');
-        rootContent.id = 'categorias';
+        rootContent.id = 'etiquetas';
         rootContent.innerHTML = html;
         return rootContent;
     }
@@ -40,7 +39,6 @@ class Etiqueta {
            <div class="input-group mb-3 mt-10" style="display: flex; align-items: center; justify-content: center;">
     <div class="btn-group me-2">
         <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 120px; line-height: 5px;"><span class="font-weight-bold">+</span> Agregar</button>
-        <button type="button" class="btn btn-custom-outline-success" id="prueba" style="height: 40px; width: 120px; line-height: 5px;"><span class="font-weight-bold">+</span> Prueba</button>
     </div>
     <input class="form-control me-2 fontAwesome" id="name" type="text" style="width: 200px; margin-left: 700px; height: 38px; border-radius: 5px; border: 1px solid #006ba6;" placeholder="&#xf002; Buscar Etiqueta...">
     <div class="btn-group me-2">
@@ -179,7 +177,7 @@ class Etiqueta {
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close d-flex align-items-center justify-content-center" data-dismiss="modal" aria-label="Close">
+        <button id="close" type="button" class="close d-flex align-items-center justify-content-center" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true" class="ion-ios-close"></span>
         </button>
       </div>
@@ -217,13 +215,13 @@ class Etiqueta {
         `;
     }
 
-    renderModalEditar=()=>{
+    renderModalEditar = () => {
         return `
 <div id="modalEditar" class="modal fade" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close d-flex align-items-center justify-content-center" data-dismiss="modal" aria-label="Close">
+        <button id="close" type="button" class="close d-flex align-items-center justify-content-center" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true" class="ion-ios-close"></span>
         </button>
       </div>
@@ -232,9 +230,9 @@ class Etiqueta {
         <ul class="ftco-footer-social p-0 text-center">
          
         </ul>
-        <form action="#" class="signup-form">
+        <form action="#" class="signup-form" id="formEdit">
          <div class="form-group mb-2">
-            <input type="text" class="form-control" style="border-right-color: white; border-left-color: white; border-top-color: white; border-bottom-color: black">
+            <input id="input" type="text" class="form-control" style="border-right-color: white; border-left-color: white; border-top-color: white; border-bottom-color: black">
         </div>
 
           <div class="form-group mb-2 align-content-lg-end">
@@ -250,7 +248,7 @@ class Etiqueta {
     }
 
     load = () => {
-        const form = this.dom.querySelector("#categorias #modal #form");
+        const form = this.dom.querySelector("#etiquetas #modal #form");
         const formData = new FormData(form);
         this.entity = {};
 
@@ -258,7 +256,6 @@ class Etiqueta {
             this.entity[key] = value;
         }
     }
-
 
 
     add = async () => {
@@ -303,8 +300,13 @@ class Etiqueta {
     }
 
     resetForm = () => {
-        var formulario = this.dom.querySelector("#categorias #modal #form");
+        var formulario = this.dom.querySelector("#etiquetas #modal #form");
         formulario.reset();
+    }
+
+    resetFormEditar = () => {
+        var form = this.dom.querySelector("#etiquetas #modalEditar #formEdit");
+        form.reset();
     }
 
     showModal = async () => {
@@ -312,12 +314,20 @@ class Etiqueta {
         this.modal.show();
     }
 
-    showEditar=async ()=>{
+    showEditar = async () => {
+        this.resetFormEditar();
         this.modalEditar.show();
     }
 
-    editarEtiqueta=()=>{
-        this.reset();
+    cancelarEdit = () => {
+        this.modalEditar.hide();
+    }
+
+    saveEdit = () => {
+        alert("TO DO");
+    }
+
+    editarEtiqueta = () => {
         this.showEditar();
     }
 
