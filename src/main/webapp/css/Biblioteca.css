@@ -1,0 +1,63 @@
+
+
+.custom-input {
+    width: 40px; /* Ajusta el ancho como desees */
+    height: 20px;
+}
+
+
+.bibliotecatitulo{
+    color: black;
+    font-size: 35px;
+    font-family: Verdana;
+    font-weight: bold;
+    display: inline-block;
+    width: 60%;
+    padding-top: 50px;
+
+}
+
+.custom-select-sm {
+    padding: 0.25rem 0.5rem; /* Ajusta el relleno para hacerlo más pequeño */
+    font-size: 0.875rem; /* Reduce el tamaño de la fuente */
+    padding-left: 20px;
+}
+
+.form-select option:checked {
+    background-color: #007bff; /* Cambia el color de fondo según tus preferencias */
+    color: #fff; /* Cambia el color del texto según tus preferencias */
+}
+.custom-modal-width {
+    max-width: 600px;
+    width: 100%;
+}
+
+.input-wrapper {
+    max-width: 80%; /* Ajusta el valor según el ancho deseado */
+    margin: 0 auto; /* Para centrar horizontalmente el campo de entrada dentro del div */
+    display: inline-block;
+}
+
+.small-input {
+    font-size: 14px; /* Tamaño de fuente más pequeño */
+    padding: 5px 10px; /* Espaciado más pequeño */
+}
+
+.imagenes {
+    display: inline-block;
+    width: 270px;
+    height: 190px;
+}
+
+select {
+    ; /* Ancho personalizado */
+    padding: 10px; /* Espaciado interior */
+    border: 1px solid #000000; /* Borde personalizado */
+    border-radius: 4px; /* Esquinas redondeadas */
+    font-size: 30px; /* Tamaño de fuente personalizado */
+    background-color: white; /* Fondo blanco */
+    display: block;
+}
+
+
+

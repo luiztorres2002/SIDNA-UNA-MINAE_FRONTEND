@@ -56,43 +56,115 @@ class Biblioteca {
     renderModal = () => {
         return `
 <div id="modal" class="modal fade" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-dialog modal-dialog-centered modal-lg custom-modal-width" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close d-flex align-items-center justify-content-center" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true" class="ion-ios-close"></span>
         </button>
       </div>
-      <div class="modal-body p-4 py-5 p-md-5">
-        <h3 class="text-center mb-3">Introduce una nueva noticia de fuente externa</h3>
-        <ul class="ftco-footer-social p-0 text-center">
-         
-        </ul>
-        <form action="#" class="signup-form">
-         <div class="form-group mb-2">
-            <label for="name" style="font-size: 15px;">Titulo de la noticia</label>
-            <input type="text" class="form-control">
+      <div class="modal-body p-4 py-3 p-md-3">
+        
+        <img src="images/Minae.png" class="w-50 mx-auto d-block" alt="...">
+        <ul class="ftco-footer-social p-0 text-center"></ul>
+        
+        <div style="padding-bottom: 25px;">
+        
         </div>
+        <form>
+        
+        
+        
+<div class="form-group">
+    <legend class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 10px; font-family: Verdana">
+    <i class="fas fa-newspaper mr-2"></i> Título:
+</legend>
+<input class="form-control border border-dark" id="titulo" style="width: 725px; font-size: 20px; margin-left: 10px;">
 
-          <div class="form-group mb-2">
-            <label for="sinopsis" style="font-size: 15px;">Sinopsis</label>
-            <input type="text" class="form-control">
-          </div>
-          <div class="form-group mb-2">
-            <label for="password">Fuente</label>
-            <input type="password" class="form-control">
-          </div>
-          <div class="form-group mb-2">
-            <button type="submit" class="form-control btn btn-primary rounded submit px-3">Ingresar</button>
-          </div>
-          <div class="form-group d-md-flex">
-            
+  </div>
+
+ <div class="form-group">
+    <legend class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 10px; font-family: Verdana">
+    <i class="fas fa-file-alt mr-2"></i> Descripción: 
+</legend>
+<textarea class="form-control border border-dark" style="width: 725px; font-size: 20px; margin-left: 10px;" id="exampleTextarea" rows="3"></textarea>
+
+  </div>
+  
+<div class="form-row row date" data-provide="datepicker">
+    <div class="col-md-6">
+      <legend class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 30px; font-family: Verdana">
+    <i class="far fa-calendar-alt mr-2"></i> Fecha
+</legend>
+ <div style="display: block;">
+   <div class="col-sm-6">
+    <input type="text" class="form-control border border-dark" style="width: 360px; font-size: 24px;">
+</div>
+<div class="col-3">
+    <div class="input-group-addon" style="font-size: 24px;">
+        <span class="glyphicon glyphicon-th"></span>
+    </div>
+</div>
+
+</div>
+    </div>
+    <div class="form-group col-md-6">
+      <legend class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 30px; font-family: Verdana">
+    <i class="fas fa-exclamation-triangle mr-2"></i> Prioridad
+</legend>
+      <div style="display: block;">
+                <div class="col-sm-1">
+                    <select class="" id="sel1" name="sellist1" style="font-size: 20px; width: 320px"> 
+            <option>Alta</option>
+            <option>Media</option>
+            <option selected>Baja</option>
+        </select>
+                </div>
+                
+</div>
+    </div>
+  </div>
+  
+  <div class="form-group">
+   <legend class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 20px; font-family: Verdana">
+    <i class="fas fa-info-circle mr-2"></i> Fuente
+</legend>
+<input class="form-control border border-dark" id="titulo" style="width: 725px; font-size: 20px; margin-left: 10px;">
+
+  </div>
+  
+  <div class="form-group">
+     <legend class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 20px; font-family: Verdana">
+    <i class="fas fa-link mr-2"></i> Enlace
+</legend>
+<input class="form-control border border-dark" id="titulo" style="width: 725px; font-size: 20px; margin-left: 10px;">
+
+  </div>
+  
+<div class="form-group row" style="padding-top: 20px">
+    <legend class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 30px; font-family: Verdana">
+    <i class="fas fa-image mr-2"></i> Imagen:
+</legend>
+
+    <div style="display: inline-block">
+    <div class="col-sm-1">
+        <input type="file" name="imagen">
+    </div>
+    </div>
+</div>
+          <div class="container" style="padding-top: 20px">
+            <div class="row justify-content-center mt-5">
+              <div class="col-md-4">
+                <button type="button" class="btn btn-primary btn-lg">Ingresar Noticia</button>
+              </div>
+            </div>
           </div>
         </form>
       </div>
     </div>
   </div>
 </div>
+
 
         `;
     }
