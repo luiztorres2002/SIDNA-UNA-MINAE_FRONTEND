@@ -6,7 +6,7 @@ class App {
 
     state;  // state variables: if any
 
-
+    Etiqueta;
     Biblioteca;
 
     constructor() {
@@ -37,17 +37,12 @@ class App {
 
     renderMenu = () => {
         return `
-         <nav id="menu" class="navbar navbar-expand-lg p-0 navbar-dark bg-dark">
-           <div class="container-fluid">
-             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuCollapse">
-               <span class="navbar-toggler-icon"></span>
-             </button>
-             <div id="menuCollapse" class="collapse navbar-collapse" >
-               <ul class="navbar-nav me-auto mb-2 mb-lg-0" id='menuItems'>
-               </ul>
-             </div>
-           </div>
-         </nav>
+        <header id="menu">
+            <a href="#" ><img src="images/Minae.png"  width="300" height="110" style="margin: 0px;"></a>
+        <ul id='menuItems'>
+            
+        </ul>
+         </header>
          `;
     }
 
@@ -56,7 +51,7 @@ class App {
         <div id="body">  
     <div class="mt-20" style="color: white; display: inline-block; padding-left: 180px" >
     
-               FSFDDFDd
+               
      </div>
 </div>
        
@@ -235,7 +230,7 @@ class App {
         <div id='bodyFiller' style='margin-left: 10%; margin-top:100px; width: 80%; text-align: center; font-size: 1.5em'>
           
           <div class="mt-14" style="color: white; display: inline-block; padding-left: 2px" >
-               <img src="images/Minae.png" class="d-block w-70 mx-auto" alt="...">
+               
             </div>
         </div>
     `;
@@ -247,15 +242,10 @@ class App {
         var html = '';
 
         html += `
-        <li class="nav-item">
-            <a class="nav-link" id="Busqueda" href="#" data-bs-toggle="modal"> <span><i class="fas fa-search"></i></span> Busqueda Parametrizada </a>
-        </li>
-         <li class="nav-item">
-            <a class="nav-link" id="Etiqueta" href="#" data-bs-toggle="modal"> <span><i class="fas fa-tag"></i></span> Etiquetas</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="Biblioteca" href="#" data-bs-toggle="modal"> <span><i class="fa fa-book"></i></span> Biblioteca Personal </a>
-        </li>
+            <li><a href="#" id="Busqueda" class="active">BUSQUEDA</a></li>
+            <li><a href="#" id="Etiquetas">ETIQUETAS</a></li>
+            <li><a href="#" id="Biblioteca">BIBLIOTECA</a></li>
+            
        
     `;
 
@@ -267,6 +257,7 @@ class App {
         // Add event listeners here
 
         this.dom.querySelector("#app>#menu #menuItems #Biblioteca")?.addEventListener('click', e => this.bibliotecaShow());
+        this.dom.querySelector("#app>#menu #menuItems #Etiquetas")?.addEventListener('click', e => this.etiquetaShow());
 
 
     }
@@ -275,7 +266,32 @@ class App {
 
     bibliotecaShow = () => {
         this.Biblioteca = new Biblioteca();
+        const menuItems = this.dom.querySelectorAll("#app>#menu #menuItems a");
+
+        menuItems.forEach((menuItem) => {
+            if (menuItem.id === "Biblioteca") {
+                menuItem.classList.add("active");
+            } else {
+                menuItem.classList.remove("active");
+            }
+        });
+
         this.dom.querySelector('#app>#body').replaceChildren(this.Biblioteca.dom);
+    }
+
+    etiquetaShow = () => {
+        this.Etiqueta = new Etiqueta();
+        const menuItems = this.dom.querySelectorAll("#app>#menu #menuItems a");
+
+        menuItems.forEach((menuItem) => {
+            if (menuItem.id === "Etiquetas") {
+                menuItem.classList.add("active");
+            } else {
+                menuItem.classList.remove("active");
+            }
+        });
+
+        this.dom.querySelector('#app>#body').replaceChildren(this.Etiqueta.dom);
     }
 
 }
