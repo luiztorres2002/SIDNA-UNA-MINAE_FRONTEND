@@ -24,7 +24,6 @@ public class Database {
             String user = "usersql";
             String password = "root1";
             String database = "SIDNA_MINAEDB";
-
             String URL_conexion = "jdbc:sqlserver://" + server + ":" + port + ";databaseName=" + database + ";user=" + user + ";password=" + password + ";encrypt=true;trustServerCertificate=true;";
             Class.forName(driver);
             return DriverManager.getConnection(URL_conexion);
@@ -67,5 +66,19 @@ public class Database {
             return -1;
         }
     }
+    public static void main(String[] args) {
+        // Crear una instancia de la clase Database
+        Database db = new Database();
+
+        // Obtener la conexión a la base de datos
+        Connection connection = db.getConnection();
+
+        if (connection != null) {
+            System.out.println("Conexión exitosa a la base de datos");
+        } else {
+            System.err.println("La conexión a la base de datos falló.");
+        }
+    }
+
 
 }
