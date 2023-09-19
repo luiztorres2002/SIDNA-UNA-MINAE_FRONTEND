@@ -229,6 +229,7 @@ class Etiqueta {
     }
 
     cancelarEdit = () => {
+        event.preventDefault();
         this.modalEditar.hide();
     }
 
