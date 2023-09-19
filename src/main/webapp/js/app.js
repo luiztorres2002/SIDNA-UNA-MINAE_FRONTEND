@@ -38,8 +38,8 @@ class App {
     renderMenu = () => {
         return `
         <header id="menu">
-            <a href="#" ><img src="images/Minae.png"  width="300" height="110" style="margin: 0px;"></a>
-        <ul id='menuItems'>
+            <a id="logonav" href="#" ><img src="images/Minae.png"  width="300" height="110" style="margin-right: 200px;"></a>
+        <ul class="navbar" id='menuItems'>
             
         </ul>
          </header>
@@ -63,7 +63,7 @@ class App {
         <footer id="footer" class="bg-dark text-white mt-4 w-100 fixed-bottom">
             <div class="container-fluid py-2">
 
-                SISTEMA RECOPILTORIO DE NOTICIAS Y DENUNCIAS AMBIENTALES
+                SISTEMA RECOPILATORIO DE NOTICIAS Y DENUNCIAS AMBIENTALES
             </div>
         </footer> 
     `;
