@@ -116,9 +116,11 @@ public class UsuarioDao {
 
             // Crea una instancia de RolDao
             UsuarioDao usuariDao = new UsuarioDao(db);
+            EtiquetaDao etiquetaDao = new EtiquetaDao(db);
             Departamento departamento = new Departamento(1,"PruebaDepartamento");
             Rol rol = new Rol(1,"Analista");
             Usuario usuario1 = usuariDao.read("4-0258-0085");
+            System.out.println(etiquetaDao.getAllEtiquetasByUsuario("1"));
 
             System.out.println(usuario1.toString());
 

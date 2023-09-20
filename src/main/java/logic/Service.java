@@ -25,6 +25,8 @@ public class Service {
 
     UsuarioDao usuarioDao;
 
+    EtiquetaDao etiquetaDao;
+
     private Service() {
         database = new Database();
 
@@ -33,6 +35,13 @@ public class Service {
         departamentoDao = new DepartamentoDao(database);
 
         usuarioDao = new UsuarioDao(database);
+        departamentoDao = new DepartamentoDao(database);
+
+        usuarioDao = new UsuarioDao(database);
+
+        noticiaExternaDao = new NoticiaExternaDao(database);
+
+        etiquetaDao = new EtiquetaDao(database);
 
         noticiaExternaDao = new NoticiaExternaDao(database);
 

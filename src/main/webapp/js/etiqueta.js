@@ -8,28 +8,17 @@ class Etiqueta {
 
     constructor() {
         this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A'};
+        this.cargarEtiquetas();
         this.dom = this.render();
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
         this.dom.querySelector("#categorias #agregar").addEventListener('click', this.createNew);
         this.dom.querySelector("#categorias #buscar").addEventListener('click', this.search);
-        const toggleSwitches2 = this.dom.querySelectorAll(".form-check-input");
-        const colors = ["green-bg", "yellow-bg", "blue-bg"];
-        let colorIndex = 0;
-
         this.modalEditar = new bootstrap.Modal(this.dom.querySelector('#modalEditar'));
 
         this.dom.querySelector("#categorias #modalEditar #formEdit #cancel").addEventListener('click', this.cancelarEdit);
         this.dom.querySelector("#categorias #modalEditar #formEdit #save").addEventListener('click', this.saveEdit);
         this.dom.querySelector("#categorias #modalEditar #close").addEventListener('click', this.cancelarEdit);
-        this.dom.querySelector("#categorias #form #tablaEtiquetas #editar").addEventListener('click', this.editarEtiqueta);
 
-        toggleSwitches2.forEach((toggleSwitch, index) => {
-            const rowNumber = toggleSwitch.getAttribute("data-row");
-            const fila = this.dom.querySelector(`[data-row="${rowNumber}"]`);
-
-            toggleSwitch.classList.add(colors[index % colors.length]);
-            fila.classList.toggle("disabled-row", !toggleSwitch.checked);
-        });
 
         const searchInput = this.dom.querySelector("#buscador");
 
@@ -40,10 +29,6 @@ class Etiqueta {
             }
         });
 
-        const toggleSwitches = this.dom.querySelectorAll(".form-check-input");
-
-
-        toggleSwitches.forEach((toggleSwitch) => {toggleSwitch.addEventListener("change", this.actualizarEstadoFila);});
 
     }
 
@@ -89,89 +74,8 @@ class Etiqueta {
             <th class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none" >Noticias Asociadas</th>
         </tr>
     </thead>
-    <tbody>
-        <tr data-row="1" >
-            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none"><li class="list-inline-item">
-                                                <button id="editar" class="btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
-                                                </li>Incendios</td>
-            <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
-            <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
-                <div class="toggle-container">
-                    <span class="number">5</span> 
-                    <div class="form-check form-switch toggle-switch">
-                        <input class="form-check-input unchecked" type="checkbox" role="switch" data-row="1" data-etiqueta-id="Incendios" style="background-color: #ffffff; border-color: #000000; ">
-                        <label class="form-check-label" for="flexSwitchCheckDefault"></label>
-                    </div>
-                </div>
-            </td>
-            
-        </tr>
-        
-        <tr data-row="2">
-            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none"><li class="list-inline-item">
-                                                <button class="btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
-                                                </li>Ambiente</td>
-            <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
-            <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
-                <div class="toggle-container">
-                    <span class="number">6</span> 
-                    <div class="form-check form-switch toggle-switch">
-                        <input class="form-check-input unchecked" type="checkbox" role="switch" data-row="2" data-etiqueta-id="Ambiente" checked style="background-color: #ffffff; border-color: #000000; ">
-                        <label class="form-check-label" for="flexSwitchCheckDefault"></label>
-                    </div>
-                </div>
-            </td>
-            
-        </tr>
-        <tr data-row="3">
-            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none"><li class="list-inline-item">
-                                                <button class="btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
-                                                </li>Denuncia</td>
-            <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
-            <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
-                <div class="toggle-container">
-                    <span class="number">10</span> 
-                    <div class="form-check form-switch toggle-switch">
-                        <input class="form-check-input unchecked" type="checkbox" role="switch" data-row="3" data-etiqueta-id="Denuncia" checked style="background-color: #ffffff; border-color: #000000; ">
-                        <label class="form-check-label" for="flexSwitchCheckDefault"></label>
-                    </div>
-                </div>
-            </td>
-            
-        </tr>
-        <tr data-row="4">
-            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none"><li class="list-inline-item">
-                                                <button class="btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
-                                                </li>Energia</td>
-            <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
-            <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
-                <div class="toggle-container">
-                    <span class="number">20</span> 
-                    <div class="form-check form-switch toggle-switch">
-                        <input class="form-check-input unchecked" type="checkbox" role="switch" data-row="4" data-etiqueta-id="Energia" checked style="background-color: #ffffff; border-color: #000000;">
-                        <label class="form-check-label" for="flexSwitchCheckDefault"></label>
-                    </div>
-                </div>
-            </td>
-            
-        </tr>
-        <tr data-row="5">
-            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none"> <li class="list-inline-item">
-                                                <button class="btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
-                                                </li>Sostenibilidad</td>
-            <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
-            <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
-                <div class="toggle-container">
-                    <span class="number">1</span> 
-                    <div class="form-check form-switch toggle-switch">
-                        <input class="form-check-input unchecked" type="checkbox" role="switch" data-row="5" data-etiqueta-id="Sostenibilidad" style="background-color: #ffffff; border-color: #000000; ">
-                        <label class="form-check-label" for="flexSwitchCheckDefault"></label>
-                    </div>
-                </div>
-            </td>
-            
-        </tr>
-    </tbody>
+    <tbody id="etiquetasTableBody">
+      
 </table>
 
 
@@ -186,6 +90,67 @@ class Etiqueta {
 
     }
 
+
+    renderizarPaginaConEtiquetas= (etiquetas) => {
+        let tableRows = '';
+
+        etiquetas.forEach((etiqueta, index) => {
+            const { descripcion } = etiqueta;
+
+            const row = `
+            <tr data-row="${index + 1}">
+      
+                    <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none"><li class="list-inline-item">
+                                                <button class="btn  btn-sm rounded-0 editar-etiqueta" type="button" data-etiqueta-id="${descripcion}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
+          
+                    </li>
+                    ${descripcion}
+                </td>
+                <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
+                <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
+                    <div class="toggle-container">
+                        <span class="number">10</span>
+                        <div class="form-check form-switch toggle-switch">
+                            <input class="form-check-input unchecked" type="checkbox" role="switch" data-row="${index + 1}" data-etiqueta-id="${descripcion}" style="background-color: #ffffff; border-color: #000000; ">
+                            <label class="form-check-label" for="flexSwitchCheckDefault"></label>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            
+       
+        `;
+
+            tableRows += row;
+        })
+
+        const tableBody = document.querySelector('#tablaEtiquetas tbody');
+        tableBody.innerHTML = tableRows;
+
+        const toggleSwitches2 = this.dom.querySelectorAll(".form-check-input");
+        const colors = ["green-bg", "yellow-bg", "blue-bg"];
+        toggleSwitches2.forEach((toggleSwitch, index) => {
+            const rowNumber = toggleSwitch.getAttribute("data-row");
+            const fila = this.dom.querySelector(`[data-row="${rowNumber}"]`);
+
+            toggleSwitch.classList.add(colors[index % colors.length]);
+            fila.classList.toggle("disabled-row", !toggleSwitch.checked);
+        });
+        const toggleSwitches = this.dom.querySelectorAll(".form-check-input");
+        const editarBotones = document.querySelectorAll('.editar-etiqueta');
+        editarBotones.forEach((boton) => {
+            boton.addEventListener('click', (event) => {
+                const etiquetaId = event.target.getAttribute('data-etiqueta-id');
+                this.editarEtiqueta();
+
+            });
+        });
+
+
+
+        toggleSwitches.forEach((toggleSwitch) => {toggleSwitch.addEventListener("change", this.actualizarEstadoFila);});
+
+    }
     renderModalEditar = () => {
         return `
 <div id="modalEditar" class="modal fade" tabindex="-1">
@@ -377,29 +342,18 @@ class Etiqueta {
         this.state.entity = this.emptyEntity();
     }
 
-    listSearch = (placa) => {
-        var usuario = globalstate.user.cedula;
-        const request = new Request(`${"http://localhost:8080/Proyecto2-Backend/api"}/categorias/search?name=${placa}`,
-            {method: 'GET', headers: {}});
+    cargarEtiquetas = async () => {
 
-        (async () => {
+        try {
+            const response = await fetch('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/1');
+            const data = await response.json();
+            var etiquetas = data;
+            this.renderizarPaginaConEtiquetas(etiquetas);
+            //console.log('modelos:', this.state.modelos);
+        } catch (error) {
+            console.log('Error al cargar la lista de autos:', error);
+        }
 
-            const response = await fetch(request);
-            if (!response.ok) {
-                errorMessage(response.status);
-                return;
-
-            }
-
-            var coberturas = await response.json();
-            var col = coberturas;
-            var listing = this.dom.querySelector("#lista #tablaCategorias");
-            listing.innerHTML = "";
-            col.forEach(p => this.row(listing, p));
-            await col.forEach(p => this.addListener(p));
-
-
-        })();
     }
 
     search = async () => {
