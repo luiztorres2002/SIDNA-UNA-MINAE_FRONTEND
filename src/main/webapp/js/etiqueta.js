@@ -7,17 +7,18 @@ class Etiqueta {
     state;
 
     constructor() {
-        this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A', etiquetas: []};
+        this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A',etiquetas: []};
         this.cargarEtiquetas();
         this.dom = this.render();
-
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
         this.dom.querySelector("#categorias #agregar").addEventListener('click', this.createNew);
         this.dom.querySelector("#categorias #buscar").addEventListener('click', this.search);
         this.modalEditar = new bootstrap.Modal(this.dom.querySelector('#modalEditar'));
-
         this.dom.querySelector("#categorias #modalEditar #formEdit #cancel").addEventListener('click', this.cancelarEdit);
-        this.dom.querySelector("#categorias #modalEditar #formEdit #save").addEventListener('click', this.saveEdit);
+        this.dom.querySelector("#categorias #modalEditar #formEdit #save").addEventListener('click', () => {
+            const etiquetaId = this.dom.querySelector("#categorias #modalEditar #formEdit #etiquetaId").value;
+            this.saveEdit(etiquetaId);
+        });
         this.dom.querySelector("#categorias #modalEditar #close").addEventListener('click', this.cancelarEdit);
 
 
@@ -85,55 +86,44 @@ class Etiqueta {
     <tbody id="etiquetasTableBody">
       
 </table>
-
-
-
                 </div>
             </form>
         </div>
 
-            
         `;
-
-
     }
 
 
-    renderizarPaginaConEtiquetas = () => {
+    renderizarPaginaConEtiquetas= () => {
         let tableRows = '';
 
         this.state.etiquetas.forEach((etiqueta, index) => {
-            const {descripcion, etiquetaId, estado} = etiqueta;
-
-
+            const { descripcion, etiquetaId, estado } = etiqueta;
             const isChecked = estado ? 'checked' : '';
-
             const row = `
-            <tr data-row="${index + 1}">
-      
-                    <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none"><li class="list-inline-item">
-                                                <button class="btn  btn-sm rounded-0 editar-etiqueta" type="button" data-etiqueta-id="${descripcion}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
-          
-                    </li>
-                    ${descripcion}
-                </td>
-                <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
-                <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
-                    <div class="toggle-container">
-                        <span class="number">10</span>
-                        <div class="form-check form-switch toggle-switch">
-                            <input class="form-check-input unchecked" type="checkbox" role="switch" data-row="${index + 1}" data-etiqueta-id="${etiquetaId}" data-etiqueta-estado="${estado}" ${isChecked} style="background-color: #ffffff; border-color: #000000; background-image: url('data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'-4 -4 8 8\\'><circle r=\\'3\\' fill=\\'%2384bd00\\'/></svg>') ">
-                            <label class="form-check-label" for="flexSwitchCheckDefault"></label>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            
-       
-        `;
-
+    <tr data-row="${index + 1}">
+        <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
+            <li class="list-inline-item">
+                <button class="editar-etiqueta btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit">
+                    <i class="fa fa-edit fa-lg"></i>
+                </button>
+            </li>
+            ${descripcion}
+        </td>
+        <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
+        <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
+            <div class="toggle-container">
+                <span class="number">10</span>
+                <div class="form-check form-switch toggle-switch">
+                    <input class="form-check-input unchecked" type="checkbox" role="switch" data-row="${index + 1}" data-etiqueta-id="${etiquetaId}" data-etiqueta-estado="${estado}" ${isChecked} style="background-color: #ffffff; border-color: #000000; background-image: url('data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'-4 -4 8 8\\'><circle r=\\'3\\' fill=\\'%2384bd00\\'/></svg>') ">
+                    <label class="form-check-label" for="flexSwitchCheckDefault"></label>
+                </div>
+            </div>
+        </td>
+    </tr>
+    `;
             tableRows += row;
-        })
+        });
 
         const tableBody = document.querySelector('#tablaEtiquetas tbody');
         tableBody.innerHTML = tableRows;
@@ -147,19 +137,15 @@ class Etiqueta {
             toggleSwitch.classList.add(colors);
             fila.classList.toggle("disabled-row", !toggleSwitch.checked);
         });
-        const toggleSwitches = this.dom.querySelectorAll(".form-check-input");
+
+
         const editarBotones = document.querySelectorAll('.editar-etiqueta');
-        editarBotones.forEach((boton) => {
-            boton.addEventListener('click', (event) => {
-                const etiquetaId = event.target.getAttribute('data-etiqueta-id');
-                this.editarEtiqueta();
-
+        editarBotones.forEach((boton, index) => {
+            const etiquetaId = this.state.etiquetas[index].etiquetaId;
+            const descripcion = this.state.etiquetas[index].descripcion;
+            boton.addEventListener('click', () => {
+                this.editarEtiqueta(etiquetaId, descripcion);
             });
-        });
-
-
-        toggleSwitches.forEach((toggleSwitch) => {
-            toggleSwitch.addEventListener("change", this.actualizarEstadoFila);
         });
 
     }
@@ -179,9 +165,12 @@ class Etiqueta {
          
         </ul>
         <form action="#" class="signup-form" id="formEdit">
-         <div class="form-group mb-2">
+         
+          <input type="hidden" id="etiquetaId" name="etiquetaId" value="">
+          
+          <div class="form-group mb-2">
             <input id="input" type="text" class="form-control" style="border-right-color: white; border-left-color: white; border-top-color: white; border-bottom-color: black">
-        </div>
+          </div>
 
           <div class="form-group mb-2 align-content-lg-end">
             <button id="cancel" type="submit" style="background-color: white" class="rounded">Cancelar</button>
@@ -194,14 +183,18 @@ class Etiqueta {
 </div>
 `;
     }
-
     resetFormEditar = () => {
         var form = this.dom.querySelector("#categorias #modalEditar #formEdit");
         form.reset();
     }
 
-    showEditar = async () => {
+    showEditar = (etiquetaId, descripcion) => {
         this.resetFormEditar();
+        const inputField = this.dom.querySelector("#categorias #modalEditar #formEdit #etiquetaId");
+        const nombreField = this.dom.querySelector("#categorias #modalEditar #formEdit #input");
+        inputField.value = etiquetaId;
+        nombreField.value = descripcion;
+
         this.modalEditar.show();
     }
 
@@ -210,9 +203,13 @@ class Etiqueta {
         this.modalEditar.hide();
     }
 
-    editarEtiqueta = () => {
-        this.showEditar();
+    editarEtiqueta = (etiquetaId, descripcion) => {
+
+        this.showEditar(etiquetaId, descripcion);
+        console.log(etiquetaId);
     }
+
+
 
 
     actualizarEstadoFila = (event) => {
@@ -221,8 +218,6 @@ class Etiqueta {
         const etiquetaNom = toggleSwitch.getAttribute("data-etiqueta-id");
         const fila = this.dom.querySelector(`[data-row="${numFila}"]`);
         const colors = ["green-bg"];
-
-
         const colorIndex = (numFila - 1) % colors.length;
 
         if (toggleSwitch.checked) {
@@ -296,7 +291,6 @@ class Etiqueta {
         }
     }
 
-
     add = async () => {
         // Necesito validar antes de ingresar en la base de datos.
         this.load(); // Carga los datos del formulario al objeto entity.
@@ -319,7 +313,6 @@ class Etiqueta {
         } catch (e) {
             alert(e);
         }
-
         this.list();
         this.reset();
         this.resetForm();
@@ -334,26 +327,20 @@ class Etiqueta {
                 <td>${c.descripcion}</td>`
         ;
 
-
         list.appendChild(tr);
     }
-
     resetForm = () => {
         var formulario = this.dom.querySelector("#categorias #modal #form");
         formulario.reset();
     }
-
     showModal = async () => {
 
         this.modal.show();
     }
-
     reset = () => {
         this.state.entity = this.emptyEntity();
     }
-
     cargarEtiquetas = async () => {
-
         try {
             const response = await fetch('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/1');
             const data = await response.json();
@@ -362,12 +349,10 @@ class Etiqueta {
         } catch (error) {
             console.log('Error al cargar la lista de etiquetas:', error);
         }
-
     }
 
     cambiarEstadoEtiqueta = (etiquetaId, nuevoEstado) => {
         const url = `http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/cambiarEstado/${etiquetaId}/${nuevoEstado}`;
-
         fetch(url, {
             method: 'PUT',
             headers: {
@@ -421,7 +406,6 @@ class Etiqueta {
             setTimeout(() => {
                 digiteMessage.classList.remove('show');
             }, 2000);
-
             return;
         }
 
@@ -434,7 +418,6 @@ class Etiqueta {
 
             } else {
                 row.classList.remove('highlight');
-
             }
         });
 
@@ -450,7 +433,7 @@ class Etiqueta {
 
     createNew = () => {
         this.reset();
-        this.state.mode = 'A'; //agregar
+        this.state.mode = 'A';
         this.showModal();
 
     }
