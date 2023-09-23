@@ -66,4 +66,12 @@ public class EtiquetaDao {
         boolean estado = resultSet.getBoolean("Estado");
         return new Etiqueta(etiquetaId, descripcion, usuarioCedula, estado);
     }
+
+    public void updateEtiqueta(Etiqueta etiqueta) throws SQLException {
+        String sql = "update Etiqueta set Descripcion=? where PK_EtiquetaId=?";
+        PreparedStatement stm = db.prepareStatement(sql);
+        stm.setString(1, etiqueta.getDescripcion());
+        stm.setInt(2, etiqueta.getEtiquetaId());
+        db.executeUpdate(stm);
+    }
 }

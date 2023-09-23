@@ -17,7 +17,7 @@ class App {
         this.dom.querySelector('#app>#modal #apply').addEventListener('click', e => this.login());
         this.dom.querySelector('#app>#modal #registrar').addEventListener('click', e => this.registrar());
         this.dom.querySelector('#app>#modal2 #formModal2 #change').addEventListener('click', e => this.ClienteUpdate());
-        this.renderBodyFiller();  //rellena el body con la informacion importante.
+        this.renderBodyFiller();
         this.renderMenuItems();
 
     }
@@ -146,8 +146,6 @@ class App {
                     </div>
                           
                    </div>
-                       
-                       
                        
                         </form>
                </div>
