@@ -7,7 +7,7 @@ class Etiqueta {
     state;
 
     constructor() {
-        this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A',etiquetas: []};
+        this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A', etiquetas: []};
         this.cargarEtiquetas();
         this.dom = this.render();
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
@@ -94,11 +94,11 @@ class Etiqueta {
     }
 
 
-    renderizarPaginaConEtiquetas= () => {
+    renderizarPaginaConEtiquetas = () => {
         let tableRows = '';
 
         this.state.etiquetas.forEach((etiqueta, index) => {
-            const { descripcion, etiquetaId, estado } = etiqueta;
+            const {descripcion, etiquetaId, estado} = etiqueta;
             const isChecked = estado ? 'checked' : '';
             const row = `
     <tr data-row="${index + 1}">
@@ -208,8 +208,6 @@ class Etiqueta {
         this.showEditar(etiquetaId, descripcion);
         console.log(etiquetaId);
     }
-
-
 
 
     actualizarEstadoFila = (event) => {
@@ -374,8 +372,8 @@ class Etiqueta {
             });
     };
 
-    saveEdit = (etiquetaId) => {
-        const url = `http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/editar/${etiquetaId}`;
+    saveEdit = (etiquetaId, descripcion) => {
+        const url = `http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/editar/${etiquetaId}?input=${descripcion}`;
         fetch(url, {
             method: 'PUT',
             headers: {
