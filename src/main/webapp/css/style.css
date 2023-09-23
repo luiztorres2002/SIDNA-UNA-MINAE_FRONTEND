@@ -1,8 +1,8 @@
 body {
 
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     min-height: 100vh;
 }
 img.logo{
@@ -12,103 +12,14 @@ img.logo{
 
 img.filler{
     width: 500px;
-    height: auto;    
+    height: auto;
 }
 
 img.flag{
     width: 100px;
-    height: auto;    
+    height: auto;
 }
 
-.fontAwesome {
-    font-family: Helvetica, 'FontAwesome', sans-serif;
-}
-
-.imagen {
-    width: 200px;
-    height: 150px;
-    margin: 10px;
-}
-
-
-.table th, .table td {
-    font-size: 18px;
-    height: 60px;
-    padding: 8px;
-}
-
-.table td.large {
-    width: 70%;
-}
-
-.table td.empty {
-    width: 15%;
-}
-
-.table td.empty2 {
-
-    padding-right: 10px;
-    width: auto;
-}
-
-.toggle-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.toggle-switch {
-    transform: scale(1.5);
-    width: 10px;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-.btn.btn-custom-outline-success .font-weight-bold {
-    font-weight: bold;
-    font-size: 24px;
-}
-
-.btn.btn-custom-outline-success:hover {
-    color: #ffffff;
-    background-color: #84bd00;
-    border-color: #84bd00;
-}
-
-.btn.btn-custom-outline-success {
-    color: #84bd00;
-    border-color: #84bd00;
-    width: 120px;
-}
-
-.btn.btn-custom-outline-success2 {
-    color: #84bd00;
-    border-color: #84bd00;
-    width: 60px;
-}
-
-
-.btn.btn-custom-outline-success.btn-outline-success {
-    border-color: #84bd00;
-}
-
-
-#flexSwitchCheckDefault:not(:checked) + label {
-    background-color: #FF0000;
-}
-
-
-.number {
-    width: 40px;
-    padding-right: 10px;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-tr.disabled-row {
-    background-color: #f2f2f2;
-    color: #888;
-}
 
 
 header .logo
@@ -140,6 +51,7 @@ header ul li a
     padding: 18px 115px;
     color: #000000;
     border-radius: 20px;
+
 }
 header ul li a:hover ,
 header ul li a.active
@@ -147,14 +59,3 @@ header ul li a.active
     background: #FED141;
     color: #2b1055;
 }
-
-#menu {
-    display: flex;
-    align-items: center;
-    padding: 10px 20px;
-    color: #fff;
-}
-
-
-
-
