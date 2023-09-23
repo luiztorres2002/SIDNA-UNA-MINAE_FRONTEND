@@ -19,6 +19,7 @@ class App {
         this.dom.querySelector('#app>#modal2 #formModal2 #change').addEventListener('click', e => this.ClienteUpdate());
         this.renderBodyFiller();  //rellena el body con la informacion importante.
         this.renderMenuItems();
+
     }
 
     render = () => {
@@ -283,6 +284,7 @@ class App {
         this.Etiqueta = new Etiqueta();
         const menuItems = this.dom.querySelectorAll("#app>#menu #menuItems a");
 
+
         menuItems.forEach((menuItem) => {
             if (menuItem.id === "Etiquetas") {
                 menuItem.classList.add("active");
@@ -292,6 +294,9 @@ class App {
         });
 
         this.dom.querySelector('#app>#body').replaceChildren(this.Etiqueta.dom);
+
     }
+
+
 
 }
