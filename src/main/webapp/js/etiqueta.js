@@ -17,7 +17,8 @@ class Etiqueta {
         this.dom.querySelector("#categorias #modalEditar #formEdit #cancel").addEventListener('click', this.cancelarEdit);
         this.dom.querySelector("#categorias #modalEditar #formEdit #save").addEventListener('click', () => {
             const etiquetaId = this.dom.querySelector("#categorias #modalEditar #formEdit #etiquetaId").value;
-            this.saveEdit(etiquetaId);
+            const descripcion=this.dom.querySelector("#categorias #modalEditar #formEdit #input").value;
+            this.saveEdit(etiquetaId, descripcion);
         });
         this.dom.querySelector("#categorias #modalEditar #close").addEventListener('click', this.cancelarEdit);
 
