@@ -12,11 +12,11 @@ public class EtiquetaDao {
     Database db;
 
     UsuarioDao usuarioDao;
+
     public EtiquetaDao(Database db) {
         this.db = db;
 
     }
-
 
 
     public List<Etiqueta> getAllEtiquetasByUsuario(String usuarioCedula) throws SQLException {
