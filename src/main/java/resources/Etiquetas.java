@@ -48,4 +48,22 @@ public class Etiquetas {
             throw new InternalServerErrorException(e);
         }
     }
+
+    @PUT
+    @Path("/editar/{etiquetaId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response editarEtiqueta(@PathParam("etiquetaId") int etiquetaID) {
+        try {
+            Database database = new Database();
+            EtiquetaDao etiquetaDao = new EtiquetaDao(database);
+            Etiqueta etiqueta = etiquetaDao.getEtiquetaById(etiquetaID);
+            if (etiqueta == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+            etiquetaDao.updateEtiqueta(etiqueta);
+            return Response.ok().build();
+        } catch (SQLException ex) {
+            throw new InternalServerErrorException(ex);
+        }
+    }
 }

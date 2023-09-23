@@ -7,7 +7,7 @@ class Etiqueta {
     state;
 
     constructor() {
-        this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A',etiquetas: []};
+        this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A', etiquetas: []};
         this.cargarEtiquetas();
         this.dom = this.render();
 
@@ -99,12 +99,11 @@ class Etiqueta {
     }
 
 
-    renderizarPaginaConEtiquetas= () => {
+    renderizarPaginaConEtiquetas = () => {
         let tableRows = '';
 
         this.state.etiquetas.forEach((etiqueta, index) => {
-            const { descripcion,etiquetaId, estado } = etiqueta;
-
+            const {descripcion, etiquetaId, estado} = etiqueta;
 
 
             const isChecked = estado ? 'checked' : '';
@@ -159,8 +158,9 @@ class Etiqueta {
         });
 
 
-
-        toggleSwitches.forEach((toggleSwitch) => {toggleSwitch.addEventListener("change", this.actualizarEstadoFila);});
+        toggleSwitches.forEach((toggleSwitch) => {
+            toggleSwitch.addEventListener("change", this.actualizarEstadoFila);
+        });
 
     }
     renderModalEditar = () => {
@@ -208,10 +208,6 @@ class Etiqueta {
     cancelarEdit = () => {
         event.preventDefault();
         this.modalEditar.hide();
-    }
-
-    saveEdit = () => {
-        alert("TO DO");
     }
 
     editarEtiqueta = () => {
@@ -299,7 +295,6 @@ class Etiqueta {
             this.entity[key] = value;
         }
     }
-
 
 
     add = async () => {
@@ -393,6 +388,26 @@ class Etiqueta {
                 console.error('Error:', error);
             });
     };
+
+    saveEdit = (etiquetaId) => {
+        const url = `http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/editar/${etiquetaId}`;
+        fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then((response) => {
+            if (!response.ok) {
+                console.error(`Error al editar la etiqueta: ${response.status}`);
+                throw new Error('Error al editar la etiqueta');
+            }
+            console.log('Etiqueta actualizada correctamente');
+        }).catch((error) => {
+            console.error('Error:', error);
+        });
+        event.preventDefault();
+        this.renderizarPaginaConEtiquetas();
+    }
 
     search = async () => {
         const searchInput = this.dom.querySelector("#buscador");
