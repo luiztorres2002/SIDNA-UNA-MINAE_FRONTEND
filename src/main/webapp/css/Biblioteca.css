@@ -59,5 +59,6 @@ select {
     display: block;
 }
 
-
-
+.required-field-error {
+    border-bottom: 2px solid red; /* Agrega una línea roja debajo del campo vacío */
+}

@@ -8,6 +8,8 @@ class Biblioteca {
 
     modalerror;
 
+    modalCampo;
+
     modalexito;
 
     constructor() {
@@ -15,11 +17,14 @@ class Biblioteca {
         this.dom = this.render();
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
         this.modalerror = new bootstrap.Modal(this.dom.querySelector('#modalError'));
+        this.modalexito = new bootstrap.Modal(this.dom.querySelector('#sucessmodal'));
+        this.modalCampo = new bootstrap.Modal(this.dom.querySelector('#modalcampo'));
         this.dom.querySelector("#biblioteca #agregar").addEventListener('click', this.createNew);
         this.dom.querySelector("#biblioteca #buscar").addEventListener('click', this.search);
         this.dom.querySelector("#biblioteca #modal #apply").addEventListener('click', this.add);
         this.dom.querySelector("#biblioteca #modalError #dismissButton").addEventListener('click', this.hideModalError);
-
+        this.dom.querySelector("#biblioteca #sucessmodal #sucessbuton").addEventListener('click', this.hideModalExito);
+        this.dom.querySelector("#biblioteca #modalcampo #dismisscampo").addEventListener('click', this.hideModalCampo);
 
     }
 
@@ -28,6 +33,8 @@ class Biblioteca {
             ${this.renderBody()}
             ${this.renderModal()}
             ${this.renderModalError()}
+            ${this.renderModalSuccess()}
+            ${this.renderModalCampo()}
         `;
         const rootContent = document.createElement('div');
         rootContent.id = 'biblioteca';
@@ -52,10 +59,6 @@ class Biblioteca {
                 </div>
             </form>
         </div>
-
-        
-        
-            
         `;
     }
     renderModal = () => {
@@ -78,20 +81,20 @@ class Biblioteca {
                 </div>
                 <form id = "form">
                     <div class="form-group">
-                        <legend class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 10px; font-family: Verdana">
+                        <legend id = "titulolegend" class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 10px; font-family: Verdana">
                             <i class="fas fa-newspaper mr-2"></i> Título:
                         </legend>
                         <input type ="text" class="form-control border border-dark" id="titulo" name= "titulo" style="width: 725px; font-size: 20px; margin-left: 10px;">
                     </div>
                     <div class="form-group">
-                        <legend class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 10px; font-family: Verdana">
+                        <legend id = "descripcionlegend" class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 10px; font-family: Verdana">
                             <i class="fas fa-file-alt mr-2"></i> Descripción: 
                         </legend>
                         <textarea type ="text" class="form-control border border-dark" style="width: 725px; font-size: 20px; margin-left: 10px;" id="descripcion" name= "descripcion" rows="3"></textarea>
                     </div>
                     <div class="form-row row date" data-provide="datepicker">
                         <div class="col-md-6">
-                                <legend class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 30px; font-family: Verdana">
+                                <legend id = "fechalegend"  class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 30px; font-family: Verdana">
                                     <i class="far fa-calendar-alt mr-2"></i> Fecha
                                 </legend>
                                     <div style="display: block;">
@@ -106,7 +109,7 @@ class Biblioteca {
                                     </div>
                         </div>
                         <div class="form-group col-md-6">
-                            <legend class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 30px; font-family: Verdana">
+                            <legend id = "prioridadlegend" class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 30px; font-family: Verdana">
                                 <i class="fas fa-exclamation-triangle mr-2"></i> Prioridad
                                     </legend>
                                         <div style="display: block;">
@@ -121,17 +124,18 @@ class Biblioteca {
                         </div>
                     </div>
                     <div class="form-group">
-                        <legend class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 20px; font-family: Verdana">
+                        <legend id = "fuentelegend"  class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 20px; font-family: Verdana">
                             <i class="fas fa-info-circle mr-2"></i> Fuente
                         </legend>
                         <input type = "text" class="form-control border border-dark" id="fuente" name ="fuente" style="width: 725px; font-size: 20px; margin-left: 10px;">
                     </div>
                     <div class="form-group">
-                        <legend class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 20px; font-family: Verdana">
+                        <legend id = "enlacelegend"  class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 20px; font-family: Verdana">
                             <i class="fas fa-link mr-2"></i> Enlace
                         </legend>
                         <input type="text" class="form-control border border-dark" id="enlace" name="enlace" style="width: 725px; font-size: 20px; margin-left: 10px;">
                     </div>
+                   
                     
                     <div class="container" style="padding-top: 20px">
                         <div class="row justify-content-center mt-5">
@@ -151,35 +155,57 @@ class Biblioteca {
     renderModalError = () => {
         return `
         <div id="modalError" class="modal fade">
-            <div class="modal-dialog modal-confirm modal-dialog-centered">
+            <div class="modal-dialog modal-confirm">
                 <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="icon-box">
+                            <i class="material-icons">&#xE5CD;</i>
+                        </div>
+                    </div>
                     <div class="modal-body text-center">
-                        <h4 style="font-size: 24px;">¡Ups! Error.</h4>
-                                <p style="font-size: 18px;">No se pudo registrar la noticia externa.</p>
-                        <button id="dismissButton" style="background-color: #FF8888; color: white; font-weight: bold;" class="btn btn-success">Salir</button>
+                         <h4>Ooops!</h4>\t
+                            <p>Something went wrong. File was not uploaded.</p>
+                                <button id = "dismissButton" class="btn btn-success" data-dismiss="modal">Try Again</button>
                     </div>
                 </div>
             </div>
-        </div>
+        </div>     
         `;
     }
 
+    renderModalCampo = () => {
+        return `
+    <div id="modalcampo" class="modal fade">
+    <div class="modal-dialog modal-confirm2">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <p style="font-size: 20px;">Por favor, complete todos los campos para publicar la noticia.</p>
+                <button id="dismisscampo" style="font-size: 20px;" class="btn2 btn-success" data-dismiss="modal">Regresar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    `;
+    }
+
+
     renderModalSuccess = () => {
         return `
-        <div id="myModal" class="modal fade">
+        <div id="sucessmodal" class="modal fade">
           <div class="modal-dialog modal-confirm">
             <div class="modal-content">
                 <div class="modal-header">
                     <div class="icon-box">
                         <i class="material-icons">&#xE876;</i>
                     </div>
-                    <h4 class="modal-title w-100">Awesome!</h4>\t
+                    <h4 class="modal-title w-100">¡Confirmado!</h4>\t
                 </div>
                 <div class="modal-body">
-                    <p class="text-center">Your booking has been confirmed. Check your email for detials.</p>
+                    <p style="font-size: 25px;" class="text-center">Tu noticia externa ha sido ingresada con éxito.</p>
                 </div>
                 <div class="modal-footer">
-            <button class="btn btn-success btn-block" data-dismiss="modal">OK</button>
+            <button class="btn btn-success btn-block" id="sucessbuton" data-dismiss="modal">OK</button>
                 </div>
             </div>
             </div>
@@ -187,14 +213,95 @@ class Biblioteca {
         `;
     }
 
+    verificarCamposLlenados = () => {
+        const titulo = document.getElementById('titulo').value;
+        const descripcion = document.getElementById('descripcion').value;
+        const fecha = document.getElementById('fecha').value;
+        const prioridad = document.getElementById('prioridad').value;
+        const fuente = document.getElementById('fuente').value;
+        const enlace = document.getElementById('enlace').value;
 
+        const tituloLegend = document.getElementById('titulolegend');
+        const descripcionLegend = document.getElementById('descripcionlegend');
+        const fechaLegend = document.getElementById('fechalegend');
+        const prioridadLegend = document.getElementById('prioridadlegend');
+        const fuenteLegend = document.getElementById('fuentelegend');
+        const enlaceLegend = document.getElementById('enlacelegend');
 
+        if (titulo.trim() === '') {
+            tituloLegend.style.color = 'red';
+            tituloLegend.style.textDecoration = 'underline';
+        }
+        else{
+            tituloLegend.style.color = 'black';
+            tituloLegend.style.textDecoration = 'none';
+        }
 
+        if (descripcion.trim() === '') {
+            descripcionLegend.style.color = 'red';
+            descripcionLegend.style.textDecoration = 'underline';
+        }
+        else{
+            descripcionLegend.style.color = 'black';
+            descripcionLegend.style.textDecoration = 'none';
+        }
+
+        if (fecha.trim() === '') {
+            fechaLegend.style.color = 'red';
+            fechaLegend.style.textDecoration = 'underline';
+        }
+        else{
+            fechaLegend.style.color = 'black';
+            fechaLegend.style.textDecoration = 'none';
+        }
+
+        if (prioridad.trim() === '') {
+            prioridadLegend.style.color = 'red';
+            prioridadLegend.style.textDecoration = 'underline';
+        }
+        else{
+            prioridadLegend.style.color = 'black';
+            prioridadLegend.style.textDecoration = 'none';
+        }
+
+        if (fuente.trim() === '') {
+            fuenteLegend.style.color = 'red';
+            fuenteLegend.style.textDecoration = 'underline';
+        }
+        else{
+            fuenteLegend.style.color = 'black';
+            fuenteLegend.style.textDecoration = 'none';
+        }
+
+        if (enlace.trim() === '') {
+            enlaceLegend.style.color = 'red';
+            enlaceLegend.style.textDecoration = 'underline';
+        }
+        else{
+            enlaceLegend.style.color = 'black';
+            enlaceLegend.style.textDecoration = 'none';
+        }
+
+        // Verificar si alguno de los campos está vacío
+        if (
+            titulo.trim() === '' ||
+            descripcion.trim() === '' ||
+            fecha.trim() === '' ||
+            prioridad.trim() === '' ||
+            fuente.trim() === '' ||
+            enlace.trim() === ''
+        ) {
+            this.showModalCampo();
+            return false;
+        }
+        return true;
+    }
 
 
 
 
     showModal = async () => {
+        this.resetForm();
         this.modal.show();
     }
 
@@ -202,19 +309,40 @@ class Biblioteca {
         this.modalerror.show();
     }
 
+    showModalCampo = async () => {
+        this.modalCampo.show();
+    }
+
+    showModalFaltaCampo = async () => {
+        this.modalerror.show();
+    }
+
     hideModalError = async () => {
         this.modalerror.hide();
         this.modal.hide();
+        this.resetForm();
+    }
+
+    hideModalExito = async () => {
+        this.modalexito.hide();
+        this.resetForm();
+        this.reset();
+    }
+
+    hideModalCampo = async () => {
+        this.modalCampo.hide();
+
     }
 
 
-    showModalExito = async () => {
+    showModalExito = () => {
         // Cargar los datos de la entidad en el formulario del modal
-        this.modal.show();
+        this.modal.hide()
+        this.modalexito.show();
     }
 
     load = async () => {
-        const form = this.dom.querySelector("#biblioteca #modal form");
+        const form = this.dom.querySelector("#biblioteca #modal #form");
         const formData = new FormData(form);
         this.entity = {};
         for (let [key, value] of formData.entries()) {
@@ -229,6 +357,25 @@ class Biblioteca {
     createNew = () => {
         this.state.mode = 'A'; //agregar
         this.showModal();
+
+    }
+
+    resetForm = () => {
+        var formulario = this.dom.querySelector("#biblioteca #modal #form");
+        formulario.reset();
+        const tituloLegend = document.getElementById('titulolegend');
+        const descripcionLegend = document.getElementById('descripcionlegend');
+        const fechaLegend = document.getElementById('fechalegend');
+        const prioridadLegend = document.getElementById('prioridadlegend');
+        const fuenteLegend = document.getElementById('fuentelegend');
+        const enlaceLegend = document.getElementById('enlacelegend');
+
+        tituloLegend.style.color = 'black';
+        descripcionLegend.style.color = 'black';
+        fechaLegend.style.color = 'black';
+        prioridadLegend.style.color = 'black';
+        fuenteLegend.style.color = 'black';
+        enlaceLegend.style.color = 'black';
 
     }
 
@@ -252,21 +399,45 @@ class Biblioteca {
         };
         this.entity["id"] = "1";
         this.entity["usuario"] = usuarioVacio;
-        const request = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasExternas', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(this.entity)
-        });
-        try {
-            const response = await fetch(request);
-            if (!response.ok) {
-                console.log(this.entity);
-                return;
+        if(this.verificarCamposLlenados()){
+            const request = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasExternas', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(this.entity)
+            });
+            try {
+                const response = await fetch(request);
+                if (!response.ok) {
+                    this.showModalError()
+                    return;
+                }
+                else{
+                    //this.addImage();
+                    this.showModalExito();
+                    return;
+                }
+            } catch (e) {
+                alert(e);
             }
-        } catch (e) {
-            alert(e);
+        }
+        else{
+
+        }
+
+    }
+
+
+    addImage = async() => {
+        const backend = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae';
+        var data = new FormData();
+        data.append("imagen", document.querySelector("#biblioteca #modal #form #imagen").files[0]);
+        let request = new Request(backend + '/NoticiasExternas/' + this.entity.titulo + '/imagen', {method: 'POST', body: data});
+        const response = await fetch(request);
+        if (!response.ok) {
+            alert("Error al guardar imagen");
+            return;
         }
     }
 
@@ -276,4 +447,9 @@ class Biblioteca {
         return entity;
     }
 
+    reset = () => {
+        this.state.entity = this.emptyEntity();
+    }
+
 }
+

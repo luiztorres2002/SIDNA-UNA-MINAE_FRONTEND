@@ -39,22 +39,5 @@ public class NoticiaExternaDao {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-      try{
-      Database db = new Database();
 
-         Departamento departamento = new Departamento(1,"PruebaDepartamento");
-         Rol rol = new Rol(1,"Analista");
-         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-         Date fechaEspecificaDate = sdf.parse("2022-08-20");
-         Usuario usuario = new Usuario("4-0258-0085", "Luis","Torres","Villalobos","torresvillalobos20@gmail.com", "123123123",departamento,rol);
-         NoticiaExternaDao noticiaExternaDao = new NoticiaExternaDao(db);
-         LocalDate fechaHoy = LocalDate.now();
-         NoticiaExterna noticiaExterna = new NoticiaExterna(1,"Incendios sdfs", "Hay una increiblsdfsdfe cantidad de incendios en San Carlos",fechaEspecificaDate,"Alsdfsta","www.lanacsdfdsion.com","www.lanacisfsdfon.com",usuario);
-         noticiaExternaDao.create(noticiaExterna);
-
-      } catch (Exception e) {
-         e.printStackTrace();
-        }
-   }
 }
