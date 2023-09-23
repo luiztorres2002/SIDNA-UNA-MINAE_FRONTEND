@@ -387,15 +387,10 @@ class Biblioteca {
             nombre: " ",
             primerApellido:  " ",
             segundoApellido:" ",
-
             email:" ",
-
             contrasena: " ",
-
             departamento:null,
-
             rol: null,
-
         };
         this.entity["id"] = "1";
         this.entity["usuario"] = usuarioVacio;
@@ -423,9 +418,7 @@ class Biblioteca {
             }
         }
         else{
-
         }
-
     }
 
 
