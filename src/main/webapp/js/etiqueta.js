@@ -242,29 +242,19 @@ class Etiqueta {
         </button>
       </div>
       <div class="modal-body p-4 py-5 p-md-5">
-        <h3 class="text-center mb-3">Introduce una nueva noticia de fuente externa</h3>
+        <h3 class="text-center mb-3">Agregar nueva etiqueta</h3>
         <ul class="ftco-footer-social p-0 text-center">
          
         </ul>
         <form action="#" class="signup-form">
          <div class="form-group mb-2">
-            <label for="name" style="font-size: 15px;">Titulo de la noticia</label>
+            <label for="name" style="font-size: 15px;">Nombre de etiqueta</label>
             <input type="text" class="form-control">
         </div>
-
           <div class="form-group mb-2">
-            <label for="sinopsis" style="font-size: 15px;">Sinopsis</label>
-            <input type="text" class="form-control">
-          </div>
-          <div class="form-group mb-2">
-            <label for="password">Fuente</label>
-            <input type="password" class="form-control">
-          </div>
-          <div class="form-group mb-2">
-            <button type="submit" class="form-control btn btn-primary rounded submit px-3">Ingresar</button>
+            <button type="submit" class="form-control btn btn-primary rounded submit px-3">agregar</button>
           </div>
           <div class="form-group d-md-flex">
-            
           </div>
         </form>
       </div>
