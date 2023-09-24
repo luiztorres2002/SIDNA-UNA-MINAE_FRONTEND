@@ -25,6 +25,7 @@ public class Service {
 
     UsuarioDao usuarioDao;
 
+
     private Service() {
         database = new Database();
 
@@ -35,6 +36,9 @@ public class Service {
         usuarioDao = new UsuarioDao(database);
 
         noticiaExternaDao = new NoticiaExternaDao(database);
+
+
+
 
     }
 
@@ -51,17 +55,6 @@ public class Service {
     }
 
 
-    public static void main(String[] args) {
-        // Crear una instancia de Service
-        Service service = Service.instance();
-
-        // Puedes realizar otras operaciones aquí utilizando la instancia de Service si es necesario.
-
-        // Imprimir un mensaje para indicar que se ha creado la instancia
-        System.out.println("Instancia de Service creada exitosamente.");
-    }
-
-    //leer
 
 
 
