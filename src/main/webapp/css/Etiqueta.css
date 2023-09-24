@@ -152,8 +152,32 @@ tr.disabled-row {
         padding: 5px 50px;
         color: #000000;
         border-radius: 20px;
-        font-size: 0.68em;
+        font-size: 0.68em !important;
         transition: all 0.3s ease;
+    }
+
+
+    #Busqueda:hover {
+        background: #006ba6;
+        font-size: 0.68em !important;
+        color: #ffffff;
+
+    }
+
+
+    #Etiquetas:hover {
+        background: #fed141;
+        font-size: 0.68em !important;
+        color: #ffffff;
+
+    }
+
+
+    #Biblioteca:hover {
+        background: #84bd00;
+        font-size: 0.68em !important;
+        color: #ffffff;
+
     }
 
     .table td.empty {
