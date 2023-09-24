@@ -19,6 +19,7 @@ class App {
         this.dom.querySelector('#app>#modal2 #formModal2 #change').addEventListener('click', e => this.ClienteUpdate());
         this.renderBodyFiller();  //rellena el body con la informacion importante.
         this.renderMenuItems();
+
     }
 
     render = () => {
@@ -38,8 +39,8 @@ class App {
     renderMenu = () => {
         return `
         <header id="menu">
-            <a href="#" ><img src="images/Minae.png"  width="300" height="110" style="margin: 0px;"></a>
-        <ul id='menuItems'>
+            <a id="logonav" href="#" ><img src="images/Minae.png"  width="300" height="110" style="margin-right: 200px;"></a>
+        <ul class="navbar" id='menuItems'>
             
         </ul>
          </header>
@@ -63,7 +64,7 @@ class App {
         <footer id="footer" class="bg-dark text-white mt-4 w-100 fixed-bottom">
             <div class="container-fluid py-2">
 
-                SISTEMA RECOPILTORIO DE NOTICIAS Y DENUNCIAS AMBIENTALES
+                SISTEMA RECOPILATORIO DE NOTICIAS Y DENUNCIAS AMBIENTALES
             </div>
         </footer> 
     `;
@@ -283,6 +284,7 @@ class App {
         this.Etiqueta = new Etiqueta();
         const menuItems = this.dom.querySelectorAll("#app>#menu #menuItems a");
 
+
         menuItems.forEach((menuItem) => {
             if (menuItem.id === "Etiquetas") {
                 menuItem.classList.add("active");
@@ -292,6 +294,9 @@ class App {
         });
 
         this.dom.querySelector('#app>#body').replaceChildren(this.Etiqueta.dom);
+
     }
+
+
 
 }

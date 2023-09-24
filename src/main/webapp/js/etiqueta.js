@@ -1,324 +1,111 @@
-class Etiqueta {
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
 
-    dom;
-
-    modal;
-
-    state;
-
-    constructor() {
-        this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A'};
-        this.dom = this.render();
-        this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
-        this.dom.querySelector("#categorias #agregar").addEventListener('click', this.createNew);
-        this.dom.querySelector("#categorias #buscar").addEventListener('click', this.search);
-
-
-
-
-    }
-
-    render = () => {
-        const html = `
-            ${this.renderBody()}
-            ${this.renderModal()}
-        `;
-        const rootContent = document.createElement('div');
-        rootContent.id = 'categorias';
-        rootContent.innerHTML = html;
-        return rootContent;
-    }
-
-    renderBody = () => {
-        return `
-   <div class="d-flex justify-content-center">
-            <form id="form" style="width: 85%; margin-top: 20px;"">
-           <div class="input-group mb-3 mt-10" style="display: flex; align-items: center; justify-content: center;">
-    <div class="btn-group me-2">
-        <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 120px; line-height: 5px;"><span class="font-weight-bold">+</span> Agregar</button>
-    </div>
-    <input class="form-control me-2 fontAwesome" id="name" type="text" style="width: 200px; margin-left: 700px; height: 38px; border-radius: 5px; border: 1px solid #006ba6;" placeholder="&#xf002; Buscar Etiqueta...">
-    <div class="btn-group me-2">
-         <button type="button" class="btn btn-custom-outline-success" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
-            <i class="fas fa-search"></i>
-         </button>
-    </div>
-</div>
- <table class="table table-fixed" >
-  <thead>
-        <tr>
-        
-            <th class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none">Nombre de Etiqueta</th>
-            <th class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></th>
-            <th class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none" >Noticias Asociadas</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr class="disabled-row" >
-            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none"><li class="list-inline-item">
-                                                <button class="btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
-                                                </li>Incendios</td>
-            <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
-            <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
-                <div class="toggle-container">
-                    <span class="number">5</span> 
-                    <div class="form-check form-switch toggle-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" style="background-color: #ffffff; border-color: #000000; background-image: url('data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'-4 -4 8 8\\'><circle r=\\'3\\' fill=\\'%23ff1100\\'/></svg>');">
-                        <label class="form-check-label" for="flexSwitchCheckDefault"></label>
-                    </div>
-                </div>
-            </td>
-            
-        </tr>
-        
-        <tr id="fila">
-            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none"><li class="list-inline-item">
-                                                <button class="btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
-                                                </li>Ambiente</td>
-            <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
-            <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
-                <div class="toggle-container">
-                    <span class="number">6</span> 
-                    <div class="form-check form-switch toggle-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" checked style="background-color: #ffffff; border-color: #000000; background-image: url('data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'-4 -4 8 8\\'><circle r=\\'3\\' fill=\\'%2384bd00\\'/></svg>');">
-                        <label class="form-check-label" for="flexSwitchCheckDefault"></label>
-                    </div>
-                </div>
-            </td>
-            
-        </tr>
-        <tr class="disabled-row" id="fila">
-            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none"><li class="list-inline-item">
-                                                <button class="btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
-                                                </li>Denuncia</td>
-            <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
-            <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
-                <div class="toggle-container">
-                    <span class="number">10</span> 
-                    <div class="form-check form-switch toggle-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" style="background-color: #ffffff; border-color: #000000; background-image: url('data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'-4 -4 8 8\\'><circle r=\\'3\\' fill=\\'%23ff1100\\'/></svg>');">
-                        <label class="form-check-label" for="flexSwitchCheckDefault"></label>
-                    </div>
-                </div>
-            </td>
-            
-        </tr>
-        <tr id="fila">
-            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none"><li class="list-inline-item">
-                                                <button class="btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
-                                                </li>Energia</td>
-            <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
-            <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
-                <div class="toggle-container">
-                    <span class="number">20</span> 
-                    <div class="form-check form-switch toggle-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" checked style="background-color: #ffffff; border-color: #000000; background-image: url('data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'-4 -4 8 8\\'><circle r=\\'3\\' fill=\\'%23fed141\\'/></svg>');">
-                        <label class="form-check-label" for="flexSwitchCheckDefault"></label>
-                    </div>
-                </div>
-            </td>
-            
-        </tr>
-        <tr id="fila">
-            <td class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none"> <li class="list-inline-item">
-                                                <button class="btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
-                                                </li>Sostenibilidad</td>
-            <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
-            <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
-                <div class="toggle-container">
-                    <span class="number">1</span> 
-                    <div class="form-check form-switch toggle-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" checked style="background-color: #ffffff; border-color: #000000; background-image: url('data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'-4 -4 8 8\\'><circle r=\\'3\\' fill=\\'%23004976\\'/></svg>');">
-                        <label class="form-check-label" for="flexSwitchCheckDefault"></label>
-                    </div>
-                </div>
-            </td>
-            
-        </tr>
-    </tbody>
-</table>
+<input type="text" id="keywordInput" placeholder="Palabra clave">
+<select id="tiempoSeleccionado" style="border: none; width: 70px">
+    <option value="" selected disabled>Fecha</option>
+    <option value="ultimaHora">Última Hora</option>
+    <option value="ultimoDia">Último Día</option>
+    <option value="ultimaSemana">Última Semana</option>
+    <option value="ultimoMes">Último Mes</option>
+    <option value="ultimoAno">Último Año</option>
+</select>
+<button onclick="corresponderPalabraClaveEnNoticias()">Buscar Noticias</button>
+<div id="noticiasCoincidentes"></div>
 
 <script>
-        
-        const toggleSwitch = this.dom.getElementById('flexSwitchCheckDefault');
-        const fila = this.dom..getElementById('fila');
+    let contadorNoticias = 0;
+    const borderColors = ['#84bd00', '#006ba6', '#fed141'];
+    const buttonColors = ['#006ba6',  '#84bd00'];
 
-        
-        function actualizarEstadoFila() {
-            if (toggleSwitch.checked) {
-                fila.classList.remove('disabled-row');
-            } else {
-                fila.classList.add('disabled-row'); 
-            }
-        }
+    async function corresponderPalabraClaveEnNoticias() {
+        const apiKey = '61123b1e9ba1ef16edf7f09f39fa5be91ca9a0609d9be31b9e7e5a2b36db6bd2';
+        const keyword = document.getElementById('keywordInput').value.toLowerCase();
+        const noticiasCoincidentes = document.getElementById('noticiasCoincidentes');
+        noticiasCoincidentes.innerHTML = '';
 
-      
-        toggleSwitch.addEventListener('change', actualizarEstadoFila);
-
-       
-        actualizarEstadoFila();
-    </script>
-                </div>
-            </form>
-        </div>
-
-        
-        
-            
-        `;
-    }
-
-    renderModal = () => {
-        return `
-<div id="modal" class="modal fade" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close d-flex align-items-center justify-content-center" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true" class="ion-ios-close"></span>
-        </button>
-      </div>
-      <div class="modal-body p-4 py-5 p-md-5">
-        <h3 class="text-center mb-3">Introduce una nueva noticia de fuente externa</h3>
-        <ul class="ftco-footer-social p-0 text-center">
-         
-        </ul>
-        <form action="#" class="signup-form">
-         <div class="form-group mb-2">
-            <label for="name" style="font-size: 15px;">Titulo de la noticia</label>
-            <input type="text" class="form-control">
-        </div>
-
-          <div class="form-group mb-2">
-            <label for="sinopsis" style="font-size: 15px;">Sinopsis</label>
-            <input type="text" class="form-control">
-          </div>
-          <div class="form-group mb-2">
-            <label for="password">Fuente</label>
-            <input type="password" class="form-control">
-          </div>
-          <div class="form-group mb-2">
-            <button type="submit" class="form-control btn btn-primary rounded submit px-3">Ingresar</button>
-          </div>
-          <div class="form-group d-md-flex">
-            
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-        `;
-    }
-
-    load = () => {
-        const form = this.dom.querySelector("#categorias #modal #form");
-        const formData = new FormData(form);
-        this.entity = {};
-
-        for (let [key, value] of formData.entries()) {
-            this.entity[key] = value;
-        }
-    }
-
-
-
-    add = async () => {
-        // Necesito validar antes de ingresar en la base de datos.
-        this.load(); // Carga los datos del formulario al objeto entity.
-        const codigo = Math.floor(Math.random() * (1000 - 1 + 1)) + 1;
-        this.entity["codigo"] = codigo;
-        const request = new Request('http://localhost:8080/Proyecto2-Backend/api/categorias', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(this.entity)
-        });
+        const tiempoSeleccionado = document.getElementById('tiempoSeleccionado').value;
 
         try {
-            const response = await fetch(request);
-            if (!response.ok) {
-                console.log(this.entity);
-                return;
+            let tiempoQuery = '';
+
+            if (tiempoSeleccionado === 'ultimaHora') {
+                tiempoQuery = 'qdr:h';
+            } else if (tiempoSeleccionado === 'ultimoDia') {
+                tiempoQuery = 'qdr:d';
+            } else if (tiempoSeleccionado === 'ultimaSemana') {
+                tiempoQuery = 'qdr:w';
+            } else if (tiempoSeleccionado === 'ultimoMes') {
+                tiempoQuery = 'qdr:m';
+            } else if (tiempoSeleccionado === 'ultimoAno') {
+                tiempoQuery = 'qdr:y';
             }
-        } catch (e) {
-            alert(e);
+
+            const apiUrl = `https://serpapi.com/search?api_key=${apiKey}&q=${keyword}&location=Costa%20Rica&google_domain=google.co.cr&gl=cr&lr=lang_es&hl=es${tiempoQuery ? `&tbs=${tiempoQuery}` : ''}&tbm=nws&num=35`;
+
+            const response = await fetch('https://cors-anywhere.herokuapp.com/' + apiUrl);
+            const searchData = await response.json();
+
+            const newsResults = searchData.news_results;
+
+            if (newsResults.length === 0) {
+                noticiasCoincidentes.innerHTML = '<p>No se encontraron noticias.</p>';
+            } else {
+                for (const [index, result] of newsResults.entries()) {
+                    contadorNoticias++;
+                    console.log(`Enlace Identificado de Noticia ${contadorNoticias}:`, result.link);
+
+                    let imageUrl = result.thumbnail;
+
+                    try {
+                        const corsProxyUrl = 'https://corsproxy.io/?';
+                        const newsResponse = await fetch(corsProxyUrl + result.link);
+                        const newsHtml = await newsResponse.text();
+                        const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
+                        const ogImage = newsDocument.querySelector('meta[property="og:image"]');
+                        imageUrl = ogImage ? ogImage.getAttribute('content') : result.thumbnail;
+                    } catch (error) {
+                        console.error(`Error al obtener datos de noticia (${result.link}):`, error);
+                    }
+
+                    const borderColor = borderColors[index % borderColors.length];
+                    const buttonColor = buttonColors[index % buttonColors.length];
+                    const elementoNoticiaCoincidente = document.createElement('div');
+                    elementoNoticiaCoincidente.classList.add('noticia-coincidente');
+
+                    elementoNoticiaCoincidente.innerHTML = `
+                    <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${borderColor};">
+                        <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo">
+                        <div class="card-body">
+                            <div class="text-section">
+                                <h5 class="card-title fw-bold">${result.title}</h5>
+                                <p class="card-text">${result.snippet}</p>
+                            </div>
+                            <div class="cta-section">
+                                <p class="card-text">${result.date}</p>
+                                <a href="${result.link}" class="btn" target="_blank"><i class="fas fa-share" style="font-size: 1.5em;width :50px; color: ${buttonColor}"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                    noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
+                }
+            }
+
+            console.log(`Total de Noticias Identificadas: ${contadorNoticias}`);
+        } catch (error) {
+            console.error('Error al obtener datos de la API:', error);
         }
-
-        this.list();
-        this.reset();
-        this.resetForm();
-        this.modal.hide();
     }
 
-    row = (list, c) => {
-        var tr = document.createElement("tr");
-        tr.innerHTML = `
-                <td>${c.codigo}</td>
-                <td>${c.nombre}</td>
-                <td>${c.descripcion}</td>`
-        ;
-
-
-        list.appendChild(tr);
-    }
-
-    resetForm = () => {
-        var formulario = this.dom.querySelector("#categorias #modal #form");
-        formulario.reset();
-    }
-
-    showModal = async () => {
-        // Cargar los datos de la entidad en el formulario del modal
-        this.modal.show();
-    }
-
-    reset = () => {
-        this.state.entity = this.emptyEntity();
-    }
-
-    listSearch = (placa) => {
-        var usuario = globalstate.user.cedula;
-        const request = new Request(`${"http://localhost:8080/Proyecto2-Backend/api"}/categorias/search?name=${placa}`,
-            {method: 'GET', headers: {}});
-
-        (async () => {
-
-            const response = await fetch(request);
-            if (!response.ok) {
-                errorMessage(response.status);
-                return;
-
-            }
-
-            var coberturas = await response.json();
-            var col = coberturas;
-            var listing = this.dom.querySelector("#lista #tablaCategorias");
-            listing.innerHTML = "";
-            col.forEach(p => this.row(listing, p));
-            await col.forEach(p => this.addListener(p));
-
-
-        })();
-    }
-
-    search = async () => {
-        var xxx = document.getElementById("name").value;
-        this.listSearch(xxx);
-    }
-
-    createNew = () => {
-        this.reset();
-        this.state.mode = 'A'; //agregar
-        this.showModal();
-
-    }
-
-    emptyEntity = () => {
-        var entity = '';
-        return entity;
-    }
-
-}
+</script>
+</body>
+</html>
