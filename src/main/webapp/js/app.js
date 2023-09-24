@@ -1,3 +1,4 @@
+
 class App {
     dom;
     modal; // login modal
@@ -8,6 +9,7 @@ class App {
 
     Etiqueta;
     Biblioteca;
+    Busqueda;
 
     constructor() {
         this.state = {};
@@ -227,9 +229,11 @@ class App {
     renderBodyFiller = () => {
         var html = `
         <div id='bodyFiller' style='margin-left: 10%; margin-top:100px; width: 80%; text-align: center; font-size: 1.5em'>
-          
+  
           <div class="mt-14" style="color: white; display: inline-block; padding-left: 2px" >
-               
+               <div class="linea-azul"></div>
+               <div class="linea-amarilla"></div>
+               <div class="linea-verde"></div>
             </div>
         </div>
     `;
@@ -241,7 +245,7 @@ class App {
         var html = '';
 
         html += `
-            <li><a href="#" id="Busqueda" class="active">BUSQUEDA</a></li>
+            <li><a href="#" id="Busqueda" class="activeBq">BUSQUEDA</a></li>
             <li><a href="#" id="Etiquetas">ETIQUETAS</a></li>
             <li><a href="#" id="Biblioteca">BIBLIOTECA</a></li>
             
@@ -257,6 +261,7 @@ class App {
 
         this.dom.querySelector("#app>#menu #menuItems #Biblioteca")?.addEventListener('click', e => this.bibliotecaShow());
         this.dom.querySelector("#app>#menu #menuItems #Etiquetas")?.addEventListener('click', e => this.etiquetaShow());
+        this.dom.querySelector("#app>#menu #menuItems #Busqueda")?.addEventListener('click', e => this.busquedaShow());
 
 
     }
@@ -276,6 +281,22 @@ class App {
         });
 
         this.dom.querySelector('#app>#body').replaceChildren(this.Biblioteca.dom);
+    }
+
+    busquedaShow = () => {
+        this.Busqueda = new Busqueda();
+        const menuItems = this.dom.querySelectorAll("#app>#menu #menuItems a");
+
+        menuItems.forEach((menuItem) => {
+            if (menuItem.id === "Busqueda") {
+                menuItem.classList.add("active");
+            } else {
+                menuItem.classList.remove("active");
+            }
+        });
+
+        this.dom.querySelector('#app>#body').replaceChildren(this.Busqueda.dom);
+
     }
 
     etiquetaShow = () => {

@@ -52,7 +52,7 @@ public class Etiquetas {
     @PUT
     @Path("/editar/{etiquetaId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response editarEtiqueta(@PathParam("etiquetaId") int etiquetaID) {
+    public Response editarEtiqueta(@PathParam("etiquetaId") int etiquetaID, @QueryParam("input") String descripcion) {
         try {
             Database database = new Database();
             EtiquetaDao etiquetaDao = new EtiquetaDao(database);
@@ -60,6 +60,7 @@ public class Etiquetas {
             if (etiqueta == null) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
+            etiqueta.setDescripcion(descripcion);
             etiquetaDao.updateEtiqueta(etiqueta);
             return Response.ok().build();
         } catch (SQLException ex) {

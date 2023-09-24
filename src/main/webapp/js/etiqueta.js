@@ -17,7 +17,8 @@ class Etiqueta {
         this.dom.querySelector("#categorias #modalEditar #formEdit #cancel").addEventListener('click', this.cancelarEdit);
         this.dom.querySelector("#categorias #modalEditar #formEdit #save").addEventListener('click', () => {
             const etiquetaId = this.dom.querySelector("#categorias #modalEditar #formEdit #etiquetaId").value;
-            this.saveEdit(etiquetaId);
+            const descripcion = this.dom.querySelector("#categorias #modalEditar #formEdit #input").value;
+            this.saveEdit(etiquetaId,descripcion);
         });
         this.dom.querySelector("#categorias #modalEditar #close").addEventListener('click', this.cancelarEdit);
 
@@ -48,9 +49,11 @@ class Etiqueta {
 
     renderBody = () => {
         return `
-<div class="blue-line"></div>
-<div id="loading-spinner" style="display: none;">
-        <!-- Add your loading spinner HTML here -->
+        <div class="linea-azul"></div>
+        <div class="linea-amarilla"></div>
+        <div class="linea-verde"></div>
+        <div id="loading-spinner" style="display: none;">
+        
         <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
@@ -137,6 +140,7 @@ class Etiqueta {
             toggleSwitch.classList.add(colors);
             fila.classList.toggle("disabled-row", !toggleSwitch.checked);
         });
+        const toggleSwitches = this.dom.querySelectorAll(".form-check-input");
 
 
         const editarBotones = document.querySelectorAll('.editar-etiqueta');
@@ -147,6 +151,9 @@ class Etiqueta {
                 this.editarEtiqueta(etiquetaId, descripcion);
             });
         });
+        toggleSwitches.forEach((toggleSwitch) => {toggleSwitch.addEventListener("change", this.actualizarEstadoFila);});
+
+
 
     }
     renderModalEditar = () => {
@@ -374,8 +381,8 @@ class Etiqueta {
             });
     };
 
-    saveEdit = (etiquetaId) => {
-        const url = `http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/editar/${etiquetaId}`;
+    saveEdit = (etiquetaId, descripcion) => {
+        const url = `http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/editar/${etiquetaId}?input=${descripcion}`;
         fetch(url, {
             method: 'PUT',
             headers: {
@@ -387,11 +394,13 @@ class Etiqueta {
                 throw new Error('Error al editar la etiqueta');
             }
             console.log('Etiqueta actualizada correctamente');
+            this.cargarEtiquetas();
+            this.renderizarPaginaConEtiquetas();
+            this.modalEditar.hide();
         }).catch((error) => {
             console.error('Error:', error);
         });
         event.preventDefault();
-        this.renderizarPaginaConEtiquetas();
     }
 
     search = async () => {

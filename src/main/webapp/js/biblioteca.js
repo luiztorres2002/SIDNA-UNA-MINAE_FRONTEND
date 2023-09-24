@@ -38,7 +38,9 @@ class Biblioteca {
     renderBody = () => {
         return `
             <h1 class="text-center mt-5" style="color: black;">Biblioteca de usuario</h1>
-
+        <div class="linea-azul"></div>
+        <div class="linea-amarilla"></div>
+        <div class="linea-verde"></div>
 
         <div class="d-flex justify-content-center">
             <form id="form">
