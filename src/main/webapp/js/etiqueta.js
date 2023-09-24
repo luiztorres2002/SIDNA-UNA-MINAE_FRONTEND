@@ -345,7 +345,7 @@ class Etiqueta {
     cargarEtiquetas = async () => {
 
         try {
-            const response = await fetch('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/4-0258-0085');
+            const response = await fetch('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/1');
             const data = await response.json();
             var etiquetas = data;
             this.renderizarPaginaConEtiquetas(etiquetas);

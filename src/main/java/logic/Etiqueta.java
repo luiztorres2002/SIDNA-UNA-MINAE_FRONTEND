@@ -5,13 +5,23 @@ public class Etiqueta {
     private String descripcion;
     private String usuarioCedula;
 
+    private Boolean estado;
 
-    public Etiqueta(int etiquetaId, String descripcion, String usuarioCedula) {
+
+    public Etiqueta(int etiquetaId, String descripcion, String usuarioCedula, boolean estado) {
         this.etiquetaId = etiquetaId;
         this.descripcion = descripcion;
         this.usuarioCedula = usuarioCedula;
+        this.estado = estado;
     }
 
+    public Boolean getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
+    }
 
     public int getEtiquetaId() {
         return etiquetaId;
