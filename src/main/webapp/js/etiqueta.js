@@ -7,9 +7,10 @@ class Etiqueta {
     state;
 
     constructor() {
-        this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A'};
+        this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A',etiquetas: []};
         this.cargarEtiquetas();
         this.dom = this.render();
+
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
         this.dom.querySelector("#categorias #agregar").addEventListener('click', this.createNew);
         this.dom.querySelector("#categorias #buscar").addEventListener('click', this.search);
@@ -46,6 +47,13 @@ class Etiqueta {
 
     renderBody = () => {
         return `
+<div class="blue-line"></div>
+<div id="loading-spinner" style="display: none;">
+        <!-- Add your loading spinner HTML here -->
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 <div id="noResultsMessage" class="popup-message">
   <i class="fas fa-exclamation-triangle"></i> No se encontraron resultados.
 </div>
@@ -60,7 +68,7 @@ class Etiqueta {
     </div>
     <input class="form-control me-2 fontAwesome" id="buscador" autocomplete="off" type="text" style="width: 200px; margin-left: 700px; height: 38px; border-radius: 5px; border: 1px solid #006ba6;" placeholder="&#xf002; Buscar Etiqueta...">
     <div class="btn-group me-2">
-         <button type="button" class="btn btn-custom-outline-success" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
+         <button type="button" class="btn btn-custom-outline-success2" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
             <i class="fas fa-search"></i>
          </button>
     </div>
@@ -91,11 +99,15 @@ class Etiqueta {
     }
 
 
-    renderizarPaginaConEtiquetas= (etiquetas) => {
+    renderizarPaginaConEtiquetas= () => {
         let tableRows = '';
 
-        etiquetas.forEach((etiqueta, index) => {
-            const { descripcion } = etiqueta;
+        this.state.etiquetas.forEach((etiqueta, index) => {
+            const { descripcion,etiquetaId, estado } = etiqueta;
+
+
+
+            const isChecked = estado ? 'checked' : '';
 
             const row = `
             <tr data-row="${index + 1}">
@@ -111,7 +123,7 @@ class Etiqueta {
                     <div class="toggle-container">
                         <span class="number">10</span>
                         <div class="form-check form-switch toggle-switch">
-                            <input class="form-check-input unchecked" type="checkbox" role="switch" data-row="${index + 1}" data-etiqueta-id="${descripcion}" style="background-color: #ffffff; border-color: #000000; ">
+                            <input class="form-check-input unchecked" type="checkbox" role="switch" data-row="${index + 1}" data-etiqueta-id="${etiquetaId}" data-etiqueta-estado="${estado}" ${isChecked} style="background-color: #ffffff; border-color: #000000; background-image: url('data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'-4 -4 8 8\\'><circle r=\\'3\\' fill=\\'%2384bd00\\'/></svg>') ">
                             <label class="form-check-label" for="flexSwitchCheckDefault"></label>
                         </div>
                     </div>
@@ -128,12 +140,12 @@ class Etiqueta {
         tableBody.innerHTML = tableRows;
 
         const toggleSwitches2 = this.dom.querySelectorAll(".form-check-input");
-        const colors = ["green-bg", "yellow-bg", "blue-bg"];
+        const colors = ["green-bg"];
         toggleSwitches2.forEach((toggleSwitch, index) => {
             const rowNumber = toggleSwitch.getAttribute("data-row");
             const fila = this.dom.querySelector(`[data-row="${rowNumber}"]`);
 
-            toggleSwitch.classList.add(colors[index % colors.length]);
+            toggleSwitch.classList.add(colors);
             fila.classList.toggle("disabled-row", !toggleSwitch.checked);
         });
         const toggleSwitches = this.dom.querySelectorAll(".form-check-input");
@@ -212,9 +224,9 @@ class Etiqueta {
         const numFila = toggleSwitch.getAttribute("data-row");
         const etiquetaNom = toggleSwitch.getAttribute("data-etiqueta-id");
         const fila = this.dom.querySelector(`[data-row="${numFila}"]`);
-        const colors = ["green-bg", "yellow-bg", "blue-bg"];
+        const colors = ["green-bg"];
 
-        // Calcular el índice de color en función de data-row
+
         const colorIndex = (numFila - 1) % colors.length;
 
         if (toggleSwitch.checked) {
@@ -230,6 +242,9 @@ class Etiqueta {
             console.log(`Se desactivó la etiqueta: ${etiquetaNom}`);
             toggleSwitch.classList.add("unchecked");
         }
+        const etiquetaId = event.target.getAttribute('data-etiqueta-id');
+        const nuevoEstado = event.target.checked;
+        this.cambiarEstadoEtiqueta(etiquetaId, nuevoEstado);
     }
     renderModal = () => {
         return `
@@ -324,7 +339,7 @@ class Etiqueta {
     }
 
     showModal = async () => {
-        // Cargar los datos de la entidad en el formulario del modal
+
         this.modal.show();
     }
 
@@ -335,16 +350,39 @@ class Etiqueta {
     cargarEtiquetas = async () => {
 
         try {
-            const response = await fetch('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/1');
+            const response = await fetch('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/4-0258-0085');
             const data = await response.json();
-            var etiquetas = data;
-            this.renderizarPaginaConEtiquetas(etiquetas);
-            //console.log('modelos:', this.state.modelos);
+            this.state.etiquetas = data;
+            this.renderizarPaginaConEtiquetas();
         } catch (error) {
-            console.log('Error al cargar la lista de autos:', error);
+            console.log('Error al cargar la lista de etiquetas:', error);
         }
 
     }
+
+    cambiarEstadoEtiqueta = (etiquetaId, nuevoEstado) => {
+        const url = `http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/cambiarEstado/${etiquetaId}/${nuevoEstado}`;
+
+        fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then((response) => {
+                if (!response.ok) {
+
+                    console.error(`Error al cambiar el estado de la etiqueta: ${response.status}`);
+                    throw new Error('Error al cambiar el estado de la etiqueta');
+                }
+
+                console.log('Estado de la etiqueta cambiado exitosamente');
+            })
+            .catch((error) => {
+
+                console.error('Error:', error);
+            });
+    };
 
     search = async () => {
         const searchInput = this.dom.querySelector("#buscador");
@@ -398,3 +436,5 @@ class Etiqueta {
     }
 
 }
+
+export default cambiarEstadoEtiqueta;

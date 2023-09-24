@@ -7,6 +7,8 @@ public class Etiqueta {
 
     private Boolean estado;
 
+    public Etiqueta() {
+    }
 
     public Etiqueta(int etiquetaId, String descripcion, String usuarioCedula, boolean estado) {
         this.etiquetaId = etiquetaId;

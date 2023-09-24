@@ -1,6 +1,9 @@
 package tests;
 
+import logic.Departamento;
 import logic.NoticiaExterna;
+import logic.Rol;
+import logic.Usuario;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -14,8 +17,11 @@ import java.util.Date;
 public class TestResourcesNoticiaExterna {
 
 
-    @Mock
-    private NoticiasExternas noticiasExternas;
+    private Departamento departamento = new Departamento(1,"PruebaDepartamento");
+    private Rol rol = new Rol(1,"Analista");
+    //private Usuario usuario = new Usuario("4-0258-0085", "Luis","Torres","Villalobos","torresvillalobos20@gmail.com", "123123123",departamento,rol);
+
+    private NoticiasExternas noticiasExternas = new NoticiasExternas();
 
     @Before
     public void setUp() {
@@ -33,9 +39,15 @@ public class TestResourcesNoticiaExterna {
         noticiaExterna.setPrioridad("Alta");
         noticiaExterna.setFuente("PruebaFuente");
         noticiaExterna.setEnlace("PruebaEnlace");
-        Mockito.doNothing().when(noticiasExternas).create(noticiaExterna);
-        noticiasExternas.create(noticiaExterna);
-        Mockito.verify(noticiasExternas, Mockito.times(1)).create(noticiaExterna);
+
+        try {
+            noticiasExternas.create(noticiaExterna);
+            assert true : "El método create se ejecutó correctamente";
+        } catch (Exception e) {
+        assert false : "Se produjo una excepción durante la ejecución del método create: " + e.getMessage();
+        }
+
+
     }
 
 }

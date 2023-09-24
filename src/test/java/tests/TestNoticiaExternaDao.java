@@ -1,23 +1,25 @@
 package tests;
 import data.Database;
 import data.NoticiaExternaDao;
+import logic.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
-import logic.NoticiaExterna;
-import logic.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 
 public class TestNoticiaExternaDao {
 
-    @Mock
-    private NoticiaExternaDao noticiaExternaDao;
 
-    private Database database;
+    private  Departamento departamento = new Departamento(1,"PruebaDepartamento");
+   private Rol rol = new Rol(1,"Analista");
+   private Usuario usuario = new Usuario("4-0258-0085", "Luis","Torres","Villalobos","torresvillalobos20@gmail.com", "123123123",departamento,rol);
+    private NoticiaExternaDao noticiaExternaDao = new NoticiaExternaDao(new Database());
 
     @Before
     public void setUp() {
@@ -35,8 +37,12 @@ public class TestNoticiaExternaDao {
         noticiaExterna.setPrioridad("Alta");
         noticiaExterna.setFuente("PruebaFuente");
         noticiaExterna.setEnlace("PruebaEnlace");
-        Mockito.doNothing().when(noticiaExternaDao).create(noticiaExterna);
-        noticiaExternaDao.create(noticiaExterna);
-        Mockito.verify(noticiaExternaDao, Mockito.times(1)).create(noticiaExterna);
+        noticiaExterna.setUsuario(usuario);
+        try {
+            noticiaExternaDao.create(noticiaExterna);
+            assert true : "El método create se ejecutó correctamente";
+        } catch (Exception e) {
+            assert false : "Se produjo una excepción durante la ejecución del método create: " + e.getMessage();
+        }
     }
 }
