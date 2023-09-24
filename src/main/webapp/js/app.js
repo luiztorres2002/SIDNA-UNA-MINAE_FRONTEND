@@ -8,7 +8,8 @@ class App {
 
     Etiqueta;
     Biblioteca;
-
+    Busqueda;
+    
     constructor() {
         this.state = {};
         this.dom = this.render();
@@ -39,7 +40,11 @@ class App {
     renderMenu = () => {
         return `
         <header id="menu">
-            <a id="logonav" href="#" ><img src="images/Minae.png"  width="300" height="110" style="margin-right: 200px;"></a>
+             <div class="info" style="text-align: center">
+                <h1 style="font-size: medium">SIDNA</h1>
+                <h4 style="font-size: medium">Sistema Recopilatorio De Noticias Ambientales</h4>
+               </div>
+        <a id="logonav" href="#" ><img src="images/Minae.png"  width="300" height="110" style="margin-right: 200px;"></a>
         <ul class="navbar" id='menuItems'>
             
         </ul>
@@ -61,12 +66,45 @@ class App {
 
     renderFooter = () => {
         return `
-        <footer id="footer" class="bg-dark text-white mt-4 w-100 fixed-bottom">
-            <div class="container-fluid py-2">
+    <footer class="footer">
+        <div class="container bottom_border">
+        <div class="row">
+        
+        <div class=" col-sm-4 col-md  col-12 col">
+         <a id="logonav1" href="#" ><img src="images/Minae.png"  width="300" height="110" style="margin-top: 200px;"></a>
+        </div>
+        
+        <div class=" col-sm-4 col-md col-sm-4  col-12 col" style="margin-top: auto">
+        <h5 class="headin5_amrc col_white_amrc pt2">Contáctenos</h5>
+        <p><i class="phone"></i>  +506 2106-8500  </p>
+        <p><i class="gmail"></i> comunicacion@minae.go.cr  </p>
+        <p><i class="Schedule"></i> Horario: Lunes - Viernes 7:00am - 3:00pm </p>
+        </div>
+        
+        </div>
+        </div>
+        
+        
+        <div class="container">
+        <ul class="foote_bottom_ul_amrc">
+        <li><a href="http://webenlance.com">Home</a></li>
+        <li><a href="http://webenlance.com">About</a></li>
+        <li><a href="http://webenlance.com">Services</a></li>
+        <li><a href="http://webenlance.com">Contact</a></li>
+        </ul>
+        
+        <p class="text-center">Copyright @2023 | Diseñado y creado por <a href="#">Grupo #12</a></p>
+        
+        <ul class="social_footer_ul">
+        <li><a href="http://webenlance.com"><i class="fab fa-facebook-f"></i></a></li>
+        <li><a href="http://webenlance.com"><i class="fab fa-twitter"></i></a></li>
+        <li><a href="http://webenlance.com"><i class="fab fa-youtube"></i></a></li>
+        <li><a href="http://webenlance.com"><i class="fab fa-instagram"></i></a></li>
+        </ul>
+        </div>
 
-                SISTEMA RECOPILATORIO DE NOTICIAS Y DENUNCIAS AMBIENTALES
-            </div>
-        </footer> 
+    </footer>
+
     `;
     }
 
@@ -243,7 +281,7 @@ class App {
         var html = '';
 
         html += `
-            <li><a href="#" id="Busqueda" class="active">BUSQUEDA</a></li>
+            <li><a href="#" id="Busqueda">BUSQUEDA</a></li>
             <li><a href="#" id="Etiquetas">ETIQUETAS</a></li>
             <li><a href="#" id="Biblioteca">BIBLIOTECA</a></li>
             
@@ -256,13 +294,27 @@ class App {
         this.dom.querySelector('#app>#menu #menuItems').innerHTML = html;
 
         // Add event listeners here
-
+        this.dom.querySelector("#app>#menu #menuItems #Busqueda")?.addEventListener('click', e => this.busquedaShow());
         this.dom.querySelector("#app>#menu #menuItems #Biblioteca")?.addEventListener('click', e => this.bibliotecaShow());
         this.dom.querySelector("#app>#menu #menuItems #Etiquetas")?.addEventListener('click', e => this.etiquetaShow());
 
 
     }
 
+    busquedaShow = () => {
+        this.Busqueda = new Busqueda();
+        const menuItems = this.dom.querySelectorAll("#app>#menu #menuItems a");
+
+        menuItems.forEach((menuItem) => {
+            if (menuItem.id === "Busqueda") {
+                menuItem.classList.add("active");
+            } else {
+                menuItem.classList.remove("active");
+            }
+        });
+
+        this.dom.querySelector('#app>#body').replaceChildren(this.Busqueda.dom);
+    }
 
 
     bibliotecaShow = () => {

@@ -1,0 +1,25 @@
+.table{
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    border-collapse: separate;
+    border-spacing: 105px 35px;
+}
+
+.image-1{
+    border-radius: 8px;
+    height: 250px;
+    width: 300px;
+}
+
+.carousel-item {
+    height: 65vh;
+    min-height: 350px;
+    background: no-repeat center center scroll;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
