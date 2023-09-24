@@ -40,6 +40,10 @@ public class EtiquetaDao {
             statement.setBoolean(1, nuevoEstado);
             statement.setInt(2, etiquetaId);
             statement.executeUpdate();
+        } catch (SQLException e) {
+
+            e.printStackTrace(); // Prints the exception stack trace to the console.
+
         }
     }
 
