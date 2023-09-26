@@ -6,7 +6,6 @@ global.fetch = jest.fn();
 
 const cambiarEstadoEtiqueta = (etiquetaId, nuevoEstado) => {
     const url = `http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/cambiarEstado/${etiquetaId}/${nuevoEstado}`;
-
     return fetch(url, {
         method: 'PUT',
         headers: {
@@ -24,8 +23,6 @@ const cambiarEstadoEtiqueta = (etiquetaId, nuevoEstado) => {
             console.error('Error:', error);
         });
 };
-
-
 describe('cambiarEstadoEtiqueta', () => {
     it('debería manejar respuestas exitosas', async () => {
         // Configura el comportamiento simulado de 'fetch' para una respuesta exitosa

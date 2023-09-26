@@ -51,6 +51,7 @@ public class Service {
         noticiaExterna.setUsuario(usuario);
         noticiaExterna.setId(1);
 
+
         noticiaExternaDao.create(noticiaExterna);
     }
 

@@ -12,15 +12,12 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class NoticiaExternaDao {
-
     Database db;
-
     UsuarioDao usuarioDao;
     public NoticiaExternaDao(Database db) {
         this.db = db;
         usuarioDao = new UsuarioDao(db);
     }
-
     public void create(NoticiaExterna NoticiaExterna) throws Exception{
         String sql = "insert into NOTICIA_EXTERNA(Titulo,Descripcion,Fecha,Prioridad,Fuente,Enlace,FK_NoticiaExterna_UsuarioCedula) values (?,?,?,?,?,?,?)";
         PreparedStatement stm = db.prepareStatement(sql);
@@ -38,7 +35,4 @@ public class NoticiaExternaDao {
             throw new Exception("No se creo");
         }
     }
-
-
-
 }
