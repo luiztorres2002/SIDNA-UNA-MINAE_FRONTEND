@@ -12,7 +12,7 @@ public class RedireccionadorTest {
         // Creamos una instancia simulada del Redireccionador
         Redireccionador redireccionadorMock = mock(Redireccionador.class);
 
-        // Definir el comportamiento simulado https://www.google.com/
+        // Definir el comportamiento simulado
         when(redireccionadorMock.redirigir("https://www.google.com/"))
                 .thenReturn("Redirigido a Google");
 

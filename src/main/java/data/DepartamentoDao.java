@@ -17,7 +17,6 @@ public class DepartamentoDao {
 
     public Departamento read(int id) throws Exception {
         String sql = "SELECT * FROM Departamento WHERE PK_DepartamentoId = ?";
-
         PreparedStatement stm = null;
         ResultSet rs = null;
         try {

@@ -61,14 +61,10 @@ global.fetch = jest.fn();
 // Describe un conjunto de pruebas para la función 'add'
 describe('Test para la función add', () => {
     beforeEach(() => {
-        // Reinicia el estado de 'fetch' antes de cada prueba
         fetch.mockClear();
     });
-
-    // Función 'add' que realiza una solicitud HTTP simulada
     async function add() {
         const entity = {
-
             fuente: 'fuenteprueba',
             enlace: 'enlaceprueba',
             descripcion: 'Prueba Descripcion',
@@ -87,16 +83,13 @@ describe('Test para la función add', () => {
                 rol: null,
             },
         };
-
-        // Configura la solicitud HTTP simulada
-        const request = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasExternas', {
+        const request = new Request('http://localhost:8qwewqee080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasExternas', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(entity),
         });
-
         try {
             const response = await fetch(request);
             if (!response.ok) {
@@ -108,21 +101,13 @@ describe('Test para la función add', () => {
             return 'error';
         }
     }
-
-    // Prueba para verificar si 'add' agrega una entidad exitosamente
     it('debería agregar una entidad exitosamente', async () => {
-        // Configura el mock de 'fetch' para devolver una respuesta exitosa
         fetch.mockResolvedValue({ ok: true });
         const result = await add();
-
-        // Comprueba si 'add' devuelve 'success' cuando la solicitud es exitosa
         expect(result).toEqual('success');
         expect(fetch).toHaveBeenCalled();
     });
-
-    // Prueba para verificar si 'add' maneja un error al agregar una entidad
     it('Debería manejar un error al agregar una entidad.', async () => {
-        // Configura el mock de 'fetch' para devolver una respuesta de error
         fetch.mockResolvedValue({ ok: false });
         const result = await add();
         expect(result).toEqual('error');
