@@ -15,6 +15,7 @@ class Etiqueta {
         this.dom.querySelector("#categorias #buscar").addEventListener('click', this.search);
         this.modalEditar = new bootstrap.Modal(this.dom.querySelector('#modalEditar'));
         this.dom.querySelector("#categorias #modalEditar #formEdit #cancel").addEventListener('click', this.cancelarEdit);
+        this.dom.querySelector("#categorias #modal #formadd #etiquetaAgregar").addEventListener('click', this.cancelarEdit);
         this.dom.querySelector("#categorias #modalEditar #formEdit #save").addEventListener('click', () => {
             const etiquetaId = this.dom.querySelector("#categorias #modalEditar #formEdit #etiquetaId").value;
             const descripcion = this.dom.querySelector("#categorias #modalEditar #formEdit #input").value;
@@ -259,13 +260,13 @@ class Etiqueta {
         <ul class="ftco-footer-social p-0 text-center">
          
         </ul>
-        <form action="#" class="signup-form">
+        <form action="#" id="formadd" class="signup-form">
          <div class="form-group mb-2">
             <label for="name" style="font-size: 15px;">Nombre de etiqueta</label>
             <input type="text" class="form-control">
         </div>
           <div class="form-group mb-2">
-            <button type="submit" class="form-control btn btn-primary rounded submit px-3">agregar</button>
+            <button type="submit" id="etiquetaAgregar" class="form-control btn btn-primary rounded submit px-3">agregar</button>
           </div>
           <div class="form-group d-md-flex">
           </div>
