@@ -15,7 +15,7 @@ class Etiqueta {
         this.dom.querySelector("#categorias #buscar").addEventListener('click', this.search);
         this.modalEditar = new bootstrap.Modal(this.dom.querySelector('#modalEditar'));
         this.dom.querySelector("#categorias #modalEditar #formEdit #cancel").addEventListener('click', this.cancelarEdit);
-        this.dom.querySelector("#categorias #modal #formadd #etiquetaAgregar").addEventListener('click', this.cancelarEdit);
+        this.dom.querySelector("#categorias #modal #formadd #etiquetaAgregar").addEventListener('click', this.agregarEtiqueta);
         this.dom.querySelector("#categorias #modalEditar #formEdit #save").addEventListener('click', () => {
             const etiquetaId = this.dom.querySelector("#categorias #modalEditar #formEdit #etiquetaId").value;
             const descripcion = this.dom.querySelector("#categorias #modalEditar #formEdit #input").value;
@@ -96,7 +96,32 @@ class Etiqueta {
 
         `;
     }
+    load = () => {
+        const form = this.dom.querySelector("#categorias #modal #formadd");
+        const formData = new FormData(form);
+        this.entity = {};
+        for (let [key, value] of formData.entries()) {
+            this.entity[key] = value;
+        }
+    }
 
+    agregarEtiqueta = async() => {
+        this.load();
+        const request = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(this.entity)});
+        try {
+            const response = await fetch(request);
+            if (!response.ok) {
+                console.log(this.entity);
+                return;
+            }
+        } catch (e) {
+            alert(e);
+        }
+        this.cargarEtiquetas();
+        this.reset();
+        this.resetForm();
+        this.modal.hide();
+    }
 
     renderizarPaginaConEtiquetas= () => {
         let tableRows = '';
@@ -258,7 +283,6 @@ class Etiqueta {
       <div class="modal-body p-4 py-5 p-md-5">
         <h3 class="text-center mb-3">Agregar nueva etiqueta</h3>
         <ul class="ftco-footer-social p-0 text-center">
-         
         </ul>
         <form action="#" id="formadd" class="signup-form">
          <div class="form-group mb-2">
@@ -290,33 +314,6 @@ class Etiqueta {
         }
     }
 
-    add = async () => {
-        // Necesito validar antes de ingresar en la base de datos.
-        this.load(); // Carga los datos del formulario al objeto entity.
-        const codigo = Math.floor(Math.random() * (1000 - 1 + 1)) + 1;
-        this.entity["codigo"] = codigo;
-        const request = new Request('http://localhost:8080/Proyecto2-Backend/api/categorias', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(this.entity)
-        });
-
-        try {
-            const response = await fetch(request);
-            if (!response.ok) {
-                console.log(this.entity);
-                return;
-            }
-        } catch (e) {
-            alert(e);
-        }
-        this.list();
-        this.reset();
-        this.resetForm();
-        this.modal.hide();
-    }
 
     row = (list, c) => {
         var tr = document.createElement("tr");

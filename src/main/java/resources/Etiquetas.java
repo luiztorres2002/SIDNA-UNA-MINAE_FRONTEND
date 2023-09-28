@@ -49,6 +49,18 @@ public class Etiquetas {
         }
     }
 
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void agregarEtiqueta(Etiqueta etiqueta) {
+        try {
+            Database database = new Database();
+            EtiquetaDao etiquetaDao = new EtiquetaDao(database);
+            etiquetaDao.addEtiqueta(etiqueta);
+        } catch (SQLException ex) {
+            throw new InternalServerErrorException(ex);
+        }
+    }
+
     @PUT
     @Path("/editar/{etiquetaId}")
     @Produces(MediaType.APPLICATION_JSON)
