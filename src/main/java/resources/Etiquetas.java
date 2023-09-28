@@ -50,11 +50,17 @@ public class Etiquetas {
     }
 
     @POST
+    @Path("/{etiquetaId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void agregarEtiqueta(Etiqueta etiqueta) {
+    public void agregarEtiqueta(@PathParam("etiquetaId") int etiquetaIDE, @QueryParam("txtNombre") String nombre) {
         try {
             Database database = new Database();
             EtiquetaDao etiquetaDao = new EtiquetaDao(database);
+            Etiqueta etiqueta = new Etiqueta();
+            etiqueta.setDescripcion(nombre);
+            etiqueta.setEstado(true);
+            etiqueta.setEtiquetaId(etiquetaIDE);
+            etiqueta.setUsuarioCedula("1");
             etiquetaDao.addEtiqueta(etiqueta);
         } catch (SQLException ex) {
             throw new InternalServerErrorException(ex);

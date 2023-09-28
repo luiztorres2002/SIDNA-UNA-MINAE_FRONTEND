@@ -15,7 +15,11 @@ class Etiqueta {
         this.dom.querySelector("#categorias #buscar").addEventListener('click', this.search);
         this.modalEditar = new bootstrap.Modal(this.dom.querySelector('#modalEditar'));
         this.dom.querySelector("#categorias #modalEditar #formEdit #cancel").addEventListener('click', this.cancelarEdit);
-        this.dom.querySelector("#categorias #modal #formadd #etiquetaAgregar").addEventListener('click', this.agregarEtiqueta);
+        this.dom.querySelector("#categorias #modal #formadd #etiquetaAgregar").addEventListener('click', () => {
+            const etiquetaId = this.dom.querySelector("#categorias #modal #formadd #etiquetaId").value;
+            const descripcion = this.dom.querySelector("#categorias #modal #formadd #txtNombre").value;
+            this.agregarEtiqueta(etiquetaId,descripcion);
+        });
         this.dom.querySelector("#categorias #modalEditar #formEdit #save").addEventListener('click', () => {
             const etiquetaId = this.dom.querySelector("#categorias #modalEditar #formEdit #etiquetaId").value;
             const descripcion = this.dom.querySelector("#categorias #modalEditar #formEdit #input").value;
@@ -107,24 +111,24 @@ class Etiqueta {
         }
     }
 
-    agregarEtiqueta = async() => {
+    agregarEtiqueta = async(etiquetaId,nombre) => {
         this.load();
-        const request = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(this.entity)});
+        const request = new Request(`http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/${etiquetaId}?txtNombre=${nombre}`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(this.entity)});
         try {
             const response = await fetch(request);
             if (!response.ok) {
                 console.log(this.entity);
                 return;
             }
+            this.cargarEtiquetas();
+            this.renderizarPaginaConEtiquetas();
+            this.reset();
+            this.resetFormAdd();
+            this.modal.hide();
         } catch (e) {
             alert(e);
         }
-        this.cargarEtiquetas();
-        this.renderizarPaginaConEtiquetas();
-        this.reset();
-        this.resetFormAdd();
         event.preventDefault();
-        this.modal.hide();
     }
 
     renderizarPaginaConEtiquetas= () => {
@@ -289,12 +293,13 @@ class Etiqueta {
         <ul class="ftco-footer-social p-0 text-center">
         </ul>
         <form action="#" id="formadd" class="signup-form">
+        <input type="hidden" id="etiquetaId" name="etiquetaId" value="">
          <div class="form-group mb-2">
             <label for="name" style="font-size: 15px;">Nombre de etiqueta</label>
-            <input type="text" class="form-control">
+            <input type="text" id="txtNombre" class="form-control">
         </div>
           <div class="form-group mb-2">
-            <button type="submit" id="etiquetaAgregar" class="form-control btn btn-primary rounded submit px-3">agregar</button>
+            <button type="submit" id="etiquetaAgregar" class="form-control btn btn-primary rounded submit px-3">Aceptar</button>
           </div>
           <div class="form-group d-md-flex">
           </div>
