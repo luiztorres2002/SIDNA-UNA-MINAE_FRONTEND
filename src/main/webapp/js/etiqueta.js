@@ -120,8 +120,10 @@ class Etiqueta {
             alert(e);
         }
         this.cargarEtiquetas();
+        this.renderizarPaginaConEtiquetas();
         this.reset();
-        this.resetForm();
+        this.resetFormAdd();
+        event.preventDefault();
         this.modal.hide();
     }
 
@@ -329,6 +331,10 @@ class Etiqueta {
     }
     resetForm = () => {
         var formulario = this.dom.querySelector("#categorias #modal #form");
+        formulario.reset();
+    }
+    resetFormAdd=()=>{
+        var formulario = this.dom.querySelector("#categorias #modal #formadd");
         formulario.reset();
     }
     showModal = async () => {
