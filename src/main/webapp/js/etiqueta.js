@@ -507,5 +507,35 @@ class Etiqueta {
     `;
     }
 
+    hideModalError = async () => {
+        this.modalerror.hide();
+        this.modal.show();
+    }
+    hideModalExito = async () => {
+        this.modalexito.hide();
+        this.resetForm();
+        this.reset();
+    }
+    hideModalCampo = async () => {
+        this.modalCampo.hide();
+
+    }
+
+    showModalCampo = async () => {
+        this.modalCampo.show();
+    }
+
+    showModalError = async () => {
+        this.modal.hide();
+        this.modalerror.show();
+    }
+
+    showModalExito = () => {
+        // Cargar los datos de la entidad en el formulario del modal
+        this.modal.hide();
+        this.modalexito.show();
+    }
+
+
 
 }
