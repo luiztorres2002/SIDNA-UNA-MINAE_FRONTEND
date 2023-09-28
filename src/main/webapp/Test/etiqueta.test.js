@@ -1,4 +1,4 @@
-const { JSDOM } = require('jsdom');
+const {JSDOM} = require('jsdom');
 const jsdom = new JSDOM('<!doctype html><html><body></body></html>');
 global.document = jsdom.window.document;
 global.fetch = jest.fn();
@@ -26,9 +26,43 @@ const cambiarEstadoEtiqueta = (etiquetaId, nuevoEstado) => {
 describe('cambiarEstadoEtiqueta', () => {
     it('debería manejar respuestas exitosas', async () => {
         // Configura el comportamiento simulado de 'fetch' para una respuesta exitosa
-        fetch.mockResolvedValueOnce({ ok: true });
+        fetch.mockResolvedValueOnce({ok: true});
         await cambiarEstadoEtiqueta(3, true);
         expect(fetch).toHaveBeenCalledWith(expect.stringContaining('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/cambiarEstado/3/true'), {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+    });
+    afterEach(() => {
+        fetch.mockClear();
+    });
+});
+
+const editarEtiqueta = (etiquetaId, descripcion) => {
+    const urlEdit = `http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/editar/${etiquetaId}?input=${descripcion}`;
+    fetch(urlEdit, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    }).then((response) => {
+        if (!response.ok) {
+            console.error(`Error al editar la etiqueta: ${response.status}`);
+            throw new Error('Error al editar la etiqueta');
+        }
+        console.log('Etiqueta actualizada correctamente');
+    }).catch((error) => {
+        console.error('Error:', error);
+    });
+};
+
+describe('editarEtiqueta', () => {
+    it('debería manejar respuestas exitosas', async () => {
+        fetch.mockResolvedValueOnce({ok: true});
+        await editarEtiqueta(1, "Inundacion")
+        expect(fetch).toHaveBeenCalledWith(expect.stringContaining('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/editar/1?input=Inundacion'), {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
