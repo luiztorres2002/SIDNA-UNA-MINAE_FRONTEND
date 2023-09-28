@@ -22,7 +22,9 @@ class Etiqueta {
             this.saveEdit(etiquetaId,descripcion);
         });
         this.dom.querySelector("#categorias #modalEditar #close").addEventListener('click', this.cancelarEdit);
-
+        //this.dom.querySelector("#categorias #modalError #dismissButton").addEventListener('click', this.hideModalError);
+        //this.dom.querySelector("#categorias #sucessmodal #sucessbuton").addEventListener('click', this.hideModalExito);
+        //this.dom.querySelector("#categorias #modalcampo #dismisscampo").addEventListener('click', this.hideModalCampo);
 
         const searchInput = this.dom.querySelector("#buscador");
 
@@ -440,5 +442,70 @@ class Etiqueta {
         var entity = '';
         return entity;
     }
+
+    renderModalSuccess = () => {
+        return `
+        <div id="sucessmodal" class="modal fade">
+          <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="icon-box">
+                        <i class="material-icons">&#xE876;</i>
+                    </div>
+                    <h4 class="modal-title w-100">¡Confirmado!</h4>\t
+                </div>
+                <div class="modal-body">
+                    <p style="font-size: 25px;" class="text-center">Tu noticia externa ha sido ingresada con éxito.</p>
+                </div>
+                <div class="modal-footer">
+            <button class="btn btn-success btn-block" id="sucessbuton" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+            </div>
+        </div>   
+        `;
+    }
+
+    renderModalError = () => {
+        return `
+<div id="modalError" class="modal fade">
+          <div class="modal-dialog modal-error">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="icon-box">
+                        <i class="material-icons">warning</i>
+                    </div>
+                    <h4 class="modal-title w-100">¡Ooops!</h4>\t
+                </div>
+                <div class="modal-body">
+                    <p style="font-size: 25px;" class="text-center">Verifica si la noticia está duplicada o los datos son incorrectos.</p>
+                </div>
+                <div class="modal-footer">
+            <button class="btn btn-success btn-block" id="dismissButton" data-dismiss="modal">Regresar al form</button>
+                </div>
+            </div>
+            </div>
+        </div>  
+
+    
+        `;
+    }
+
+    renderModalCampo = () => {
+        return `
+    <div id="modalcampo" class="modal fade">
+    <div class="modal-dialog modal-confirm2">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <p style="font-size: 20px;">Por favor, complete todos los campos para publicar la noticia.</p>
+                <button id="dismisscampo" style="font-size: 20px;" class="btn2 btn-success" data-dismiss="modal">Regresar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    `;
+    }
+
 
 }
