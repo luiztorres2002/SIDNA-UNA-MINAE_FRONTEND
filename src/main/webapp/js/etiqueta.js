@@ -73,7 +73,7 @@ class Etiqueta {
                 <p id="etiqueta-description" style="font-size: 1.5em;"></p>
             </div>
             <div class="modal-footer justify-content-lg-start" style="border-top: none;">
-                <button id="confirm-si" type="submit" style="background-color: #006ba6" class="rounded text-light">Aceptar</button>
+                <button id="confirm-si" type="submit" style="background-color: #84bd00" class="rounded text-dark">Aceptar</button>
                 <button id="confirm-no" type="submit" style="background-color: white" class="rounded" data-dismiss="modal">Cancelar</button>
             </div>
         </div>
@@ -243,7 +243,7 @@ class Etiqueta {
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button id="close" type="button" class="close d-flex align-items-center justify-content-center" data-dismiss="modal" aria-label="Close">
+        <button id="close" type="button" class="close d-flex align-items-center justify-content-center" data-dismiss="modal" aria-label="Close" style="font-size: 36px; width: 50px; height: 50px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); border: 2px solid #ccc; border-radius: 50%;">
           <span aria-hidden="true" class="ion-ios-close"></span>
         </button>
       </div>
@@ -261,8 +261,8 @@ class Etiqueta {
           </div>
 
           <div class="form-group mb-2 align-content-lg-end">
+            <button id="save" type="submit" style="background-color: #84bd00" class="rounded text-dark">Guardar</button>
             <button id="cancel" type="submit" style="background-color: white" class="rounded">Cancelar</button>
-            <button id="save" type="submit" style="background-color: #307c" class="rounded text-light">Guardar</button>
           </div>
         </form>
       </div>
@@ -496,28 +496,6 @@ class Etiqueta {
                 console.error('Error en la solicitud:', error);
             });
     };
-
-    saveEdit = (etiquetaId, descripcion) => {
-        const url = `http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/editar/${etiquetaId}?input=${descripcion}`;
-        fetch(url, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }).then((response) => {
-            if (!response.ok) {
-                console.error(`Error al editar la etiqueta: ${response.status}`);
-                throw new Error('Error al editar la etiqueta');
-            }
-            console.log('Etiqueta actualizada correctamente');
-            this.cargarEtiquetas();
-            this.renderizarPaginaConEtiquetas();
-            this.modalEditar.hide();
-        }).catch((error) => {
-            console.error('Error:', error);
-        });
-        event.preventDefault();
-    }
 
     saveEdit = (etiquetaId, descripcion) => {
         const url = `http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/editar/${etiquetaId}?input=${descripcion}`;
@@ -765,6 +743,9 @@ class Etiqueta {
 
     hideModalErrorEditar = async () => {
         this.modalerrorEditar.hide();
+        const etiquetaId = this.dom.querySelector("#categorias #modalEditar #formEdit #etiquetaId").value;
+        const descripcion = this.dom.querySelector("#categorias #modalEditar #formEdit #input").value;
+        this.editarEtiqueta(etiquetaId, descripcion);
     }
     hideModalExitoEditar = async () => {
         this.modalexitoEditar.hide();
