@@ -17,6 +17,7 @@ class Etiqueta {
         this.cargarEtiquetas();
         this.dom = this.render();
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
+        this.modalerror = new bootstrap.Modal(this.dom.querySelector('#modalError'));
         this.dom.querySelector("#categorias #agregar").addEventListener('click', this.createNew);
         this.dom.querySelector("#categorias #buscar").addEventListener('click', this.search);
         this.modalEditar = new bootstrap.Modal(this.dom.querySelector('#modalEditar'));
@@ -514,16 +515,22 @@ class Etiqueta {
     }
 
     search = async () => {
-        const searchInput = this.dom.querySelector("#buscador");
-        const noResultsMessage = this.dom.querySelector("#noResultsMessage");
+        const searchInput = this.dom.querySelector("#buscadorEtiqueta");
+        const modal = this.dom.querySelector("#modalError");
         const searchTerm = searchInput.value.toLowerCase();
         const rows = document.querySelectorAll('tbody tr');
         let encontrados = false;
 
         if (searchTerm.trim() === "") {
-            digiteMessage.classList.add('show');
+            const etiquetaDescriptionElement = document.getElementById('mensaje');
+            const modalFooter = modal.querySelector('.modal-footer');
+            if (modalFooter) {
+                modalFooter.style.display = 'none';
+            }
+            etiquetaDescriptionElement.textContent = `Por favor, ingrese un término de búsqueda válido.`;
+            this.showModalError();
             setTimeout(() => {
-                digiteMessage.classList.remove('show');
+                this.hideModalError2();
             }, 2000);
             return;
         }
@@ -541,14 +548,21 @@ class Etiqueta {
         });
 
         if (!encontrados) {
-            noResultsMessage.classList.add('show');
+            const etiquetaDescriptionElement = document.getElementById('mensaje');
+            const modalFooter = modal.querySelector('.modal-footer');
+            if (modalFooter) {
+                modalFooter.style.display = 'none';
+            }
+            etiquetaDescriptionElement.textContent = `No se encontraron resultados.`;
+            this.showModalError();
             setTimeout(() => {
-                noResultsMessage.classList.remove('show');
+                this.hideModalError2();
             }, 2000);
         }
 
         searchInput.value = "";
     }
+
 
     createNew = () => {
         this.reset();
@@ -597,7 +611,7 @@ class Etiqueta {
                     <h4 class="modal-title w-100">¡Ooops!</h4>\t
                 </div>
                 <div class="modal-body">
-                    <p style="font-size: 25px;" class="text-center">Verifica si la noticia está duplicada o los datos son incorrectos.</p>
+                    <p style="font-size: 25px;" class="text-center" id="mensaje">Verifica si la noticia está duplicada o los datos son incorrectos.</p>
                 </div>
                 <div class="modal-footer">
             <button class="btn btn-success btn-block" id="dismissButton" data-dismiss="modal">Regresar al form</button>
@@ -630,6 +644,9 @@ class Etiqueta {
         this.modalerror.hide();
         this.modal.show();
     }
+    hideModalError2 = async () => {
+        this.modalerror.hide();
+    }
     hideModalExito = async () => {
         this.modalexito.hide();
         this.resetForm();
@@ -645,7 +662,6 @@ class Etiqueta {
     }
 
     showModalError = async () => {
-        this.modal.hide();
         this.modalerror.show();
     }
 
