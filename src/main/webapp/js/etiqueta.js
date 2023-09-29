@@ -25,7 +25,7 @@ class Etiqueta {
         this.modalCampoEditar = new bootstrap.Modal(this.dom.querySelector("#modalcampoEditar"));
         this.modalerrorEditar = new bootstrap.Modal(this.dom.querySelector("#modalErrorEditar"));
         this.dom.querySelector("#categorias #modalEditar #formEdit #cancel").addEventListener('click', this.cancelarEdit);
-
+        this.dom.querySelector("#categorias #modal #cancelModal").addEventListener('click', this.hidemodal);
         this.dom.querySelector("#etiquetaAgregar").addEventListener('click', () => {
             const descripcion = this.dom.querySelector("#txtNombre").value;
             this.agregarEtiqueta2( descripcion);
@@ -82,6 +82,12 @@ class Etiqueta {
         
     `;
 
+    }
+    hidemodal = () =>{
+
+        this.modal.hide();
+        this.modal.resetForm();
+        this.reset();
     }
 
     render = () => {
@@ -366,8 +372,8 @@ class Etiqueta {
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close d-flex align-items-center justify-content-center" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true" class="ion-ios-close"></span>
+        <button type="button" id = "cancelModal" class="close d-flex align-items-center justify-content-center" aria-label="Close" style="font-size: 36px; width: 50px; height: 50px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); border: 2px solid #ccc; border-radius: 50%;">
+        <span aria-hidden="true" class="ion-ios-close"></span>
         </button>
       </div>
       <div class="modal-body p-4 py-5 p-md-5">
@@ -377,8 +383,7 @@ class Etiqueta {
         <form action="#" id="formadd" class="signup-form">
         <input type="hidden" id="etiquetaId" name="etiquetaId" value="">
          <div class="form-group mb-2">
-            <label for="name" style="font-size: 15px;">Nombre de etiqueta</label>
-            <input type="text" id="txtNombre" class="form-control">
+            <input type="text" id="txtNombre" class="form-control" placeholder="Ingrese texto aquí">
         </div>
           <div class="form-group mb-2">
             <button type="submit" id="etiquetaAgregar" class="form-control btn btn-primary rounded submit px-3">Aceptar</button>
