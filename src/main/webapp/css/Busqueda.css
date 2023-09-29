@@ -23,9 +23,7 @@ select {
 }
 
 
-.card-img-custom {
-    max-height: 155px !important;
-}
+
 
 .card-text-truncate {
     width: 100%;
@@ -43,6 +41,10 @@ select {
 }
 .card.card.bg-light-subtle .card-title {
     color: dimgrey;
+}
+
+#pillsMobile-container {
+    display: none;
 }
 
 .card img {
@@ -77,7 +79,9 @@ select {
     max-height: 700px;
     max-width: 3000px;
     overflow-y: auto;
+
 }
+
 
 
 #loading-spinner {
@@ -86,6 +90,164 @@ select {
 .popup-message {
 
 }
+
+
+.search-container {
+    display: flex;
+    align-items: center;
+    width: 1200px;
+    max-height: 38px !important;
+    margin: 0 auto;
+    border-radius: 6px !important;
+    border: 1px solid #006ba6;
+    transition: max-height 0.3s, max-width 0.3s;
+}
+
+
+
+#search-input {
+    border: none;
+    padding: 6px;
+    border-radius: 4px;
+    font-size: 16px;
+    outline: none;
+    flex: 1;
+
+}
+
+
+#search-input:empty::before {
+    content: attr(data-placeholder);
+    color: #aaa;
+}
+
+
+.pill-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-left: 4px;
+
+}
+
+.pill-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-left: 4px;
+
+}
+
+
+.pill {
+    color: #fff;
+    border-radius: 20px;
+    padding: 3px 10px;
+    cursor: pointer;
+}
+
+
+.pill {
+    background-color: #007bff;
+}
+
+.pill:nth-child(1) {
+    background-color: #006ba6;
+}
+
+.pill:nth-child(2) {
+    background-color: #fed141;
+}
+
+.pill:nth-child(3) {
+    background-color: #84bd00;
+}
+.pill:nth-child(4) {
+    background-color: #006ba6;
+}
+.pill:nth-child(5) {
+    background-color: #fed141;
+}
+.pill:nth-child(6) {
+    background-color: #84bd00;
+}
+
+.traffic-light {
+    position: absolute;
+    display: block;
+    margin-top: 30px;
+    background-color: #ffffff;
+    width: 75px;
+    height: 25px;
+    border-radius: 100px;
+}
+.traffic-light > input {
+    appearance: none;
+    user-select: none;
+    outline: none;
+    width: 10px;
+    height: 10px;
+    margin-top: 15px;
+    margin-left: 9px !important;
+    border-radius: 100%;
+}
+input.Alta {
+    background-color: #b81d13;
+    box-shadow: 0em 0px 0px 5px #b81d13;
+}
+input.Alta:hover {
+    background-color: #fc625d;
+    box-shadow: 0em 0px 0px 5px #fc625d;
+}
+input.Alta:checked {
+    background-color: #fc625d;
+    box-shadow: 0em 0px 0px 5px #fc625d;
+}
+input.Media {
+    background-color: #efb700;
+    box-shadow: 0em 0px 0px 5px #efb700;
+}
+input.Media:hover {
+    background-color: #ffe200;
+    box-shadow: 0em 0px 0px 5px #ffe200;
+}
+input.Media:checked {
+    background-color: #ffe200;
+    box-shadow: 0em 0px 0px 5px  #ffe200;
+}
+input.Baja {
+    background-color: #008450;
+    box-shadow: 0em 0px 0px 5px #008450;
+}
+input.Baja:hover {
+    background-color: #24d73e;
+    box-shadow: 0em 0px 0px 5px #24d73e;
+}
+input.Baja:checked {
+    background-color: #34cb4a;
+    box-shadow: 0em 0px 0px 5px #34cb4a;
+}
+* {
+    user-select: none;
+    outline: none;
+}
+
+
+
+
+
+.close-icon {
+    margin-left: 4px;
+    cursor: pointer;
+}
+
+@media (max-width: 1400px) {
+    .search-container {
+        max-height: 600px;
+        max-width: 500px !important;
+        overflow-y: auto;
+    }
+}
 @media (max-width: 768px) {
     .card {
         max-width: 100% !important;
@@ -93,9 +255,34 @@ select {
         flex-direction: column !important;
         margin: 1em auto !important;
     }
+    .traffic-light {
+        position: absolute;
+        display: block;
+        margin-right: 100px;
+        margin-top: 30px;
+        background-color: #ffffff;
+
+    }
+    #pillsMobile-container {
+        display: block;
+        display: flex;
+    }
+    .pill{
+        font-size: 15px;
+    }
+
+    #pills-container{
+        display: none;
+    }
+
+    #enlaceBtn {
+        margin-bottom: 10px;
+        width: 0px;
+    }
 
     .card img {
         max-width: 100% !important;
+        max-height: 150px !important;
         padding: 0.5em !important;
         border-radius: 0.7em !important;
     }
@@ -131,8 +318,11 @@ select {
         margin-left: 20px !important;
     }
 
+
+
     #tiempoSeleccionado{
         margin-left: 0px !important;
+        margin-right: 10px !important;
     }
 
     .search-results-container {
@@ -140,5 +330,13 @@ select {
         max-width: 3000px;
         overflow-y: auto;
     }
+
+    .search-container {
+        max-height: 600px;
+        max-width: 150px !important;
+        overflow-y: auto;
+    }
+
+
 
 }

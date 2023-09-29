@@ -92,6 +92,7 @@ header ul li a
 }
 
 
+
 #Busqueda:hover {
     background: #006ba6;
     font-size: 1.6em;
@@ -114,6 +115,30 @@ header ul li a
 
 }
 
+::-webkit-scrollbar {
+    width: 12px;
+    background-color: #F5F5F5;
+}
+
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px #0000004d;
+    border-radius: 10px;
+    background-color: #F5F5F5;
+}
+
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 8px #fed141;
+    background-color: #fed141;
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+    background: #84bd00;
+    -webkit-box-shadow: inset 0 0 8px #84bd00;
+}
 
 #Biblioteca.active {
     background: #84bd00;
@@ -133,5 +158,8 @@ header ul li a
 @media (max-width: 768px) {
     #footer{
         font-size: 0.7em !important;
+    }
+    ::-webkit-scrollbar {
+        width: 0;
     }
 }

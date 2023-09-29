@@ -50,7 +50,7 @@ class Biblioteca {
 
     <form id="form">
         <div class="input-group mt-3">
-            <input class="form-control fontAwesome rounded" id="buscador" autocomplete="off" type="text" placeholder="&#xf002; Buscar Noticia">
+            <input class="form-control fontAwesome rounded" id="buscadorB" autocomplete="off" type="text" placeholder="&#xf002; Buscar Noticia">
         </div>
         <div class="container">
         <div class="btn-group mt-3" style="margin-left: 0px;">
@@ -474,7 +474,6 @@ class Biblioteca {
         prioridadLegend.style.color = 'black';
         fuenteLegend.style.color = 'black';
         enlaceLegend.style.color = 'black';
-
     }
 
     add = async() => {

@@ -43,7 +43,7 @@ class Etiqueta {
         // this.dom.querySelector("#categorias #sucessmodal #sucessbuton").addEventListener('click', this.hideModalExito);
         // this.dom.querySelector("#categorias #modalcampo #dismisscampo").addEventListener('click', this.hideModalCampo);
 
-        const searchInput = this.dom.querySelector("#buscador");
+        const searchInput = this.dom.querySelector("#buscadorEtiqueta");
 
         searchInput.addEventListener("keydown", (event) => {
             if (event.key === "Enter") {
@@ -52,6 +52,34 @@ class Etiqueta {
             }
         });
 
+
+    }
+
+    renderModalConfirmar = () => {
+        return `
+<div id="confirmationModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content- align-items-center mb-3">
+                    <h3 class="text-left mb-0">Confirmar</h3>
+                    <button class="btn btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
+                </div>
+                <ul class="ftco-footer-social p-0 text-center">
+                </ul>
+                <p id="etiqueta-description" style="font-size: 1.5em;"></p>
+            </div>
+            <div class="modal-footer justify-content-lg-start" style="border-top: none;">
+                <button id="confirm-si" type="submit" style="background-color: #006ba6" class="rounded text-light">Aceptar</button>
+                <button id="confirm-no" type="submit" style="background-color: white" class="rounded" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+        
+    `;
 
     }
 
@@ -64,6 +92,7 @@ class Etiqueta {
             ${this.renderModalError()}
             ${this.renderModalCampo()}
             ${this.renderModalSuccessEditar()}
+            ${this.renderModalConfirmar()}
             ${this.renderModalErrorEditar()}
             ${this.renderModalCampoEditar()}
         `;
@@ -78,32 +107,28 @@ class Etiqueta {
         <div class="linea-azul"></div>
         <div class="linea-amarilla"></div>
         <div class="linea-verde"></div>
-        <div id="loading-spinner" style="display: none;">
-        
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
     </div>
-<div id="noResultsMessage" class="popup-message">
-  <i class="fas fa-exclamation-triangle"></i> No se encontraron resultados.
-</div>
-<div id="digiteMessage" class="popup-message">
-  <i class="fas fa-exclamation-triangle"></i> Por favor, ingrese un término de búsqueda válido.
-</div>
    <div class="d-flex justify-content-center">
             <form id="form" style="width: 85%; margin-top: 20px;"">
            <div class="input-group mb-3 mt-10" style="display: flex; align-items: center; justify-content: center;">
     <div class="btn-group me-2">
         <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 120px; line-height: 5px;"><span class="font-weight-bold">+</span> <span class="texto-agregar">Agregar</span></button>
     </div>
-    <input class="form-control me-2 fontAwesome" id="buscador" autocomplete="off" type="text" style="width: 200px; margin-left: 700px; height: 38px; border-radius: 5px; border: 1px solid #006ba6;" placeholder="&#xf002; Buscar Etiqueta...">
+    <input class="form-control me-2 fontAwesome" id="buscadorEtiqueta" autocomplete="off" type="text" style="width: 200px; margin-left: 700px; height: 38px; border-radius: 5px; border: 1px solid #006ba6;" placeholder="&#xf002; Buscar Etiqueta...">
     <div class="btn-group me-2">
          <button type="button" class="btn btn-custom-outline-success2" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
             <i class="fas fa-search"></i>
          </button>
     </div>
 </div>
- <table class="table table-fixed" id="tablaEtiquetas">
+<div class="centered-container">
+  <div class="d-flex justify-content-center align-items-center">
+    <div class="spinner-border" role="status" style="color: #84bd00">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</div>
+ <table class="table table-fixed" id="tablaEtiquetas" style="display: none;">
   <thead>
         <tr>
         
@@ -154,11 +179,11 @@ class Etiqueta {
         event.preventDefault();
     }
 
-    renderizarPaginaConEtiquetas = () => {
+    renderizarPaginaConEtiquetas= () => {
         let tableRows = '';
 
         this.state.etiquetas.forEach((etiqueta, index) => {
-            const {descripcion, etiquetaId, estado} = etiqueta;
+            const { descripcion, etiquetaId, estado } = etiqueta;
             const isChecked = estado ? 'checked' : '';
             const row = `
     <tr data-row="${index + 1}">
@@ -175,7 +200,7 @@ class Etiqueta {
             <div class="toggle-container">
                 <span class="number">10</span>
                 <div class="form-check form-switch toggle-switch">
-                    <input class="form-check-input unchecked" type="checkbox" role="switch" data-row="${index + 1}" data-etiqueta-id="${etiquetaId}" data-etiqueta-estado="${estado}" ${isChecked} style="background-color: #ffffff; border-color: #000000; background-image: url('data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'-4 -4 8 8\\'><circle r=\\'3\\' fill=\\'%2384bd00\\'/></svg>') ">
+                    <input class="form-check-input unchecked" type="checkbox" role="switch" data-row="${index + 1}"data-etiqueta-descripcion="${descripcion}" data-etiqueta-id="${etiquetaId}" data-etiqueta-estado="${estado}" ${isChecked} style="background-color: #ffffff; border-color: #000000; background-image: url('data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'-4 -4 8 8\\'><circle r=\\'3\\' fill=\\'%2384bd00\\'/></svg>') ">
                     <label class="form-check-label" for="flexSwitchCheckDefault"></label>
                 </div>
             </div>
@@ -208,10 +233,7 @@ class Etiqueta {
                 this.editarEtiqueta(etiquetaId, descripcion);
             });
         });
-        toggleSwitches.forEach((toggleSwitch) => {
-            toggleSwitch.addEventListener("change", this.actualizarEstadoFila);
-        });
-
+        toggleSwitches.forEach((toggleSwitch) => {toggleSwitch.addEventListener("change", this.actualizarEstadoFila);});
 
     }
     renderModalEditar = () => {
@@ -279,27 +301,64 @@ class Etiqueta {
         const toggleSwitch = event.target;
         const numFila = toggleSwitch.getAttribute("data-row");
         const etiquetaNom = toggleSwitch.getAttribute("data-etiqueta-id");
+        const etiquetaDescripcion = toggleSwitch.getAttribute("data-etiqueta-descripcion");
         const fila = this.dom.querySelector(`[data-row="${numFila}"]`);
         const colors = ["green-bg"];
         const colorIndex = (numFila - 1) % colors.length;
 
-        if (toggleSwitch.checked) {
-            fila.classList.remove("disabled-row");
-            fila.classList.remove("highlight");
-            toggleSwitch.classList.remove(...colors);
-            toggleSwitch.classList.add(colors[colorIndex]);
-            console.log(`Se activó la etiqueta: ${etiquetaNom}`);
-            toggleSwitch.classList.remove("unchecked");
-        } else {
-            fila.classList.add("disabled-row");
-            fila.classList.remove("highlight");
-            console.log(`Se desactivó la etiqueta: ${etiquetaNom}`);
-            toggleSwitch.classList.add("unchecked");
-        }
         const etiquetaId = event.target.getAttribute('data-etiqueta-id');
         const nuevoEstado = event.target.checked;
-        this.cambiarEstadoEtiqueta(etiquetaId, nuevoEstado);
+        const actionMessage = nuevoEstado ? `habilitar` : `deshabilitar`;
+        const etiquetaDescriptionElement = document.getElementById('etiqueta-description');
+        etiquetaDescriptionElement.textContent = `Esta seguro que desea ${actionMessage} esta etiqueta: ${etiquetaDescripcion}?`;
+        let clickFueraModal = false;
+
+        const modalPromise = new Promise((resolve, reject) => {
+            $('#confirmationModal').modal('show');
+
+            document.getElementById('confirm-si').addEventListener('click', () => {
+                $('#confirmationModal').modal('hide');
+                resolve(true);
+            });
+
+            document.getElementById('confirm-no').addEventListener('click', () => {
+                $('#confirmationModal').modal('hide');
+                resolve(false);
+            });
+
+            $('#confirmationModal').on('click', (e) => {
+                if (e.target === document.getElementById('confirmationModal')) {
+                    // Modal closed by clicking outside
+                    clickFueraModal = true;
+                    $('#confirmationModal').modal('hide');
+                    resolve(false);
+                }
+            });
+        });
+
+        modalPromise.then((confirm) => {
+            if (confirm && !clickFueraModal) {
+                if (nuevoEstado) {
+                    fila.classList.remove("disabled-row");
+                    fila.classList.remove("highlight");
+                    toggleSwitch.classList.remove(...colors);
+                    toggleSwitch.classList.add(colors[colorIndex]);
+                    console.log(`Se activó la etiqueta: ${etiquetaNom}`);
+                    toggleSwitch.classList.remove("unchecked");
+                } else {
+                    fila.classList.add("disabled-row");
+                    fila.classList.remove("highlight");
+                    console.log(`Se desactivó la etiqueta: ${etiquetaNom}`);
+                    toggleSwitch.classList.add("unchecked");
+                }
+
+                this.cambiarEstadoEtiqueta(etiquetaId, nuevoEstado);
+            } else {
+                toggleSwitch.checked = !nuevoEstado;
+            }
+        });
     }
+
     renderModal = () => {
         return `
 <div id="modal" class="modal fade" tabindex="-1">
@@ -377,6 +436,10 @@ class Etiqueta {
             const data = await response.json();
             this.state.etiquetas = data;
             this.renderizarPaginaConEtiquetas();
+            const loadingSpinner = document.querySelector('.spinner-border');
+            loadingSpinner.style.display = 'none';
+            const table = document.getElementById('tablaEtiquetas');
+            table.style.display = 'table';
         } catch (error) {
             console.log('Error al cargar la lista de etiquetas:', error);
         }
@@ -404,6 +467,28 @@ class Etiqueta {
                 console.error('Error:', error);
             });
     };
+
+    saveEdit = (etiquetaId, descripcion) => {
+        const url = `http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/editar/${etiquetaId}?input=${descripcion}`;
+        fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then((response) => {
+            if (!response.ok) {
+                console.error(`Error al editar la etiqueta: ${response.status}`);
+                throw new Error('Error al editar la etiqueta');
+            }
+            console.log('Etiqueta actualizada correctamente');
+            this.cargarEtiquetas();
+            this.renderizarPaginaConEtiquetas();
+            this.modalEditar.hide();
+        }).catch((error) => {
+            console.error('Error:', error);
+        });
+        event.preventDefault();
+    }
 
     saveEdit = (etiquetaId, descripcion) => {
         const url = `http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/editar/${etiquetaId}?input=${descripcion}`;
