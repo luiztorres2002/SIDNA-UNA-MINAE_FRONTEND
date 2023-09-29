@@ -64,12 +64,37 @@ class App {
 
     renderFooter = () => {
         return `
-        <footer id="footer" class="bg-dark text-white mt-4 w-100 fixed-bottom">
-            <div class="container-fluid py-2">
-
-                SISTEMA RECOPILATORIO DE NOTICIAS Y DENUNCIAS AMBIENTALES
+         <footer class="footer-dark">
+           <div class="container">
+                <div class="row">
+                    <div class="col-sm-6 col-md-3 item">
+                            <a id="logonav" href="#" ><img src="images/Minae.png"  width="300" height="110" style="margin-right: 200px;"></a>
+                    </div>
+                    <div class="col-sm-6 col-md-3 item">
+                        <h3>Contáctenos</h3>
+                        <ul>
+                            <li>+506 2106-8500</li>
+                            <li><a href="#">comunicacion@minae.go.cr</a></li>
+                            <li>Horario:
+                                Lunes - Viernes:  
+                                7:00am - 3:00pm</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6 item text">
+                        <h3>SIDNA</h3>
+                        <p>Sistema Recopilatorio de Denuncias y Noticias Ambientales</p>
+                    </div>
+                     <div class="col item social">
+                        <p class="text-center">Copyright @2023 | Designed With by <a href="#">MINAE</a></p>
+                        <ul class="social_footer_ul">
+                        <li><a href="https://www.facebook.com/minaecr"  target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a></li>
+                        <li><a href="https://twitter.com/CRMinae"  target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter"></i></a></li>
+                        <li><a href="https://www.youtube.com/@ministeriodeambienteyenerg1176"  target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i></a></li>
+                        <li><a href="https://www.instagram.com/minaecr/"  target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a></li>
+                        </ul>
+                    </div>
             </div>
-        </footer> 
+        </footer>
     `;
     }
 
