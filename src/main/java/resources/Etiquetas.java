@@ -9,6 +9,7 @@ import logic.Etiqueta;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 @Path("/etiquetas")
 public class Etiquetas {
@@ -75,9 +76,18 @@ public class Etiquetas {
             Database database = new Database();
             EtiquetaDao etiquetaDao = new EtiquetaDao(database);
             Etiqueta etiqueta = etiquetaDao.getEtiquetaById(etiquetaID);
-            if (etiqueta == null || descripcion.isEmpty()) {
+
+            List<Etiqueta> etiquetas = getAllEtiquetasByUsuario(etiqueta.getUsuarioCedula());
+            for (Etiqueta value : etiquetas) {
+                if (Objects.equals(value.getDescripcion().toLowerCase(), descripcion.toLowerCase())) {
+                    return Response.status(Response.Status.NOT_FOUND).build();
+                }
+            }
+
+            if (descripcion.isEmpty()) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
+
             etiqueta.setDescripcion(descripcion);
             etiquetaDao.updateEtiqueta(etiqueta);
             return Response.ok().build();
