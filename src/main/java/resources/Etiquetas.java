@@ -9,6 +9,7 @@ import logic.Etiqueta;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 @Path("/etiquetas")
 public class Etiquetas {
@@ -49,6 +50,24 @@ public class Etiquetas {
         }
     }
 
+    @POST
+    @Path("/{etiquetaId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void agregarEtiqueta(@PathParam("etiquetaId") int etiquetaIDE, @QueryParam("txtNombre") String nombre) {
+        try {
+            Database database = new Database();
+            EtiquetaDao etiquetaDao = new EtiquetaDao(database);
+            Etiqueta etiqueta = new Etiqueta();
+            etiqueta.setDescripcion(nombre);
+            etiqueta.setEstado(true);
+            etiqueta.setEtiquetaId(etiquetaIDE);
+            etiqueta.setUsuarioCedula("1");
+            etiquetaDao.addEtiqueta(etiqueta);
+        } catch (SQLException ex) {
+            throw new InternalServerErrorException(ex);
+        }
+    }
+
     @PUT
     @Path("/editar/{etiquetaId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -57,9 +76,18 @@ public class Etiquetas {
             Database database = new Database();
             EtiquetaDao etiquetaDao = new EtiquetaDao(database);
             Etiqueta etiqueta = etiquetaDao.getEtiquetaById(etiquetaID);
-            if (etiqueta == null) {
+
+            List<Etiqueta> etiquetas = getAllEtiquetasByUsuario(etiqueta.getUsuarioCedula());
+            for (Etiqueta value : etiquetas) {
+                if (Objects.equals(value.getDescripcion().toLowerCase(), descripcion.toLowerCase())) {
+                    return Response.status(Response.Status.NOT_FOUND).build();
+                }
+            }
+
+            if (descripcion.isEmpty()) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
+
             etiqueta.setDescripcion(descripcion);
             etiquetaDao.updateEtiqueta(etiqueta);
             return Response.ok().build();

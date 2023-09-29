@@ -21,6 +21,7 @@ class App {
         this.dom.querySelector('#app>#modal2 #formModal2 #change').addEventListener('click', e => this.ClienteUpdate());
         this.renderBodyFiller();
         this.renderMenuItems();
+        this.busquedaShow();
 
     }
 

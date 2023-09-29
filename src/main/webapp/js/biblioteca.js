@@ -105,7 +105,7 @@ class Biblioteca {
    <div class="col-md-6">
       <div class="form-group">
         <legend id="fechalegend" class="col-form-label pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 10px; font-family: Verdana">
-          <i class="far fa-calendar-alt mr-2"></i> Fecha
+          <i class="far fa-calendar-alt mr-2"></i> Fecha de redacción
         </legend>
         <div class="row">
           <div class="col">
@@ -205,7 +205,7 @@ class Biblioteca {
                     <p style="font-size: 25px;" class="text-center">Verifica si la noticia está duplicada o los datos son incorrectos.</p>
                 </div>
                 <div class="modal-footer">
-            <button class="btn btn-success btn-block" id="dismissButton" data-dismiss="modal">Ented=ido</button>
+            <button class="btn btn-success btn-block" id="dismissButton" data-dismiss="modal">Regresar al form</button>
                 </div>
             </div>
             </div>
@@ -391,8 +391,7 @@ class Biblioteca {
 
     hideModalError = async () => {
         this.modalerror.hide();
-        this.modal.hide();
-        this.resetForm();
+        this.modal.show();
     }
 
     hideModalExito = async () => {
