@@ -75,7 +75,7 @@ public class Etiquetas {
             Database database = new Database();
             EtiquetaDao etiquetaDao = new EtiquetaDao(database);
             Etiqueta etiqueta = etiquetaDao.getEtiquetaById(etiquetaID);
-            if (etiqueta == null) {
+            if (etiqueta == null || descripcion.isEmpty()) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
             etiqueta.setDescripcion(descripcion);
