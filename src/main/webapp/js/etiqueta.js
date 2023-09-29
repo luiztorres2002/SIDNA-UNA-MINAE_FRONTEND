@@ -25,10 +25,10 @@ class Etiqueta {
         this.modalCampoEditar = new bootstrap.Modal(this.dom.querySelector("#modalcampoEditar"));
         this.modalerrorEditar = new bootstrap.Modal(this.dom.querySelector("#modalErrorEditar"));
         this.dom.querySelector("#categorias #modalEditar #formEdit #cancel").addEventListener('click', this.cancelarEdit);
-        this.dom.querySelector("#categorias #modal #formadd #etiquetaAgregar").addEventListener('click', () => {
-            const etiquetaId = this.dom.querySelector("#categorias #modal #formadd #etiquetaId").value;
-            const descripcion = this.dom.querySelector("#categorias #modal #formadd #txtNombre").value;
-            this.agregarEtiqueta(etiquetaId, descripcion);
+
+        this.dom.querySelector("#etiquetaAgregar").addEventListener('click', () => {
+            const descripcion = this.dom.querySelector("#txtNombre").value;
+            this.agregarEtiqueta2( descripcion);
         });
         this.dom.querySelector("#categorias #modalEditar #formEdit #save").addEventListener('click', () => {
             const etiquetaId = this.dom.querySelector("#categorias #modalEditar #formEdit #etiquetaId").value;
@@ -466,6 +466,34 @@ class Etiqueta {
             .catch((error) => {
 
                 console.error('Error:', error);
+            });
+    };
+
+    agregarEtiqueta2 = (descripcion) => {
+        event.preventDefault();
+        const url = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/';
+
+
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain'
+            },
+            body: descripcion
+        };
+
+        fetch(url, options)
+            .then(response => {
+                if (response.status === 201) {
+                    console.log('Etiqueta agregada con éxito');
+                    this.cargarEtiquetas();
+                    this.renderizarPaginaConEtiquetas();
+                } else {
+                    console.error('Error al agregar la etiqueta');
+                }
+            })
+            .catch(error => {
+                console.error('Error en la solicitud:', error);
             });
     };
 

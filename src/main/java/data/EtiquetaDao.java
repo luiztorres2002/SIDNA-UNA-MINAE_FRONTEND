@@ -80,7 +80,7 @@ public class EtiquetaDao {
                 statement.executeUpdate();
             } catch (SQLException e) {
 
-                e.printStackTrace(); // Prints the exception stack trace to the console.
+                e.printStackTrace();
             }
         }
 
