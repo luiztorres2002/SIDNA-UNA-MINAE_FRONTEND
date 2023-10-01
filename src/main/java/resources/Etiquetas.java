@@ -59,13 +59,23 @@ public class Etiquetas {
             Etiqueta etiqueta = new Etiqueta();
             etiqueta.setDescripcion(descripcion);
             etiqueta.setEstado(true);
-            etiqueta.setUsuarioCedula("1");
+            etiqueta.setUsuarioCedula("4-0258-0085");
+
+            List<Etiqueta> etiquetas = getAllEtiquetasByUsuario(etiqueta.getUsuarioCedula());
+            for (Etiqueta value : etiquetas) {
+                if (Objects.equals(value.getDescripcion().toLowerCase(), descripcion.toLowerCase())) {
+                    return Response.status(Response.Status.NOT_FOUND).build();
+                }
+            }
+
+            if (descripcion.isEmpty()) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
 
             etiquetaDao.addEtiqueta(etiqueta);
-            return Response.status(Response.Status.CREATED).build();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al agregar etiqueta").build();
+            return Response.ok().build();
+        } catch (SQLException ex) {
+            throw new InternalServerErrorException(ex);
         }
     }
 

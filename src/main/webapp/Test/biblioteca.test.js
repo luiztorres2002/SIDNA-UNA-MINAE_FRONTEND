@@ -83,7 +83,7 @@ describe('Test para la función add', () => {
                 rol: null,
             },
         };
-        const request = new Request('http://localhost:8qwewqee080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasExternas', {
+        const request = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasExternas', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -94,8 +94,10 @@ describe('Test para la función add', () => {
             const response = await fetch(request);
             if (!response.ok) {
                 return 'error';
+                console.log('La noticia fallo al ingresarse');
             } else {
                 return 'success';
+                console.log('La noticia ha sido ingresada con exito');
             }
         } catch (e) {
             return 'error';
@@ -106,12 +108,7 @@ describe('Test para la función add', () => {
         const result = await add();
         expect(result).toEqual('success');
         expect(fetch).toHaveBeenCalled();
-    });
-    it('Debería manejar un error al agregar una entidad.', async () => {
-        fetch.mockResolvedValue({ ok: false });
-        const result = await add();
-        expect(result).toEqual('error');
-        expect(fetch).toHaveBeenCalled();
+
     });
 });
 

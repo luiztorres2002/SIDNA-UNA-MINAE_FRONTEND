@@ -3,6 +3,12 @@ const jsdom = new JSDOM('<!doctype html><html><body></body></html>');
 global.document = jsdom.window.document;
 global.fetch = jest.fn();
 
+////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+/////////////////TEST EDITAR CAMBIAR ESTADO ETIQUETA FRONT END////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
 
 const cambiarEstadoEtiqueta = (etiquetaId, nuevoEstado) => {
     const url = `http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/cambiarEstado/${etiquetaId}/${nuevoEstado}`;
@@ -40,6 +46,15 @@ describe('cambiarEstadoEtiqueta', () => {
     });
 });
 
+
+////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+////////////////////////TEST EDITAR ETIQUETA FRONT END////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+
 const editarEtiqueta = (etiquetaId, descripcion) => {
     const urlEdit = `http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/editar/${etiquetaId}?input=${descripcion}`;
     fetch(urlEdit, {
@@ -69,6 +84,70 @@ describe('editarEtiqueta', () => {
             },
         });
     });
+    afterEach(() => {
+        fetch.mockClear();
+    });
+});
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////TEST AGREGAR ETIQUETA////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+const addNewLabel = () => {
+    const descripcion = 'ppiiooo';
+    const url = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/';
+
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'text/plain'
+        },
+        body: descripcion
+    };
+
+    return fetch(url, options)
+        .then(response => {
+            if (!response.ok) {
+                console.log('Error');
+                throw new Error('Error en la solicitud');
+            } else {
+                console.log('Etiqueta agregada con éxito');
+            }
+        })
+        .catch(error => {
+            console.error('Error en la solicitud:', error);
+        });
+};
+
+describe('addNewLabel', () => {
+    it('debería manejar respuestas exitosas', async () => {
+        fetch.mockResolvedValueOnce({ ok: true });
+        await addNewLabel();
+        expect(fetch).toHaveBeenCalledWith(expect.stringContaining('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain',
+            },
+            body: 'ppiiooo',
+        });
+    });
+
+    it('debería manejar respuestas de error', async () => {
+        fetch.mockResolvedValueOnce({ ok: false });
+        await addNewLabel();
+        expect(fetch).toHaveBeenCalledWith(expect.stringContaining('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain',
+            },
+            body: 'ppiiooo',
+        });
+        console.log('Etiqueta agregada con éxito');
+    });
+
     afterEach(() => {
         fetch.mockClear();
     });
