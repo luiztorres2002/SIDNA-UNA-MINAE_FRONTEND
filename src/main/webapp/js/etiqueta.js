@@ -25,7 +25,6 @@ class Etiqueta {
         this.modalCampoEditar = new bootstrap.Modal(this.dom.querySelector("#modalcampoEditar"));
         this.modalerrorEditar = new bootstrap.Modal(this.dom.querySelector("#modalErrorEditar"));
         this.dom.querySelector("#categorias #modalEditar #formEdit #cancel").addEventListener('click', this.cancelarEdit);
-
         this.dom.querySelector("#etiquetaAgregar").addEventListener('click', () => {
             const descripcion = this.dom.querySelector("#txtNombre").value;
             this.agregarEtiqueta2( descripcion);
@@ -58,30 +57,28 @@ class Etiqueta {
 
     renderModalConfirmar = () => {
         return `
-<div id="confirmationModal" class="modal fade" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
+    <div id="confirmationModal" class="modal fade" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered" role="document" style="width: auto;max-width: 80%; margin-left: 37%;">
+        <div class="modal-content" style="width: auto;">
+          <div class="modal-header">
+          </div>
+          <div class="modal-body">
+            <div class="d-flex justify-content- align-items-center mb-3">
+              <h3 class="text-left mb-0">Confirmar</h3>
+              <button class="btn btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
             </div>
-            <div class="modal-body">
-                <div class="d-flex justify-content- align-items-center mb-3">
-                    <h3 class="text-left mb-0">Confirmar</h3>
-                    <button class="btn btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
-                </div>
-                <ul class="ftco-footer-social p-0 text-center">
-                </ul>
-                <p id="etiqueta-description" style="font-size: 1.5em;"></p>
-            </div>
-            <div class="modal-footer justify-content-lg-start" style="border-top: none;">
-                <button id="confirm-si" type="submit" style="background-color: #84bd00" class="rounded text-dark">Aceptar</button>
-                <button id="confirm-no" type="submit" style="background-color: white" class="rounded" data-dismiss="modal">Cancelar</button>
-            </div>
+            <ul class="ftco-footer-social p-0 text-center">
+            </ul>
+            <p id="etiqueta-description" style="font-size: 1.0em; font-weight: bold;">Your dynamic content here...</p>
+          </div>
+          <div class="modal-footer justify-content-lg-start" style="border-top: none;">
+            <button id="confirm-si" type="submit" style="background-color: #84bd00" class="rounded text-light">Aceptar</button>
+            <button id="confirm-no" type="submit" style="background-color: white" class="rounded" data-dismiss="modal">Cancelar</button>
+          </div>
         </div>
+      </div>
     </div>
-</div>
-        
-    `;
-
+  `;
     }
 
     render = () => {
@@ -129,7 +126,8 @@ class Etiqueta {
     </div>
   </div>
 </div>
- <table class="table table-fixed" id="tablaEtiquetas" style="display: none;">
+ <div class="table-responsive" style="max-height: 600px; overflow-y: auto; overflow-x: hidden;">
+  <table class="table table-fixed" id="tablaEtiquetas" style="display: none">  
   <thead>
         <tr>
         
@@ -141,6 +139,7 @@ class Etiqueta {
     <tbody id="etiquetasTableBody">
       
 </table>
+</div>
                 </div>
             </form>
         </div>
@@ -254,14 +253,14 @@ class Etiqueta {
         </ul>
         <form action="#" class="signup-form" id="formEdit">
          
-          <input type="hidden" id="etiquetaId" name="etiquetaId" value="">
+          <input type="hidden" id="etiquetaId" name="etiquetaId" autocomplete="off" value="">
           
           <div class="form-group mb-2">
             <input id="input" type="text" class="form-control" style="border-right-color: white; border-left-color: white; border-top-color: white; border-bottom-color: black">
           </div>
 
           <div class="form-group mb-2 align-content-lg-end">
-            <button id="save" type="submit" style="background-color: #84bd00" class="rounded text-dark">Guardar</button>
+            <button id="save" type="submit" style="background-color: #84bd00" class="rounded text-light">Guardar</button>
             <button id="cancel" type="submit" style="background-color: white" class="rounded">Cancelar</button>
           </div>
         </form>
@@ -329,7 +328,6 @@ class Etiqueta {
 
             $('#confirmationModal').on('click', (e) => {
                 if (e.target === document.getElementById('confirmationModal')) {
-                    // Modal closed by clicking outside
                     clickFueraModal = true;
                     $('#confirmationModal').modal('hide');
                     resolve(false);
@@ -366,7 +364,7 @@ class Etiqueta {
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close d-flex align-items-center justify-content-center" data-dismiss="modal" aria-label="Close">
+        <button id="close" type="button" class="close d-flex align-items-center justify-content-center" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true" class="ion-ios-close"></span>
         </button>
       </div>
@@ -378,7 +376,7 @@ class Etiqueta {
         <input type="hidden" id="etiquetaId" name="etiquetaId" value="">
          <div class="form-group mb-2">
             <label for="name" style="font-size: 15px;">Nombre de etiqueta</label>
-            <input type="text" id="txtNombre" class="form-control">
+            <input type="text" id="txtNombre" autocomplete="off" class="form-control">
         </div>
           <div class="form-group mb-2">
             <button type="submit" id="etiquetaAgregar" class="form-control btn btn-primary rounded submit px-3">Aceptar</button>
@@ -472,8 +470,6 @@ class Etiqueta {
     agregarEtiqueta2 = (descripcion) => {
         event.preventDefault();
         const url = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/';
-
-
         const options = {
             method: 'POST',
             headers: {
@@ -507,18 +503,18 @@ class Etiqueta {
         }).then((response) => {
             if (!response.ok) {
                 console.error(`Error al editar la etiqueta: ${response.status}`);
-                this.showModalErrorEditar();
                 throw new Error('Error al editar la etiqueta');
             }
             console.log('Etiqueta actualizada correctamente');
             this.cargarEtiquetas();
             this.renderizarPaginaConEtiquetas();
-            this.showModalExitoEditar();
+            this.modalEditar.hide();
         }).catch((error) => {
             console.error('Error:', error);
         });
         event.preventDefault();
     }
+
 
     search = async () => {
         const searchInput = this.dom.querySelector("#buscadorEtiqueta");
@@ -743,9 +739,6 @@ class Etiqueta {
 
     hideModalErrorEditar = async () => {
         this.modalerrorEditar.hide();
-        const etiquetaId = this.dom.querySelector("#categorias #modalEditar #formEdit #etiquetaId").value;
-        const descripcion = this.dom.querySelector("#categorias #modalEditar #formEdit #input").value;
-        this.editarEtiqueta(etiquetaId, descripcion);
     }
     hideModalExitoEditar = async () => {
         this.modalexitoEditar.hide();

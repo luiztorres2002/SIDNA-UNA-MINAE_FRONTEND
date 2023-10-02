@@ -24,6 +24,7 @@ class Busqueda {
         this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A'};
         this.dom = this.render();
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
+        this.dom.querySelector("#busqueda #buscar").addEventListener('click', this.corresponderPalabraClaveEnNoticias);
         setTimeout(() => {
             this.mostrarDestacadas();
         }, 100);
@@ -47,6 +48,7 @@ class Busqueda {
         <div class="linea-amarilla"></div>
         <div class="linea-verde"></div>
        
+     
         <div id="loading-spinner" style="display: none;">
         
         <div class="spinner-border text-primary" role="status">
@@ -188,7 +190,7 @@ class Busqueda {
         console.log('API Key usada:', apiKey);
 
         const corsProxyUrl = 'https://corsproxy.io/?';
-        const apiUrl = `https://serpapi.com/search?api_key=${apiKey}&q=costa%20rica%20ambiente&location=Costa%20Rica&google_domain=google.co.cr&gl=cr&lr=lang_es&hl=es&tbm=nws&&tbs=sbd:1&num=35`;
+        const apiUrl = `https://serpapi.com/search?api_key=${apiKey}&q=costa%20rica%20medio%20ambiente&location=Costa%20Rica&google_domain=google.co.cr&gl=cr&lr=lang_es&hl=es&tbm=nws&&tbs=sbd:1&num=35`;
 
         const response = await fetch(corsProxyUrl + apiUrl);
         const searchData = await response.json();
@@ -200,7 +202,6 @@ class Busqueda {
         } else {
             for (const [index, result] of newsResults.entries()) {
                 contadorNoticias++;
-                console.log(`Enlace Identificado de Noticia ${contadorNoticias}:`, result.link);
 
                 let imageUrl = result.thumbnail;
 
@@ -259,6 +260,97 @@ class Busqueda {
                 });
                 noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
             }
+        }
+    }
+
+    async  corresponderPalabraClaveEnNoticias() {
+        let contadorNoticias = 0;
+        const coloresBorde = ['#84bd00', '#006ba6', '#fed141'];
+        const coloresBoton = ['#006ba6',  '#84bd00'];
+
+        const keyword = busqueda.toLowerCase();
+        const noticiasCoincidentes = document.querySelector('#noticiasCoincidentes');
+        noticiasCoincidentes.innerHTML = '';
+
+        const tiempoSeleccionado = document.querySelector('#tiempoSeleccionado').value;
+        const apiKey = apiKeys[currentApiKeyIndex];
+        currentApiKeyIndex = (currentApiKeyIndex + 1) % apiKeys.length;
+
+        console.log('API Key usada:', apiKey);
+
+        try {
+            let tiempoQuery = '';
+
+            if (tiempoSeleccionado === 'ultimaHora') {
+                tiempoQuery = 'qdr:h';
+            } else if (tiempoSeleccionado === 'ultimoDia') {
+                tiempoQuery = 'qdr:d';
+            } else if (tiempoSeleccionado === 'ultimaSemana') {
+                tiempoQuery = 'qdr:w';
+            } else if (tiempoSeleccionado === 'ultimoMes') {
+                tiempoQuery = 'qdr:m';
+            } else if (tiempoSeleccionado === 'ultimoAno') {
+                tiempoQuery = 'qdr:y';
+            }
+
+            const apiUrl = `https://serpapi.com/search?api_key=${apiKey}&q=${keyword}&location=Costa%20Rica&google_domain=google.co.cr&gl=cr&lr=lang_es&hl=es&tbm=nws&tbs=sbd:1${tiempoQuery ? `,${tiempoQuery}` : ''}&num=35`;
+            const corsProxyUrl = 'https://corsproxy.io/?';
+            const response = await fetch(corsProxyUrl + apiUrl);
+            const searchData = await response.json();
+
+            const newsResults = searchData.news_results;
+            const tiempoSeleccionadoSelect = document.querySelector('#tiempoSeleccionado');
+            tiempoSeleccionadoSelect.value = '';
+
+            if (newsResults.length === 0) {
+                noticiasCoincidentes.innerHTML = '<p>No se encontraron noticias.</p>';
+            } else {
+                for (const [index, result] of newsResults.entries()) {
+                    contadorNoticias++;
+
+
+                    let imageUrl = result.thumbnail;
+
+                    try {
+                        const corsProxyUrl = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
+                        const newsResponse = await fetch(corsProxyUrl + result.link);
+                        const newsHtml = await newsResponse.text();
+                        const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
+                        const ogImage = newsDocument.querySelector('meta[property="og:image"]');
+                        imageUrl = ogImage ? ogImage.getAttribute('content') : result.thumbnail;
+                    } catch (error) {
+                        console.error(`Error al obtener datos de noticia (${result.link}):`, error);
+                    }
+
+                    const colorBorde = coloresBorde[index % coloresBorde.length];
+                    const buttonColor = coloresBoton[index % coloresBoton.length];
+                    const elementoNoticiaCoincidente = document.createElement('div');
+                    elementoNoticiaCoincidente.classList.add('noticia-coincidente');
+
+                    elementoNoticiaCoincidente.innerHTML = `
+                    <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};">
+                        <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.thumbnail}'; this.classList.add('card-img-top', 'card-img-custom');">
+                        <div class="card-body">
+                            <div class="text-section">
+                                <h5 class="card-title fw-bold">${result.title}</h5>
+                                <p class="card-text">${result.snippet}</p>
+                            </div>
+                            <div class="cta-section">
+                                <p class="card-text">${result.date}</p>
+                                <a href="${result.link}" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
+                    <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${buttonColor}"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                    noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
+                }
+            }
+            busqueda = "";
+
+            console.log(`Total de Noticias Identificadas: ${contadorNoticias}`);
+        } catch (error) {
+            console.error('Error al obtener datos de la API:', error);
         }
     }
     /*
