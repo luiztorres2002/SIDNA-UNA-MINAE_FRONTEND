@@ -518,6 +518,7 @@ class Etiqueta {
         }).then((response) => {
             if (!response.ok) {
                 console.error(`Error al editar la etiqueta: ${response.status}`);
+                this.showModalErrorEditar();
                 throw new Error('Error al editar la etiqueta');
             }
             console.log('Etiqueta actualizada correctamente');
