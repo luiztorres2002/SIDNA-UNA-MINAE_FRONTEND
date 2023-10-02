@@ -44,6 +44,8 @@ class Etiqueta {
         this.dom.querySelector("#categorias #modalErrorEditar #dismissButtonEditar").addEventListener('click', this.hideModalErrorEditar);
         this.dom.querySelector("#categorias #sucessmodalEditar #sucessbutonEdit").addEventListener('click', this.hideModalExitoEditar);
         this.dom.querySelector("#categorias #modalcampoEditar #dismisscampoEditar").addEventListener('click', this.hideModalCampoEditar);
+        this.dom.querySelector("#categorias #error #errorb").addEventListener('click', this.hideModalError);
+        this.dom.querySelector("#categorias #sucess #sucessb").addEventListener('click', this.hideModalExito);
 
         // this.dom.querySelector("#categorias #modalError #dismissButton").addEventListener('click', this.hideModalError);
         // this.dom.querySelector("#categorias #sucessmodal #sucessbuton").addEventListener('click', this.hideModalExito);
