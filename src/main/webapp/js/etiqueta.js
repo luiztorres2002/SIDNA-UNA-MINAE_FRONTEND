@@ -10,6 +10,9 @@ class Etiqueta {
     modalexitoEditar;
     modalerrorEditar;
 
+    modaletiquetaExito;
+    modaletiquetaError;
+
     state;
 
     constructor() {
@@ -24,7 +27,10 @@ class Etiqueta {
         this.modalexitoEditar = new bootstrap.Modal(this.dom.querySelector("#sucessmodalEditar"));
         this.modalCampoEditar = new bootstrap.Modal(this.dom.querySelector("#modalcampoEditar"));
         this.modalerrorEditar = new bootstrap.Modal(this.dom.querySelector("#modalErrorEditar"));
+        this.modaletiquetaError = new bootstrap.Modal(this.dom.querySelector("#error"));
+        this.modaletiquetaExito = new bootstrap.Modal(this.dom.querySelector("#sucess"));
         this.dom.querySelector("#categorias #modalEditar #formEdit #cancel").addEventListener('click', this.cancelarEdit);
+
         this.dom.querySelector("#etiquetaAgregar").addEventListener('click', () => {
             const descripcion = this.dom.querySelector("#txtNombre").value;
             this.agregarEtiqueta2( descripcion);
@@ -80,6 +86,12 @@ class Etiqueta {
     </div>
   `;
     }
+    hidemodal = () =>{
+
+        this.modal.hide();
+        this.modal.resetForm();
+        this.reset();
+    }
 
     render = () => {
         const html = `
@@ -93,6 +105,8 @@ class Etiqueta {
             ${this.renderModalConfirmar()}
             ${this.renderModalErrorEditar()}
             ${this.renderModalCampoEditar()}
+            ${this.renderModalErrorEti()}
+            ${this.renderModalSuccessEti()}
         `;
         const rootContent = document.createElement('div');
         rootContent.id = 'categorias';
@@ -364,8 +378,8 @@ class Etiqueta {
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button id="close" type="button" class="close d-flex align-items-center justify-content-center" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true" class="ion-ios-close"></span>
+        <button type="button" id = "cancelModal" class="close d-flex align-items-center justify-content-center" aria-label="Close" style="font-size: 36px; width: 50px; height: 50px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); border: 2px solid #ccc; border-radius: 50%;">
+        <span aria-hidden="true" class="ion-ios-close"></span>
         </button>
       </div>
       <div class="modal-body p-4 py-5 p-md-5">
@@ -375,8 +389,7 @@ class Etiqueta {
         <form action="#" id="formadd" class="signup-form">
         <input type="hidden" id="etiquetaId" name="etiquetaId" value="">
          <div class="form-group mb-2">
-            <label for="name" style="font-size: 15px;">Nombre de etiqueta</label>
-            <input type="text" id="txtNombre" autocomplete="off" class="form-control">
+            <input type="text" id="txtNombre" class="form-control" placeholder="Ingrese texto aquí">
         </div>
           <div class="form-group mb-2">
             <button type="submit" id="etiquetaAgregar" class="form-control btn btn-primary rounded submit px-3">Aceptar</button>
@@ -431,7 +444,7 @@ class Etiqueta {
     }
     cargarEtiquetas = async () => {
         try {
-            const response = await fetch('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/1');
+            const response = await fetch('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/4-0258-0085');
             const data = await response.json();
             this.state.etiquetas = data;
             this.renderizarPaginaConEtiquetas();
@@ -480,12 +493,14 @@ class Etiqueta {
 
         fetch(url, options)
             .then(response => {
-                if (response.status === 201) {
+                if (!response.ok) {
+                    console.log('Error');
+                    this.showModalErrorEtiqueta();
+                } else {
                     console.log('Etiqueta agregada con éxito');
                     this.cargarEtiquetas();
                     this.renderizarPaginaConEtiquetas();
-                } else {
-                    console.error('Error al agregar la etiqueta');
+                    this.showModalExitoEtiqueta();
                 }
             })
             .catch(error => {
@@ -508,13 +523,12 @@ class Etiqueta {
             console.log('Etiqueta actualizada correctamente');
             this.cargarEtiquetas();
             this.renderizarPaginaConEtiquetas();
-            this.modalEditar.hide();
+            this.showModalExitoEditar();
         }).catch((error) => {
             console.error('Error:', error);
         });
         event.preventDefault();
     }
-
 
     search = async () => {
         const searchInput = this.dom.querySelector("#buscadorEtiqueta");
@@ -739,6 +753,9 @@ class Etiqueta {
 
     hideModalErrorEditar = async () => {
         this.modalerrorEditar.hide();
+        const etiquetaId = this.dom.querySelector("#categorias #modalEditar #formEdit #etiquetaId").value;
+        const descripcion = this.dom.querySelector("#categorias #modalEditar #formEdit #input").value;
+        this.editarEtiqueta(etiquetaId, descripcion);
     }
     hideModalExitoEditar = async () => {
         this.modalexitoEditar.hide();
@@ -760,5 +777,82 @@ class Etiqueta {
         this.modalEditar.hide();
         this.modalexitoEditar.show();
     }
+
+    renderModalErrorEti = () => {
+        return `
+<div id="error" class="modal fade">
+          <div class="modal-dialog modal-error">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="icon-box">
+                        <i class="material-icons">warning</i>
+                    </div>
+                    <h4 class="modal-title w-100">¡Ooops!</h4>\t
+                </div>
+                <div class="modal-body">
+                    <p style="font-size: 25px;" class="text-center">Verifica si la etiqueta está duplicada o los datos son incorrectos.</p>
+                </div>
+                <div class="modal-footer">
+            <button class="btn btn-success btn-block" id="errorb" data-dismiss="modal">Regresar al form</button>
+                </div>
+            </div>
+            </div>
+        </div>  
+
+    
+        `;
+    }
+
+
+
+
+    renderModalSuccessEti = () => {
+        return `
+        <div id="sucess" class="modal fade">
+          <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="icon-box">
+                        <i class="material-icons">&#xE876;</i>
+                    </div>
+                    <h4 class="modal-title w-100">¡Confirmado!</h4>\t
+                </div>
+                <div class="modal-body">
+                    <p style="font-size: 25px;" class="text-center">Tu etiqueta ha sido ingresada con éxito.</p>
+                </div>
+                <div class="modal-footer">
+            <button class="btn btn-success btn-block" id="sucessb" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+            </div>
+        </div>   
+        `;
+    }
+
+    showModalExitoEtiqueta = () => {
+        this.modal.hide();
+        this.modaletiquetaExito.show();
+    }
+
+
+    showModalErrorEtiqueta = () => {
+        // Cargar los datos de la entidad en el formulario del modal
+        this.modal.hide();
+        this.modaletiquetaError.show();
+    }
+
+    hideModalError = async () => {
+        this.modaletiquetaError.hide();
+        this.modal.show();
+    }
+
+    hideModalExito = async () => {
+        this.modaletiquetaExito.hide();
+        this.resetForm();
+        this.reset();
+    }
+
+
+
 
 }

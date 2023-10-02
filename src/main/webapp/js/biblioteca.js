@@ -509,8 +509,38 @@ class Biblioteca {
             mes = '12';
         }
 
+        let diaa = this.entity['dia'];
 
-        this.entity["fecha"] = anio+"-"+mes+"-"+dia;
+        if(diaa == '1'){
+            diaa = '01';
+        }
+        if(diaa == '2'){
+            diaa = '02';
+        }
+        if(diaa == '3'){
+            diaa = '03';
+        }
+        if(diaa == '4'){
+            diaa = '04';
+        }
+        if(diaa == '5'){
+            diaa = '05';
+        }
+        if(diaa == '6'){
+            diaa = '06';
+        }
+        if(diaa == '7'){
+            diaa = '07';
+        }
+        if(diaa == '8'){
+            diaa = '08';
+        }
+        if(diaa == '9'){
+            diaa = '09';
+        }
+
+
+        this.entity["fecha"] = anio+"-"+mes+"-"+diaa;
 
         delete this.entity['dia'];
         delete this.entity['mes'];

@@ -1,4 +1,4 @@
-package tests;
+package tests.NoticiaExterna;
 import data.Database;
 import data.NoticiaExternaDao;
 import logic.*;

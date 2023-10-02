@@ -1,4 +1,4 @@
-package tests;
+package tests.NoticiaExterna;
 
 import logic.Departamento;
 import logic.NoticiaExterna;

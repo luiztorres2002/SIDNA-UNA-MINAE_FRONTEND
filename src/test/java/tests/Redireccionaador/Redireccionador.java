@@ -1,4 +1,4 @@
-package tests;
+package tests.Redireccionaador;
 public class Redireccionador {
     public String redirigir(String url) {
         // Lógica de redirección

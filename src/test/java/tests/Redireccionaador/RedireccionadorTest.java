@@ -1,7 +1,9 @@
-package tests;
+package tests.Redireccionaador;
 
 import static org.mockito.Mockito.*;
 import org.junit.jupiter.api.Test;
+import tests.Redireccionaador.Redireccionador;
+
 import static org.junit.Assert.*;
 
 
