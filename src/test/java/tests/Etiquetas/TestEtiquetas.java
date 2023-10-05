@@ -41,9 +41,11 @@ public class TestEtiquetas {
             e.printStackTrace(); // Prints the exception stack trace to the console.
         }
     }
+
+
     @Test
     public void crearEtiquetaTest() throws SQLException {
-        Etiqueta etiquetaa = new Etiqueta(1, "No one", "4-0258-0085", true);
+        Etiqueta etiquetaa = new Etiqueta(1, "Prueba", "4-0258-0085", true);
 
         try {
             String sql = "INSERT INTO ETIQUETA (Descripcion, FK_Etiqueta_UsuarioCedula, Estado) VALUES (?, ?, ?)";

@@ -19,12 +19,29 @@ class Busqueda {
 
     state;
 
+    modalmarcar;
+
+    entidad;
+
+    modalerror;
+
+    modalexito;
+
 
     constructor() {
         this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A'};
         this.dom = this.render();
+        this.entidad ={};
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
+        this.modalmarcar = new bootstrap.Modal(this.dom.querySelector('#marcar'));
+        this.modalerror = new bootstrap.Modal(this.dom.querySelector('#modalError'));
+        this.modalexito = new bootstrap.Modal(this.dom.querySelector('#sucessmodal'));
         this.dom.querySelector("#busqueda #buscar").addEventListener('click', this.corresponderPalabraClaveEnNoticias);
+        this.dom.querySelector("#busqueda #marcar #formmarcar #marcarb").addEventListener('click', this.add);
+        this.dom.querySelector("#busqueda #marcar #formmarcar #marcarcancelarb").addEventListener('click', this.modalmarcarclose);
+        this.dom.querySelector("#busqueda #marcar #cancelModal").addEventListener('click', this.hidemodal);
+        this.dom.querySelector("#busqueda  #modalError #dismissButton").addEventListener('click', this.hideModalError);
+        this.dom.querySelector("#busqueda  #sucessmodal #sucessbuton").addEventListener('click', this.hideModalExito);
         setTimeout(() => {
             this.mostrarDestacadas();
         }, 100);
@@ -35,6 +52,9 @@ class Busqueda {
         const html = `
             ${this.renderBody()}
             ${this.renderModal()}
+            ${this.renderModalMarcar()}
+            ${this.renderModalError()}
+            ${this.renderModalSuccess()}
         `;
         const rootContent = document.createElement('div');
         rootContent.id = 'busqueda';
@@ -87,6 +107,9 @@ class Busqueda {
     </div>
 </div>
 <div id="pillsMobile-container" class="pill-container"></div>
+<div class="container justify-content-center" style="text-align: center; font-family: Verdana; font-size: 28px;"> 
+            Últimas noticias ambientales
+        </div>
 <div class="search-results-container">
     <div id="noticiasCoincidentes"></div> 
     <div class="d-flex justify-content-center">
@@ -97,7 +120,7 @@ class Busqueda {
                 </div>
             </form>
         </div>
-        
+      
        `;
 
 
@@ -139,6 +162,55 @@ class Busqueda {
 
         return body;
     }
+
+    renderModalError = () => {
+        return `
+<div id="modalError" class="modal fade">
+          <div class="modal-dialog modal-error">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="icon-box">
+                        <i class="material-icons">warning</i>
+                    </div>
+                    <h4 class="modal-title w-100">¡Ooops!</h4>\t
+                </div>
+                <div class="modal-body">
+                    <p style="font-size: 25px;" class="text-center">La noticia que intentas ingresar ya se encuentra en tu biblioteca</p>
+                </div>
+                <div class="modal-footer">
+            <button class="btn btn-success btn-block" id="dismissButton" data-dismiss="modal">Entendido</button>
+                </div>
+            </div>
+            </div>
+        </div>  
+
+    
+        `;
+    }
+
+    renderModalSuccess = () => {
+        return `
+    <div id="sucessmodal" class="modal fade">
+      <div class="modal-dialog modal-confirm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-box">
+                    <i class="material-icons">&#xE876;</i>
+                </div>
+                <h4 class="modal-title w-100">¡Confirmado!</h4>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 25px;" class="text-center">La noticia ha sido ingresada a tu biblioteca con éxito.</p>
+            </div>
+            <div class="modal-footer mt-3 text-center"> <!-- Ajusta el margen superior y alinea el botón al centro -->
+                <button class="btn btn-success btn-block" id="sucessbuton" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+      </div>
+    </div>
+    `;
+    }
+
 
     actualizarTexto() {
         const searchInput = document.getElementById("search-input");
@@ -245,23 +317,30 @@ class Busqueda {
                         </div>
                     </div>
                 `;
+                this.entity = {};
                 const newsElements = document.querySelectorAll('.noticia-coincidente');
                 newsElements.forEach((element, index) => {
                     const colorButtons = element.querySelectorAll('input[type="radio"]');
                     const newsSource = newsResults[index].link;
+                    const titulo = newsResults[index].title;
+                    const descripcion = newsResults[index].snippet;
+                    const fuente = newsResults[index].source;
+                    const fecha = newsResults[index].date;
+                    const imagen = newsResults[index].thumbnail;
 
                     colorButtons.forEach((button, colorIndex) => {
-                        button.addEventListener('click', () => {
-                            const selectedColor = button.value;
-                            const infoText = `News: ${newsSource} ${selectedColor}`;
-                            console.log(infoText);
-                        });
+                        const selectedColor = button.value;
+                        const infoText = `${selectedColor}`;
+                        button.addEventListener('click', this.modalmarcarshow.bind(this, titulo,descripcion,newsSource,fuente,infoText,fecha,imagen));
+
                     });
                 });
                 noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
             }
         }
     }
+
+
 
     async  corresponderPalabraClaveEnNoticias() {
         let contadorNoticias = 0;
@@ -353,268 +432,42 @@ class Busqueda {
             console.error('Error al obtener datos de la API:', error);
         }
     }
-    /*
-        async function corresponderPalabraClaveEnNoticias() {
-            const urlPrincipal = document.getElementById('mainUrlInput').value;
-            const palabraClave = document.getElementById('keywordInput').value.toLowerCase();
-            const palabraClaveNormalized = palabraClave
-                .toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "");
-
-            const noticiasCoincidentes = document.getElementById('noticiasCoincidentes');
-            noticiasCoincidentes.innerHTML = '';
-
-            try {
-                const respuesta = await fetch(urlPrincipal);
-                const html = await respuesta.text();
-                const analizador = new DOMParser();
-                const documento = analizador.parseFromString(html, 'text/html');
-
-                const enlacesNoticias = Array.from(documento.querySelectorAll('a.nota-link')).filter(a => {
-                    const href = a.getAttribute('href');
-                    return href && href.startsWith('/');
-                });
-
-                if (enlacesNoticias.length === 0) {
-                    noticiasCoincidentes.innerHTML = '<p>No se encontraron  noticias.</p>';
-                } else {
-                    for (const enlace of enlacesNoticias) {
-                        const urlNoticia = new URL(enlace.getAttribute('href'), urlPrincipal).href;
-                        if (urlsProcesadas.has(urlNoticia)) {
-                            continue;
-                        }
-                        contadorNoticias++;
-                        console.log(`Enlace Identificado de Noticia ${contadorNoticias}:`, urlNoticia);
-
-                        try {
-                            const respuestaNoticia = await fetch(urlNoticia);
-                            const htmlNoticia = await respuestaNoticia.text();
-                            const documentoNoticia = analizador.parseFromString(htmlNoticia, 'text/html');
-                            const contenidoTextoNoticia = documentoNoticia.body.textContent.toLowerCase();
-
-                            const articleElement = documentoNoticia.querySelector('article');
 
 
-                            const relatedDiv = articleElement.querySelector('div.related');
-                            if (relatedDiv) {
-                                relatedDiv.remove();
-                            }
-                            const articleText = articleElement.textContent.toLowerCase();
+    renderModalMarcar = () => {
+        return `
+        <div id="marcar" class="modal fade" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" id="cancelModal" class="close d-flex align-items-center justify-content-center" aria-label="Close" style="font-size: 36px; width: 50px; height: 50px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); border: 2px solid #ccc; border-radius: 50%;">
+                            <span aria-hidden="true" class="ion-ios-close"></span>
+                        </button>
+                    </div>
+                    <div class="modal-body p-4 py-5 p-md-5">
+                        <div class="text-center">
+                            <img src="images/Minae.png" class="w-50 mx-auto d-block mb-4" alt="...">
 
-                            if (articleText.normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(palabraClaveNormalized)) {
-                                const elementoNoticiaCoincidente = document.createElement('div');
-                                elementoNoticiaCoincidente.classList.add('noticia-coincidente');
-
-
-
-                                const ogDescripcion = documentoNoticia.querySelector('meta[property="og:description"]');
-                                const ogImagen = documentoNoticia.querySelector('meta[property="og:image"]');
-                                const ogTitulo = documentoNoticia.querySelector('meta[property="og:title"]');
-                                const ogFecha = documentoNoticia.querySelector('meta[property="article:published_time"]');
-
-
-                                if (ogDescripcion && ogImagen && ogTitulo)  {
-                                    const descripcion = ogDescripcion.getAttribute('content');
-                                    const urlImagen = ogImagen.getAttribute('content');
-                                    const titulo = ogTitulo.getAttribute('content');
-                                    let timePublished = '';
-
-                                    if (ogFecha) {
-                                        const dateString = ogFecha.getAttribute('content');
-                                        const date = new Date(dateString);
-                                        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-                                        timePublished = date.toLocaleDateString('es-ES', options);
-                                    }
-
-                                    const elementoNoticiaCoincidente = document.createElement('div');
-                                    elementoNoticiaCoincidente.classList.add('card', 'bg-dark-subtle', 'mt-4');
-
-                                    elementoNoticiaCoincidente.innerHTML = `
-            <img src="${urlImagen}" class="card-img-top" alt="Imagen Previo">
-            <div class="card-body">
-                <div class="text-section">
-                    <h5 class="card-title fw-bold">${titulo}</h5>
-                    <p class="card-text">${descripcion}</p>
-                </div>
-                <div class="cta-section">
-                    <p class="card-text">${timePublished}</p>
-                    <a href="${urlNoticia}" class="btn btn-dark" target="_blank">Ver Noticia</a>
+                        </div>
+                        <h4 class="text-center mb-2 mt-2">¿Desea guardar esta noticia en su biblioteca?</h4>
+                        <ul class="ftco-footer-social p-0 text-center">
+                        </ul>
+                        <form action="#" id="formmarcar" class="signup-form">
+                            <div class="btn-group mt-4 d-flex justify-content-center">
+                                <button type="submit" id="marcarb" class="btn btn-outline-primary rounded submit ml-4 mr-3">Agregar</button>
+                                <button type="button" id="marcarcancelarb" class="btn btn-outline-secondary rounded submit">Cancelar</button>
+                            </div>
+                            <div class="form-group d-md-flex">
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        `;
-
-                                    document.getElementById('noticiasCoincidentes').appendChild(elementoNoticiaCoincidente);
-                                } else {
-
-                                    const elementoNoticiaCoincidente = document.createElement('div');
-                                    elementoNoticiaCoincidente.classList.add('card', 'bg-light-subtle', 'mt-4');
-
-                                    elementoNoticiaCoincidente.innerHTML = `
-            <div class="card-body">
-                <div class="text-section">
-                    <h5 class="card-title fw-bold">Palabra clave encontrada</h5>
-                    <p class="card-text">Palabra clave encontrada en <a href="${urlNoticia}" target="_blank">${enlace.textContent}</a></p>
-                </div>
-            </div>
-        `;
-
-                                    document.getElementById('noticiasCoincidentes').appendChild(elementoNoticiaCoincidente);
-                                }
-                                arrayNoticiasCoincidentes.push({ Url: urlNoticia, Titulo_es: enlace.textContent });
-                                noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
+        </div>
+    `;
+    }
 
 
-                                urlsProcesadas.add(urlNoticia);
-                            }
-                        } catch (error) {
-                            console.error(`Error al obtener datos de noticia (${urlNoticia}):`, error);
-                        }
-                    }
-                }
-
-                console.log(`Total de Noticias Identificadas: ${contadorNoticias}`);
-            } catch (error) {
-                console.error('Error al obtener datos de la URL principal:', error);
-            }
-        }
-
-        async function cargarMasNoticias() {
-            const palabraClave = document.getElementById('keywordInput').value.toLowerCase();
-            const palabraClaveNormalized = palabraClave
-                .toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "");
-            try {
-                const apiUrl = 'https://www.teletica.com/api/news/getMore';
-                const desde = contadorNoticias;
-                const hasta = desde + 6;
-
-                const respuesta = await fetch(`${apiUrl}?from=${desde}&to=${hasta}&slug=noticias`);
-
-                if (respuesta.ok) {
-                    try {
-                        const datos = await respuesta.json();
-
-                        if (datos.length > 0) {
-                            for (const articulo of datos) {
-                                contadorNoticias++;
-                                const categoria = articulo.Nodes_en[0].toLowerCase().replace(/\s+/g, '');
-                                const urlArticulo = `https://www.teletica.com/${categoria}/${articulo.Url}_${articulo.Id}`;
-
-                                if (urlsProcesadas.has(urlArticulo)) {
-                                    continue;
-                                }
-
-                                console.log(`Enlace Identificado al Artículo de Noticia ${contadorNoticias}:`, urlArticulo);
-
-                                try {
-                                    const respuestaArticulo = await fetch(urlArticulo);
-
-                                    if (!respuestaArticulo.ok) {
-                                        throw new Error(`Error al obtener noticia. Estado: ${respuestaArticulo.status}`);
-                                    }
-
-                                    const htmlArticulo = await respuestaArticulo.text();
-                                    const documentoArticulo = new DOMParser().parseFromString(htmlArticulo, 'text/html');
-                                    const contenidoTextoArticulo = documentoArticulo.body.textContent.toLowerCase();
-
-
-                                    const articleElement = documentoArticulo.querySelector('article');
-
-
-                                    const relatedDiv = articleElement.querySelector('div.related');
-                                    if (relatedDiv) {
-                                        relatedDiv.remove();
-                                    }
-                                    const articleText = articleElement.textContent.toLowerCase();
-
-
-                                    if (articleText.normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(palabraClaveNormalized)) {
-                                        const elementoNoticiaCoincidente = document.createElement('div');
-                                        elementoNoticiaCoincidente.classList.add('noticia-coincidente');
-
-
-
-                                        const ogDescripcion = documentoArticulo.querySelector('meta[property="og:description"]');
-                                        const ogImagen = documentoArticulo.querySelector('meta[property="og:image"]');
-                                        const ogTitulo = documentoArticulo.querySelector('meta[property="og:title"]');
-                                        const ogFecha = documentoArticulo.querySelector('meta[property="article:published_time"]');
-
-
-                                        if (ogDescripcion && ogImagen) {
-                                            const descripcion = ogDescripcion.getAttribute('content');
-                                            const urlImagen = ogImagen.getAttribute('content');
-                                            const titulo = ogTitulo.getAttribute('content');
-                                            let timePublished = '';
-
-                                            if (ogFecha) {
-                                                const dateString = ogFecha.getAttribute('content');
-                                                const date = new Date(dateString);
-                                                const options = { year: 'numeric', month: 'long', day: 'numeric' };
-                                                timePublished = date.toLocaleDateString('es-ES', options);
-                                            }
-
-                                            const elementoNoticiaCoincidente = document.createElement('div');
-                                            elementoNoticiaCoincidente.classList.add('card', 'bg-dark-subtle', 'mt-4');
-
-                                            elementoNoticiaCoincidente.innerHTML = `
-            <img src="${urlImagen}" class="card-img-top" alt="Imagen Previo">
-            <div class="card-body">
-                <div class="text-section">
-                    <h5 class="card-title fw-bold">${titulo}</h5>
-                    <p class="card-text">${descripcion}</p>
-                </div>
-                <div class="cta-section">
-                    <p class="card-text">${timePublished}</p>
-                    <a href="${urlArticulo}" class="btn btn-dark" target="_blank">Ver Noticia</a>
-                </div>
-            </div>
-        `;
-
-                                            document.getElementById('noticiasCoincidentes').appendChild(elementoNoticiaCoincidente);
-                                        } else {
-
-                                            const elementoNoticiaCoincidente = document.createElement('div');
-                                            elementoNoticiaCoincidente.classList.add('card', 'bg-light-subtle', 'mt-4');
-
-                                            elementoNoticiaCoincidente.innerHTML = `
-            <div class="card-body">
-                <div class="text-section">
-                    <h5 class="card-title fw-bold">Palabra clave encontrada</h5>
-                    <p class="card-text">Palabra clave encontrada en <a href="${urlArticulo}" target="_blank"></a></p>
-                </div>
-            </div>
-        `;
-
-                                            document.getElementById('noticiasCoincidentes').appendChild(elementoNoticiaCoincidente);
-                                        }
-                                        arrayNoticiasCoincidentes.push({ Url: urlArticulo, Titulo_es: ogTitulo.getAttribute('content') });
-                                        noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
-
-
-                                        urlsProcesadas.add(urlArticulo);
-                                    }
-                                } catch (error) {
-                                    console.error(`Error al obtener datos de noticia (${urlArticulo}):`, error.message);
-                                }
-                            }
-                        } else {
-                            console.log('No hay más noticias disponibles.');
-                        }
-                    } catch (jsonError) {
-                        console.error('Error al analizar JSON:', jsonError);
-                    }
-                } else {
-                    throw new Error(`Error al obtener más noticias. Estado: ${respuesta.status}`);
-                }
-            } catch (error) {
-                console.error('Error al obtener más noticias:', error.message);
-            }
-        }
-
-
-    */
 
     renderModal = () => {
         return `
@@ -673,33 +526,30 @@ class Busqueda {
 
 
     add = async () => {
-        // Necesito validar antes de ingresar en la base de datos.
-        this.load(); // Carga los datos del formulario al objeto entity.
-        const codigo = Math.floor(Math.random() * (1000 - 1 + 1)) + 1;
-        this.entity["codigo"] = codigo;
-        const request = new Request('http://localhost:8080/Proyecto2-Backend/api/categorias', {
+
+        const request = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(this.entity)
+            body: JSON.stringify(this.entidad)
         });
-
         try {
             const response = await fetch(request);
             if (!response.ok) {
-                console.log(this.entity);
+                this.showModalError()
+                return;
+            }
+            else{
+                this.showModalExito();
                 return;
             }
         } catch (e) {
             alert(e);
         }
-
-        this.list();
-        this.reset();
-        this.resetForm();
-        this.modal.hide();
     }
+
+
 
     row = (list, c) => {
         var tr = document.createElement("tr");
@@ -724,7 +574,7 @@ class Busqueda {
     }
 
     reset = () => {
-        this.state.entity = this.emptyEntity();
+        this.entidad = {};
     }
 
     listSearch = (placa) => {
@@ -768,6 +618,86 @@ class Busqueda {
         var entity = '';
         return entity;
     }
+
+
+    modalmarcarshow = (titulo,descripcion, enlace, fuente,infotext,fecha,imagen) => {
+        this.entidad['id'] = '1';
+        this.entidad['titulo'] = titulo;
+        this.entidad['descripcion'] = descripcion;
+        this.entidad['fecha'] = fecha;
+        this.entidad['prioridad'] = infotext;
+        this.entidad['fuente'] = fuente;
+        this.entidad['enlace'] = enlace;
+        this.entidad['fechaGuardado'] = '2023-11-11';
+        this.entidad['usuarioCedula'] = '1';
+        this.entidad['imagen'] = imagen;
+        this.modalmarcar.show();
+    }
+
+    modalmarcarclose = () => {
+            this.reset();
+            this.modalmarcar.hide();
+    }
+
+    emptyEntity = () => {
+        var entity = '';
+        return entity;
+    }
+
+    reset = () => {
+        this.state.entity = this.emptyEntity();
+    }
+
+    renderModalSuccess = () => {
+        return `
+        <div id="sucessmodal" class="modal fade">
+          <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="icon-box">
+                        <i class="material-icons">&#xE876;</i>
+                    </div>
+                    <h4 class="modal-title w-100">¡Confirmado!</h4>\t
+                </div>
+                <div class="modal-body">
+                    <p style="font-size: 25px;" class="text-center">La noticia ha sido ingresada con éxito en tu biblioteca</p>
+                </div>
+                <div class="modal-footer">
+            <button class="btn btn-success btn-block" id="sucessbuton" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+            </div>
+        </div>   
+        `;
+    }
+
+    showModalError = async () => {
+        this.modalmarcar.hide();
+        this.modalerror.show();
+    }
+
+    hideModalError = async () => {
+        this.modalerror.hide();
+    }
+
+    hidemodal = async () => {
+        this.modalmarcar.hide();
+        this.reset();
+    }
+
+    hideModalExito = async () => {
+        this.modalexito.hide();
+        this.resetForm();
+        this.reset();
+    }
+
+    showModalExito = () => {
+        // Cargar los datos de la entidad en el formulario del modal
+        this.modalmarcar.hide();
+        this.modalexito.show();
+    }
+
+
 
 
 

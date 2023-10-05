@@ -35,4 +35,6 @@ public class NoticiaExternaDao {
             throw new Exception("No se creo");
         }
     }
+
+
 }

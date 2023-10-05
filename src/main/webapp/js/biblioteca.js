@@ -44,22 +44,25 @@ class Biblioteca {
 
     renderBody = () => {
         return `
-         
+         <div class="linea-azul"></div>
+        <div class="linea-amarilla"></div>
+        <div class="linea-verde"></div>
         <div class="container">
-    <h1 class="mt-5 text-center">Biblioteca de usuario</h1>
+   <div class="container mt-5 justify-content-center" style="text-align: center; font-family: Verdana; font-size: 32px;"> 
+           Biblioteca Personal
+        </div>
 
-    <form id="form">
-        <div class="input-group mt-3">
-            <input class="form-control fontAwesome rounded" id="buscadorB" autocomplete="off" type="text" placeholder="&#xf002; Buscar Noticia">
-        </div>
-        <div class="container">
-        <div class="btn-group mt-3" style="margin-left: 0px;">
-            <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; color:white; background-color: #84bd00; width: 190px; line-height: 5px; margin-top: 4px;">
-                <span class="font-weight-bold">+</span> <span class="texto-agregar">Agregar Noticia</span>
-            </button>
-        </div>
-         </div>
-    </form>
+  <form id="form" class="d-flex justify-content-between align-items-center">
+    <div class="input-group">
+        <input class="form-control fontAwesome rounded mt-3" id="buscadorB" autocomplete="off" type="text" placeholder="&#xf002; Buscar Noticia">
+    </div>
+    <div class="btn-group" style="margin-left: 10px;">
+        <button type="button" class="btn btn-custom-outline-success ml-3 mt-3" id="agregar" style="height: 40px; color:white; background-color: #84bd00; width: 190px; line-height: 5px; margin-top: 2px;">
+            <span class="font-weight-bold">+</span> <span class="texto-agregar">Agregar Noticia</span>
+        </button>
+    </div>
+</form>
+
 </div>
 
 
@@ -265,6 +268,7 @@ class Biblioteca {
         const mes = document.getElementById('mes').value;
         const anio = document.getElementById('anio').value;
         const regexAnio = /^\d{4}$/;
+        const regexEnlace = /^(https?:\/\/).+/i;
 
         const tituloLegend = document.getElementById('titulolegend');
         const descripcionLegend = document.getElementById('descripcionlegend');
@@ -273,93 +277,79 @@ class Biblioteca {
         const fuenteLegend = document.getElementById('fuentelegend');
         const enlaceLegend = document.getElementById('enlacelegend');
 
+        // Restablecer estilos
+        tituloLegend.style.color = 'black';
+        tituloLegend.style.textDecoration = 'none';
+        descripcionLegend.style.color = 'black';
+        descripcionLegend.style.textDecoration = 'none';
+        fechaLegend.style.color = 'black';
+        fechaLegend.style.textDecoration = 'none';
+        prioridadLegend.style.color = 'black';
+        prioridadLegend.style.textDecoration = 'none';
+        fuenteLegend.style.color = 'black';
+        fuenteLegend.style.textDecoration = 'none';
+        enlaceLegend.style.color = 'black';
+        enlaceLegend.style.textDecoration = 'none';
+
         if (titulo.trim() === '') {
             tituloLegend.style.color = 'red';
             tituloLegend.style.textDecoration = 'underline';
-            tituloLegend.title = 'Debes de ingresar un titulo';
-        }
-        else{
-            tituloLegend.style.color = 'black';
-            tituloLegend.style.textDecoration = 'none';
+            tituloLegend.title = 'Debes ingresar un título';
         }
 
         if (descripcion.trim() === '') {
             descripcionLegend.style.color = 'red';
             descripcionLegend.style.textDecoration = 'underline';
-            descripcionLegend.title = 'Debes de ingresar una descripcion de la noticia';
-        }
-        else{
-            descripcionLegend.style.color = 'black';
-            descripcionLegend.style.textDecoration = 'none';
+            descripcionLegend.title = 'Debes ingresar una descripción de la noticia';
         }
 
-        if(mes.trim() === '' || mes.trim() === 'Mes'){
+        if (mes.trim() === '' || mes.trim() === 'Mes') {
             fechaLegend.style.color = 'red';
             fechaLegend.style.textDecoration = 'underline';
-            fechaLegend.title = 'Eliga un mes valido';
-        } else{
-            fechaLegend.style.color = 'black';
-            fechaLegend.style.textDecoration = 'none';
+            fechaLegend.title = 'Elige un mes válido';
         }
 
-        if(dia.trim() === '' || dia.trim() === 'dia'){
+        if (dia.trim() === '' || parseInt(dia) < 1 || parseInt(dia) > 31) {
             fechaLegend.style.color = 'red';
-            fechaLegend.style.color = 'red';
-            fechaLegend.title = 'Ingrese un valor dentro del rango de los dias (1-31)';
-        }else{
-            fechaLegend.style.textDecoration = 'none';
-            fechaLegend.style.color = 'black';
+            fechaLegend.style.textDecoration = 'underline';
+            fechaLegend.title = 'Ingresa un valor dentro del rango de los días (1-31)';
         }
 
         if (prioridad.trim() === '') {
             prioridadLegend.style.color = 'red';
             prioridadLegend.style.textDecoration = 'underline';
-            prioridadLegend.title = 'Ingrese una prioridad validad';
-        }
-        else{
-            prioridadLegend.style.color = 'black';
-            prioridadLegend.style.textDecoration = 'none';
+            prioridadLegend.title = 'Ingresa una prioridad válida';
         }
 
         if (fuente.trim() === '') {
             fuenteLegend.style.color = 'red';
             fuenteLegend.style.textDecoration = 'underline';
-            fuenteLegend.title = 'Ingrese una fuente valida';
-        }
-        else{
-            fuenteLegend.style.color = 'black';
-            fuenteLegend.style.textDecoration = 'none';
+            fuenteLegend.title = 'Ingresa una fuente válida';
         }
 
-        if (enlace.trim() === '') {
+        if (!regexEnlace.test(enlace)) {
             enlaceLegend.style.color = 'red';
             enlaceLegend.style.textDecoration = 'underline';
-            enlaceLegend.title = 'Ingrese un enlace que sea valido (www.ejemplo.com)'
+            enlaceLegend.title = 'Ingresa un enlace válido (debe comenzar con http:// o https://)';
         }
-        else{
-            enlaceLegend.style.color = 'black';
-            enlaceLegend.style.textDecoration = 'none';
-        }
+
         if (!regexAnio.test(anio)) {
-            // Si el año no coincide con el formato válido (4 dígitos), muestra un mensaje de error
-            // y aplica un estilo de subrayado y color rojo al campo de año.
             fechaLegend.style.color = 'red';
             fechaLegend.style.textDecoration = 'underline';
-            fechaLegend.title= 'Ingrese un año valido';
-        } else {
-            // Si el año es válido, restaura el estilo original.
-            fechaLegend.style.color = 'black';
-            fechaLegend.style.textDecoration = 'none';
+            fechaLegend.title = 'Ingresa un año válido';
         }
 
         // Verificar si alguno de los campos está vacío
         if (
             titulo.trim() === '' ||
-            descripcion.trim() === '' || anio.trim() === '',
-            mes.trim() === '' || dia.trim() == '' || !regexAnio.test(anio) ||
+            descripcion.trim() === '' ||
+            anio.trim() === '' ||
+            mes.trim() === '' ||
+            dia.trim() === '' ||
             prioridad.trim() === '' ||
             fuente.trim() === '' ||
-            enlace.trim() === ''
+            enlace.trim() === '' || !regexEnlace.test(enlace) || !regexAnio.test(anio) ||  parseInt(dia) < 1 || parseInt(dia) > 31
+
         ) {
             this.showModalCampo();
             return false;
