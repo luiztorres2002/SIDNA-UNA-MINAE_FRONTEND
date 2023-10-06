@@ -31,6 +31,7 @@ class Busqueda {
     constructor() {
         this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A'};
         this.dom = this.render();
+        const self = this;
         this.entidad ={};
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
         this.modalmarcar = new bootstrap.Modal(this.dom.querySelector('#marcar'));
@@ -45,7 +46,16 @@ class Busqueda {
         setTimeout(() => {
             this.mostrarDestacadas();
         }, 100);
-
+        const semaforoContainer = this.dom.querySelector('.semaforoModal');
+        const radioButtons = semaforoContainer.querySelectorAll('input[type="radio"]');
+        radioButtons.forEach(radioButton => {
+            radioButton.addEventListener('change', function() {
+                if (this.checked) {
+                    self.entidad['prioridad'] = this.value;
+                    console.log(`Prioridad nueva seleccionada: ${this.value}`);
+                }
+            });
+        });
     }
 
     render = () => {
@@ -75,12 +85,9 @@ class Busqueda {
             <span class="visually-hidden">Loading...</span>
         </div>
     </div>
-<div id="noResultsMessage" class="popup-message">
-  <i class="fas fa-exclamation-triangle"></i> No se encontraron resultados.
-</div>
-<div id="digiteMessage" class="popup-message">
-  <i class="fas fa-exclamation-triangle"></i> Por favor, ingrese un término de búsqueda válido.
-</div>
+    <div class="container justify-content-center" id="tituloBusqueda" style="text-align: center; font-family: Verdana; font-size: 28px;"> 
+            Últimas noticias ambientales
+        </div>
    <div class="d-flex justify-content-center">
             <form id="form" style="width: 85%;"">
            <div class="input-group mb-3 mt-10" style="display: flex; align-items: center; justify-content: center;">
@@ -107,20 +114,16 @@ class Busqueda {
     </div>
 </div>
 <div id="pillsMobile-container" class="pill-container"></div>
-<div class="container justify-content-center" style="text-align: center; font-family: Verdana; font-size: 28px;"> 
-            Últimas noticias ambientales
-        </div>
 <div class="search-results-container">
     <div id="noticiasCoincidentes"></div> 
     <div class="d-flex justify-content-center">
    
     </div>
 </div>
-
                 </div>
             </form>
         </div>
-      
+        
        `;
 
 
@@ -129,14 +132,13 @@ class Busqueda {
             const pillsContainer = document.getElementById("pills-container");
             const pillsContainer2 = document.getElementById("pillsMobile-container");
             const searchInput = document.getElementById("search-input");
-
             searchInput.addEventListener("keyup", (event) => {
                 if (event.key === "Enter" || event.key === "," || event.key === "-") {
                     event.preventDefault();
                     const searchValue = searchInput.textContent.trim();
                     if (searchValue) {
 
-                        const cleanedValue = searchValue.replace(/[,.-]/g, "").trim();
+                        const cleanedValue = searchValue.replace(/[,-]/g, "").trim();
                         if (cleanedValue) {
                             this.crearBurbuja(cleanedValue);
                             searchInput.textContent = "";
@@ -279,7 +281,7 @@ class Busqueda {
 
                 try {
 
-                    const corsProxyUrl = 'https://corsproxy.io/?';
+                    const corsProxyUrl = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
                     const newsResponse = await fetch(corsProxyUrl + result.link);
                     const newsHtml = await newsResponse.text();
                     const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
@@ -296,7 +298,7 @@ class Busqueda {
                 elementoNoticiaCoincidente.classList.add('noticia-coincidente');
 
                 elementoNoticiaCoincidente.innerHTML = `
-                    <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};">
+                    <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${result.link}">
                         <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.thumbnail}'; this.classList.add('card-img-top', 'card-img-custom');">
                         <div class="card-body">
                             <div class="text-section">
@@ -326,7 +328,7 @@ class Busqueda {
                     const descripcion = newsResults[index].snippet;
                     const fuente = newsResults[index].source;
                     const fecha = newsResults[index].date;
-                    const imagen = newsResults[index].thumbnail;
+                    const imagen = imageUrl;
 
                     colorButtons.forEach((button, colorIndex) => {
                         const selectedColor = button.value;
@@ -335,12 +337,11 @@ class Busqueda {
 
                     });
                 });
+
                 noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
             }
         }
     }
-
-
 
     async  corresponderPalabraClaveEnNoticias() {
         let contadorNoticias = 0;
@@ -450,8 +451,17 @@ class Busqueda {
 
                         </div>
                         <h4 class="text-center mb-2 mt-2">¿Desea guardar esta noticia en su biblioteca?</h4>
+                       
                         <ul class="ftco-footer-social p-0 text-center">
                         </ul>
+                         <div class="d-flex align-items-center justify-content-center">
+                    <p class="mr-3" style="margin-top: 14px;">Prioridad seleccionada:</p>
+                    <div class="semaforoModal">
+                        <input type="radio" id="radioAlta" name="rag1" class="AltaModal" value="Alta">
+                        <input type="radio" id="radioMedia" name="rag1" class="MediaModal" value="Media">
+                        <input type="radio" id="radioBaja" name="rag1" class="BajaModal" value="Baja">
+                    </div>
+                </div>
                         <form action="#" id="formmarcar" class="signup-form">
                             <div class="btn-group mt-4 d-flex justify-content-center">
                                 <button type="submit" id="marcarb" class="btn btn-outline-primary rounded submit ml-4 mr-3">Agregar</button>
@@ -526,7 +536,7 @@ class Busqueda {
 
 
     add = async () => {
-
+        event.preventDefault();
         const request = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas', {
             method: 'POST',
             headers: {
@@ -534,6 +544,7 @@ class Busqueda {
             },
             body: JSON.stringify(this.entidad)
         });
+
         try {
             const response = await fetch(request);
             if (!response.ok) {
@@ -542,6 +553,10 @@ class Busqueda {
             }
             else{
                 this.showModalExito();
+                const noticia = document.querySelector(`[data-link="${this.entidad.enlace}"]`);
+                if (noticia) {
+                    noticia.remove();
+                }
                 return;
             }
         } catch (e) {
@@ -631,6 +646,24 @@ class Busqueda {
         this.entidad['fechaGuardado'] = '2023-11-11';
         this.entidad['usuarioCedula'] = '1';
         this.entidad['imagen'] = imagen;
+        let radioToSelect;
+        switch (infotext) {
+            case "Alta":
+                radioToSelect = document.getElementById('radioAlta');
+                break;
+            case "Media":
+                radioToSelect = document.getElementById('radioMedia');
+                break;
+            case "Baja":
+                radioToSelect = document.getElementById('radioBaja');
+                break;
+            default:
+                break;
+        }
+        if (radioToSelect) {
+            radioToSelect.checked = true;
+        }
+
         this.modalmarcar.show();
     }
 

@@ -65,30 +65,28 @@ class Etiqueta {
 
     renderModalConfirmar = () => {
         return `
-<div id="confirmationModal" class="modal fade" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
+    <div id="confirmationModal" class="modal fade" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered" id="confirmacion" role="document" style="width: auto;max-width: 80%; margin-left: 37%;">
+        <div class="modal-content" style="width: auto;">
+          <div class="modal-header">
+          </div>
+          <div class="modal-body">
+            <div class="d-flex justify-content- align-items-center mb-3">
+              <h3 class="text-left mb-0">Confirmar</h3>
+              <button class="btn btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
             </div>
-            <div class="modal-body">
-                <div class="d-flex justify-content- align-items-center mb-3">
-                    <h3 class="text-left mb-0">Confirmar</h3>
-                    <button class="btn btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
-                </div>
-                <ul class="ftco-footer-social p-0 text-center">
-                </ul>
-                <p id="etiqueta-description" style="font-size: 1.5em;"></p>
-            </div>
-            <div class="modal-footer justify-content-lg-start" style="border-top: none;">
-                <button id="confirm-si" type="submit" style="background-color: #84bd00" class="rounded text-dark">Aceptar</button>
-                <button id="confirm-no" type="submit" style="background-color: white" class="rounded" data-dismiss="modal">Cancelar</button>
-            </div>
+            <ul class="ftco-footer-social p-0 text-center">
+            </ul>
+            <p id="etiqueta-description" style="font-size: 1.0em; font-weight: bold;">Your dynamic content here...</p>
+          </div>
+          <div class="modal-footer justify-content-lg-start" style="border-top: none;">
+            <button id="confirm-si" type="submit" style="background-color: #84bd00" class="rounded text-light">Aceptar</button>
+            <button id="confirm-no" type="submit" style="background-color: white" class="rounded" data-dismiss="modal">Cancelar</button>
+          </div>
         </div>
+      </div>
     </div>
-</div>
-        
-    `;
-
+  `;
     }
     hidemodal = () =>{
 
@@ -124,6 +122,9 @@ class Etiqueta {
         <div class="linea-amarilla"></div>
         <div class="linea-verde"></div>
     </div>
+    <div class="container justify-content-center" id="tituloEtiqueta" style="text-align: center; font-family: Verdana; font-size: 28px;"> 
+            Etiquetas
+        </div>
    <div class="d-flex justify-content-center">
             <form id="form" style="width: 85%; margin-top: 20px;"">
            <div class="input-group mb-3 mt-10" style="display: flex; align-items: center; justify-content: center;">
@@ -144,18 +145,21 @@ class Etiqueta {
     </div>
   </div>
 </div>
- <table class="table table-fixed" id="tablaEtiquetas" style="display: none;">
+ <div class="table-responsive" style="max-height: 600px; overflow-y: auto; overflow-x: hidden; background-color: white">
+  <table class="table table-fixed" id="tablaEtiquetas" style="display: none">  
   <thead>
         <tr>
         
-            <th class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none">Nombre de Etiqueta</th>
-            <th class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></th>
-            <th class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none" >Noticias Asociadas</th>
+            <th class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none; background-color: white;">Nombre de Etiqueta</th>
+            <th class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none; background-color: white;"></th>
+            <th class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none; background-color: white;" >Noticias Asociadas</th>
+            <th class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none; background-color: white;" >Estado</th>
         </tr>
     </thead>
     <tbody id="etiquetasTableBody">
       
 </table>
+</div>
                 </div>
             </form>
         </div>
@@ -213,8 +217,11 @@ class Etiqueta {
         </td>
         <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
         <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
+        <div class="toggle-container">
+        <span class="number">10</span>
+        </div>
+        <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
             <div class="toggle-container">
-                <span class="number">10</span>
                 <div class="form-check form-switch toggle-switch">
                     <input class="form-check-input unchecked" type="checkbox" role="switch" data-row="${index + 1}"data-etiqueta-descripcion="${descripcion}" data-etiqueta-id="${etiquetaId}" data-etiqueta-estado="${estado}" ${isChecked} style="background-color: #ffffff; border-color: #000000; background-image: url('data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'-4 -4 8 8\\'><circle r=\\'3\\' fill=\\'%2384bd00\\'/></svg>') ">
                     <label class="form-check-label" for="flexSwitchCheckDefault"></label>
@@ -486,8 +493,6 @@ class Etiqueta {
     agregarEtiqueta2 = (descripcion) => {
         event.preventDefault();
         const url = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/';
-
-
         const options = {
             method: 'POST',
             headers: {
@@ -854,7 +859,7 @@ class Etiqueta {
 
     hideModalExito = async () => {
         this.modaletiquetaExito.hide();
-        this.resetFormAdd();
+        this.resetForm();
         this.reset();
     }
 

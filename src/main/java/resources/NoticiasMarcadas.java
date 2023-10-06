@@ -20,7 +20,6 @@ import logic.Service;
                 Service service = Service.instance();
                 service.noticiaMarcadaAdd(noticiaMarcada);
             } catch (Exception ex) {
-                System.out.println("Hola");
                 throw new NotAcceptableException();
             }
         }

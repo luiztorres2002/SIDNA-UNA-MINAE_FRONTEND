@@ -68,6 +68,11 @@
     margin: 10px;
 }
 
+#tablaEtiquetas thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
 
 .table th, .table td {
     font-size: 18px;
@@ -76,11 +81,11 @@
 }
 
 .table td.large {
-    width: 70%;
+    width: 57%;
 }
 
 .table td.empty {
-    width: 15%;
+    width: 25%;
 }
 
 .table td.empty2 {
@@ -165,6 +170,16 @@ tr.disabled-row {
         transition: all 0.3s ease;
     }
 
+    .table th, .table td {
+        font-size: 16px;
+        height: 60px;
+        padding: 8px;
+    }
+
+    #tituloEtiqueta{
+        font-size: 14px !important;
+    }
+
 
     #Busqueda:hover {
         background: #006ba6;
@@ -190,7 +205,7 @@ tr.disabled-row {
     }
 
     .table td.empty {
-        width: 70%;
+        width: 100%;
     }
 
     #logonav img {
@@ -203,13 +218,16 @@ tr.disabled-row {
         width: 40px !important;
     }
     #loading-spinner {
-        display: none; /* Ocultar inicialmente */
+        display: none;
         position: fixed;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
     }
 
+    #confirmacion {
+        margin-left: 10% !important;
+    }
 
     #buscar {
         width: 40px !important;
