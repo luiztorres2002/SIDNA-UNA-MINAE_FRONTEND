@@ -311,9 +311,13 @@ class Busqueda {
                                   <input type="radio" name="rag1" class="Media" value="Media">
                                   <input type="radio" name="rag1" class="Baja" value="Baja">
                                 </div>
-                                <a href="${result.link}" id="enlanceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
-                    <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i></a>
-                   
+                                <a class="vista_previa" href="${result.link}" id="enlanceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
+                                <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i>
+                                      <div class="iframe-preview">
+                                        <iframe  src="${result.link}" style="border:0px #FFFFFF none;" name="test" scrolling="no" frameborder="0" marginheight="0px" marginwidth="0px" height="2000px" width="1000px"></iframe>
+                                      </div>
+                                </a>
+
                             </div>
                         </div>
                     </div>
