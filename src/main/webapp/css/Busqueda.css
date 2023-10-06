@@ -191,6 +191,23 @@ select {
     margin-left: 9px !important;
     border-radius: 100%;
 }
+
+.semaforoModal {
+    display: block;
+    background-color: #ffffff;
+    width: 75px;
+    height: 25px;
+    border-radius: 100px;
+}
+.semaforoModal > input {
+    appearance: none;
+    user-select: none;
+    outline: none;
+    width: 10px;
+    height: 10px;
+    margin-left: 9px !important;
+    border-radius: 100%;
+}
 input.Alta {
     background-color: #b81d13;
     box-shadow: 0em 0px 0px 5px #b81d13;
@@ -200,8 +217,8 @@ input.Alta:hover {
     box-shadow: 0em 0px 0px 5px #fc625d;
 }
 input.Alta:checked {
-    background-color: #fc625d;
-    box-shadow: 0em 0px 0px 5px #fc625d;
+    background-color: #b81d13;
+    box-shadow: 0em 0px 0px 5px #b81d13;
 }
 input.Media {
     background-color: #efb700;
@@ -212,8 +229,8 @@ input.Media:hover {
     box-shadow: 0em 0px 0px 5px #ffe200;
 }
 input.Media:checked {
-    background-color: #ffe200;
-    box-shadow: 0em 0px 0px 5px  #ffe200;
+    background-color: #efb700;
+    box-shadow: 0em 0px 0px 5px  #efb700;
 }
 input.Baja {
     background-color: #008450;
@@ -224,6 +241,43 @@ input.Baja:hover {
     box-shadow: 0em 0px 0px 5px #24d73e;
 }
 input.Baja:checked {
+    background-color: #008450;
+    box-shadow: 0em 0px 0px 5px #008450;
+}
+
+input.AltaModal {
+    background-color: #c9c9c9;
+    box-shadow: 0em 0px 0px 5px #c9c9c9;
+}
+input.AltaModal:hover {
+    background-color: #fc625d;
+    box-shadow: 0em 0px 0px 5px #fc625d;
+}
+input.AltaModal:checked {
+    background-color: #fc625d;
+    box-shadow: 0em 0px 0px 5px #fc625d;
+}
+input.MediaModal {
+    background-color: #c9c9c9;
+    box-shadow: 0em 0px 0px 5px #c9c9c9;
+}
+input.MediaModal:hover {
+    background-color: #ffe200;
+    box-shadow: 0em 0px 0px 5px #ffe200;
+}
+input.MediaModal:checked {
+    background-color: #ffe200;
+    box-shadow: 0em 0px 0px 5px  #ffe200;
+}
+input.BajaModal{
+    background-color: #c9c9c9;
+    box-shadow: 0em 0px 0px 5px #c9c9c9;
+}
+input.BajaModal:hover {
+    background-color: #24d73e;
+    box-shadow: 0em 0px 0px 5px #24d73e;
+}
+input.BajaModal:checked {
     background-color: #34cb4a;
     box-shadow: 0em 0px 0px 5px #34cb4a;
 }
@@ -256,6 +310,9 @@ input.Baja:checked {
         max-height: 510px !important;
         flex-direction: column !important;
         margin: 1em auto !important;
+    }
+    #tituloBusqueda{
+        font-size: 14px !important;
     }
     .traffic-light {
         position: absolute;
@@ -328,7 +385,7 @@ input.Baja:checked {
     }
 
     .search-results-container {
-        max-height: 600px;
+        max-height: 630px;
         max-width: 3000px;
         overflow-y: auto;
     }
