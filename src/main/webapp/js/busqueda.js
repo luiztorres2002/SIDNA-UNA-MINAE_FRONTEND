@@ -266,7 +266,6 @@ class Busqueda {
 
         const response = await fetch(corsProxyUrl + apiUrl);
         const searchData = await response.json();
-
         const newsResults = searchData.news_results;
 
         if (newsResults.length === 0) {

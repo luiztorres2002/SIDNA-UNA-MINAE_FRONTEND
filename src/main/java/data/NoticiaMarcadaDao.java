@@ -2,12 +2,15 @@ package data;
 
 import jakarta.ws.rs.NotFoundException;
 import logic.Departamento;
+import logic.Etiqueta;
 import logic.NoticiaExterna;
 import logic.NoticiaMarcada;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -40,6 +43,33 @@ public class NoticiaMarcadaDao {
             this.registrarNoticiaEtiqueta(noticiaMarcada.getTitulo(),"Costa Rica Medio Ambiente",noticiaMarcada.getUsuarioCedula());
         }
 
+    }
+
+    public List<NoticiaMarcada> getAllNoticiasMarcadas(String usuarioCedula) throws SQLException{
+        String sql = "SELECT * FROM NOTICIA_MARCADA where Fk_NoticiaMarcada_UsuarioCedula = ?";
+        List<NoticiaMarcada> noticiaMarcada = new ArrayList<>();
+        try (PreparedStatement statement = db.prepareStatement(sql)) {
+            statement.setString(1, usuarioCedula);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    noticiaMarcada.add(mapResultSetToNoticiaMarcada(resultSet));
+                }
+                return noticiaMarcada;
+            }
+        }
+    }
+    private NoticiaMarcada mapResultSetToNoticiaMarcada(ResultSet resultSet) throws SQLException {
+        int NoticiaMarcadaId = resultSet.getInt("PK_NoticiaMarcada_Id");
+        String titulo = resultSet.getString("Titulo");
+        String descripcion = resultSet.getString("Descripcion");
+        String fecha = resultSet.getString("Fecha");
+        String prioridad = resultSet.getString("Prioridad");
+        String fuente = resultSet.getString("Fuente");
+        String enlace = resultSet.getString("Enlace");
+        String imagen = resultSet.getString("Imagen");
+        Date fechaGuardado = resultSet.getDate("Fechaguardado");
+        String usuarioCedula = resultSet.getString("Fk_NoticiaMarcada_UsuarioCedula");
+        return new NoticiaMarcada(NoticiaMarcadaId, titulo, descripcion, fecha, prioridad, fuente,enlace,imagen,fechaGuardado,usuarioCedula);
     }
 
     public void registrarNoticiaEtiqueta(String noticiatitle, String EtiquetaDescipcion, String Cedula) throws Exception {

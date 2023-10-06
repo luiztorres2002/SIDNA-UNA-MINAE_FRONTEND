@@ -13,7 +13,7 @@ class Biblioteca {
     modalexito;
 
     constructor() {
-        this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A'};
+        this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A', biblioteca:[]};
         this.dom = this.render();
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
         this.modalerror = new bootstrap.Modal(this.dom.querySelector('#modalError'));
@@ -25,6 +25,10 @@ class Biblioteca {
         this.dom.querySelector("#biblioteca #modalError #dismissButton").addEventListener('click', this.hideModalError);
         this.dom.querySelector("#biblioteca #sucessmodal #sucessbuton").addEventListener('click', this.hideModalExito);
         this.dom.querySelector("#biblioteca #modalcampo #dismisscampo").addEventListener('click', this.hideModalCampo);
+        setTimeout(() => {
+            this.mostrarDestacadas();
+        }, 100);
+
 
     }
 
@@ -61,13 +65,93 @@ class Biblioteca {
             <span class="font-weight-bold">+</span> <span class="texto-agregar">Agregar Noticia</span>
         </button>
     </div>
+    <div class="search-results-container">
+    <div id="muestraBiblioteca"></div> 
+    <div class="d-flex justify-content-center">
+    </div>
+</div>
 </form>
 
 </div>
 
 
 
+
         `;
+    }
+    async mostrarBiblioteca() {
+        let contadorNoticias = 0;
+        const bordeColores = ['#84bd00', '#006ba6', '#fed141'];
+        const botonColores = ['#006ba6',  '#84bd00'];
+        this.state.etiquetas.forEach((etiqueta, index) => {
+            const { descripcion, etiquetaId, estado } = etiqueta;
+            const isChecked = estado ? 'checked' : '';
+            const row = `
+  
+   
+        const noticiasCoincidentes = document.querySelector('#muestraBiblioteca');
+        noticiasCoincidentes.innerHTML = '';
+
+                const colorBorde = bordeColores[index % bordeColores.length];
+                const colorBoton = botonColores[index % botonColores.length];
+                const elementoBiblioteca = document.createElement('div');
+                elementoBiblioteca.classList.add('noticia-biblioteca');
+
+                elementoBiblioteca.innerHTML = `
+                    <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};">
+                        <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.thumbnail}'; this.classList.add('card-img-top', 'card-img-custom');">
+                        <div class="card-body">
+                            <div class="text-section">
+                                <h5 class="card-title fw-bold">${result.title}</h5>
+                                <p class="card-text">${result.snippet}</p>
+                            </div>
+                            <div class="cta-section">
+                                <p class="card-text">${result.date}</p>
+                                <div class="traffic-light">
+                                  <input type="radio" name="rag1" class="Alta" value="Alta">
+                                  <input type="radio" name="rag1" class="Media" value="Media">
+                                  <input type="radio" name="rag1" class="Baja" value="Baja">
+                                </div>
+                                <a href="${result.link}" id="enlanceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
+                    <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i></a>
+                   
+                            </div>
+                        </div>
+                    </div>
+                `;
+                this.entity = {};
+                const newsElements = document.querySelectorAll('.noticia-coincidente');
+                newsElements.forEach((element, index) => {
+                    const colorButtons = element.querySelectorAll('input[type="radio"]');
+                    const newsSource = newsResults[index].link;
+                    const titulo = newsResults[index].title;
+                    const descripcion = newsResults[index].snippet;
+                    const fuente = newsResults[index].source;
+                    const fecha = newsResults[index].date;
+                    const imagen = newsResults[index].thumbnail;
+
+                    colorButtons.forEach((button, colorIndex) => {
+                        const selectedColor = button.value;
+                        const infoText = `${selectedColor}`;
+                        button.addEventListener('click', this.modalmarcarshow.bind(this, titulo,descripcion,newsSource,fuente,infoText,fecha,imagen));
+
+                    });
+                });
+                noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
+            }
+        }
+    } `;
+    cargarBiblioteca = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas/4-0258-0085');
+            const data = await response.json();
+            this.state.biblioteca = data;
+            this.mostrarBiblioteca();
+            const loadingSpinner = document.querySelector('.spinner-border');
+            loadingSpinner.style.display = 'none';
+        } catch (error) {
+            console.log('Error al cargar la lista de etiquetas:', error);
+        }
     }
     renderModal = () => {
         return `
