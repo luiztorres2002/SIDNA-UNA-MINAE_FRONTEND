@@ -70,6 +70,7 @@ public class NoticiaMarcadaDao {
         Date fechaGuardado = resultSet.getDate("Fechaguardado");
         String usuarioCedula = resultSet.getString("Fk_NoticiaMarcada_UsuarioCedula");
         return new NoticiaMarcada(NoticiaMarcadaId, titulo, descripcion, fecha, prioridad, fuente,enlace,imagen,fechaGuardado,usuarioCedula);
+        //coment
     }
 
     public void registrarNoticiaEtiqueta(String noticiatitle, String EtiquetaDescipcion, String Cedula) throws Exception {
