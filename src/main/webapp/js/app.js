@@ -274,8 +274,6 @@ class App {
             <li><a href="#" id="Busqueda" class="activeBq">BUSQUEDA</a></li>
             <li><a href="#" id="Etiquetas">ETIQUETAS</a></li>
             <li><a href="#" id="Biblioteca">BIBLIOTECA</a></li>
-            
-       
     `;
 
 
