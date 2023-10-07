@@ -13,7 +13,8 @@ class Biblioteca {
     modalexito;
 
     constructor() {
-        this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A', biblioteca:[]};
+        this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A', noticias: []};
+
         this.dom = this.render();
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
         this.modalerror = new bootstrap.Modal(this.dom.querySelector('#modalError'));
@@ -25,9 +26,7 @@ class Biblioteca {
         this.dom.querySelector("#biblioteca #modalError #dismissButton").addEventListener('click', this.hideModalError);
         this.dom.querySelector("#biblioteca #sucessmodal #sucessbuton").addEventListener('click', this.hideModalExito);
         this.dom.querySelector("#biblioteca #modalcampo #dismisscampo").addEventListener('click', this.hideModalCampo);
-        setTimeout(() => {
-            this.mostrarDestacadas();
-        }, 100);
+        this.cargarBiblioteca();
 
 
     }
@@ -51,107 +50,65 @@ class Biblioteca {
          <div class="linea-azul"></div>
         <div class="linea-amarilla"></div>
         <div class="linea-verde"></div>
-        <div class="container">
-   <div class="container mt-5 justify-content-center" style="text-align: center; font-family: Verdana; font-size: 32px;"> 
+   <div class="container justify-content-center" style="text-align: center; font-family: Verdana; font-size: 32px;"> 
            Biblioteca Personal
         </div>
-
-  <form id="form" class="d-flex justify-content-between align-items-center">
-    <div class="input-group">
-        <input class="form-control fontAwesome rounded mt-3" id="buscadorB" autocomplete="off" type="text" placeholder="&#xf002; Buscar Noticia">
-    </div>
-    <div class="btn-group" style="margin-left: 10px;">
-        <button type="button" class="btn btn-custom-outline-success ml-3 mt-3" id="agregar" style="height: 40px; color:white; background-color: #84bd00; width: 190px; line-height: 5px; margin-top: 2px;">
-            <span class="font-weight-bold">+</span> <span class="texto-agregar">Agregar Noticia</span>
-        </button>
-    </div>
-    <div class="search-results-container">
-    <div id="muestraBiblioteca"></div> 
     <div class="d-flex justify-content-center">
+            <form id="form" style="width: 85%;"">
+           <div class="input-group  mt-10" style="display: flex; align-items: center; justify-content: center;">
+    <div class="btn-group me-2">
+<button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 190px; line-height: 5px;"><span class="font-weight-bold">+</span> <span class="texto-agregar">Agregar Noticia</span></button>
+    </div>
+   <select id="tiempoSeleccionado2" style="border: none; width: 110px; margin-left: 115px";>
+    <option value="" selected disabled>Prioridad</option>
+    <option value="Alta">Alta</option>
+    <option value="Media">Media</option>
+    <option value="Baja">Baja</option>
+</select>
+<select id="tiempoSeleccionado2" style="border: none; width: 90px; margin-left: 20px";>
+    <option value="" selected disabled>Fecha</option>
+    <option value="ultimaHora">Última Hora</option>
+    <option value="ultimoDia">Último Día</option>
+    <option value="ultimaSemana">Última Semana</option>
+    <option value="ultimoMes">Último Mes</option>
+    <option value="ultimoAno">Último Año</option>
+</select>
+   <input class="form-control me-2 fontAwesome" id="buscadorEtiqueta" autocomplete="off" type="text" style="width: 100px; margin-left: 200px; height: 38px; border-radius: 5px; border: 1px solid #006ba6;" placeholder="&#xf002; Buscar..."> 
+    <div class="btn-group me-2">
+         <button type="button" class="btn btn-custom-outline-success" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
+            <i class="fas fa-search"></i>
+         </button>
     </div>
 </div>
-</form>
+<select id="tiempoSeleccionadoMobile" style="border: none; width: 110px; margin-left: 115px; display: none">
+    <option value="" selected disabled>Prioridad</option>
+    <option value="Alta">Alta</option>
+    <option value="Media">Media</option>
+    <option value="Baja">Baja</option>
+</select>
+<select id="tiempoSeleccionadoMobile" style="border: none; width: 90px; margin-left: 20px; display: none">
+    <option value="" selected disabled>Fecha</option>
+    <option value="ultimaHora">Última Hora</option>
+    <option value="ultimoDia">Último Día</option>
+    <option value="ultimaSemana">Última Semana</option>
+    <option value="ultimoMes">Último Mes</option>
+    <option value="ultimoAno">Último Año</option>
+</select>
 
+<div id="pillsMobile-container" class="pill-container"></div>
+<div class="search-results-container">
+    <div id="noticiasBiblioteca"></div> 
+    <div class="d-flex justify-content-center">
+   
+    </div>
 </div>
-
+                </div>
+            </form>
+        
 
 
 
         `;
-    }
-    async mostrarBiblioteca() {
-        let contadorNoticias = 0;
-        const bordeColores = ['#84bd00', '#006ba6', '#fed141'];
-        const botonColores = ['#006ba6',  '#84bd00'];
-        this.state.etiquetas.forEach((etiqueta, index) => {
-            const { descripcion, etiquetaId, estado } = etiqueta;
-            const isChecked = estado ? 'checked' : '';
-            const row = `
-  
-   
-        const noticiasCoincidentes = document.querySelector('#muestraBiblioteca');
-        noticiasCoincidentes.innerHTML = '';
-
-                const colorBorde = bordeColores[index % bordeColores.length];
-                const colorBoton = botonColores[index % botonColores.length];
-                const elementoBiblioteca = document.createElement('div');
-                elementoBiblioteca.classList.add('noticia-biblioteca');
-
-                elementoBiblioteca.innerHTML = `
-                    <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};">
-                        <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.thumbnail}'; this.classList.add('card-img-top', 'card-img-custom');">
-                        <div class="card-body">
-                            <div class="text-section">
-                                <h5 class="card-title fw-bold">${result.title}</h5>
-                                <p class="card-text">${result.snippet}</p>
-                            </div>
-                            <div class="cta-section">
-                                <p class="card-text">${result.date}</p>
-                                <div class="traffic-light">
-                                  <input type="radio" name="rag1" class="Alta" value="Alta">
-                                  <input type="radio" name="rag1" class="Media" value="Media">
-                                  <input type="radio" name="rag1" class="Baja" value="Baja">
-                                </div>
-                                <a href="${result.link}" id="enlanceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
-                    <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i></a>
-                   
-                            </div>
-                        </div>
-                    </div>
-                `;
-                this.entity = {};
-                const newsElements = document.querySelectorAll('.noticia-coincidente');
-                newsElements.forEach((element, index) => {
-                    const colorButtons = element.querySelectorAll('input[type="radio"]');
-                    const newsSource = newsResults[index].link;
-                    const titulo = newsResults[index].title;
-                    const descripcion = newsResults[index].snippet;
-                    const fuente = newsResults[index].source;
-                    const fecha = newsResults[index].date;
-                    const imagen = newsResults[index].thumbnail;
-
-                    colorButtons.forEach((button, colorIndex) => {
-                        const selectedColor = button.value;
-                        const infoText = `${selectedColor}`;
-                        button.addEventListener('click', this.modalmarcarshow.bind(this, titulo,descripcion,newsSource,fuente,infoText,fecha,imagen));
-
-                    });
-                });
-                noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
-            }
-        }
-    } `;
-    cargarBiblioteca = async () => {
-        try {
-            const response = await fetch('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas/4-0258-0085');
-            const data = await response.json();
-            this.state.biblioteca = data;
-            this.mostrarBiblioteca();
-            const loadingSpinner = document.querySelector('.spinner-border');
-            loadingSpinner.style.display = 'none';
-        } catch (error) {
-            console.log('Error al cargar la lista de etiquetas:', error);
-        }
     }
     renderModal = () => {
         return `
@@ -441,9 +398,79 @@ class Biblioteca {
 
         return true;
     }
+    renderizarNoticias = async () => {
+        const bordeColores = ['#84bd00', '#006ba6', '#fed141'];
+        const botonColores = ['#006ba6', '#84bd00'];
+
+        const noticiasCoincidentes = document.getElementById('noticiasBiblioteca');
+
+        for (const [index, noticia] of this.state.noticias.entries()) {
+            const { titulo, descripcion, prioridad, fuente, enlace, imagen, fechaGuardado, fecha  } = noticia;
+            const etiquetas = noticia.etiquetas;
+            const fechaDate = new Date(fechaGuardado);
+            const fechaFormateada = fechaDate.toLocaleDateString();
+            const colorBorde = bordeColores[index % bordeColores.length];
+            const colorBoton = botonColores[index % botonColores.length];
+            const elementoNoticiaCoincidente = document.createElement('div');
+            elementoNoticiaCoincidente.classList.add('noticiaBiblioteca');
 
 
+            elementoNoticiaCoincidente.innerHTML = `
+        <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${enlace}">
+            <img src="${imagen}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${imagen}'; this.classList.add('card-img-top', 'card-img-custom');">
+            <div class="card-body">
+                <div class="text-section-Biblioteca">
+                    <h5 class="card-title fw-bold">${titulo}</h5>
+                    <p class="card-text">${descripcion}</p>
+                    <div class="pill-container"></div> 
+                </div>
+                <div class="cta-section">
+                    <p class="card-text" >${fechaFormateada}</p>
+                    <div class="semaforoModal2">
+                        <input type="radio" name="prioridad-${index}" class="AltaModal2" value="Alta" ${prioridad === 'Alta' ? 'checked' : ''}>
+                        <input type="radio" name="prioridad-${index}" class="MediaModal2" value="Media" ${prioridad === 'Media' ? 'checked' : ''}>
+                        <input type="radio" name="prioridad-${index}" class="BajaModal2" value="Baja" ${prioridad === 'Baja' ? 'checked' : ''}>
+                    </div>
+                    <div class="c-btn-group">
+                        <a class="borrar-container">
+                            <i class="fas fa-trash-can" id="borrarBtn" style="font-size: 1.3em; margin-top: 9px; color: #f10;"></i>
+                        </a>
+                        <a href="${enlace}" id="enlaceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${fuente}" style="margin-bottom: 6px;">
+                            <i class="fas fa-share" style="font-size: 1.5em; color: ${colorBorde};"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
 
+            noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
+
+            const pillsContainer1 = elementoNoticiaCoincidente.querySelector(".pill-container");
+            etiquetas.forEach((etiqueta) => {
+                const pill = document.createElement("div");
+                pill.className = "pillBiblioteca";
+                pill.innerHTML = `
+    <span class="pill-text">${etiqueta.descripcion}</span>
+`;
+                pill.style.backgroundColor = colorBorde;
+                pillsContainer1.appendChild(pill);
+            });
+        }
+    };
+
+
+    cargarBiblioteca = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas/4-0258-0085');
+            const data = await response.json();
+            console.log(data);
+            this.state.noticias = data;
+            this.renderizarNoticias();
+        } catch (error) {
+            console.log('Error al cargar la lista de noticias:', error);
+        }
+    }
 
     showModal = async () => {
         this.resetForm();

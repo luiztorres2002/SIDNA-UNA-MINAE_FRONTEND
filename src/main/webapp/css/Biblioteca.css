@@ -17,15 +17,72 @@
 
 }
 
+.semaforoModal2 {
+    display: block;
+    background-color: #ffffff;
+    width: 42px;
+    height: 25px;
+    /* margin: auto; */
+    margin-bottom: 55px;
+    margin-right: 8px;
+    border-radius: 100px;
+}
+.semaforoModal2 > input {
+    appearance: none;
+    user-select: none;
+    outline: none;
+    width: 10px;
+    height: 10px;
+    margin-left: 9px !important;
+    border-radius: 100%;
+}
+
+input.AltaModal2 {
+    background-color: #c9c9c9;
+    box-shadow: 0em 0px 0px 5px #c9c9c9;
+}
+input.AltaModal2:hover {
+    background-color: #fc625d;
+    box-shadow: 0em 0px 0px 5px #fc625d;
+}
+input.AltaModal2:checked {
+    background-color: #fc625d;
+    box-shadow: 0em 0px 0px 5px #fc625d;
+}
+input.MediaModal2 {
+    background-color: #c9c9c9;
+    box-shadow: 0em 0px 0px 5px #c9c9c9;
+}
+input.MediaModal2:hover {
+    background-color: #ffe200;
+    box-shadow: 0em 0px 0px 5px #ffe200;
+}
+input.MediaModal2:checked {
+    background-color: #ffe200;
+    box-shadow: 0em 0px 0px 5px  #ffe200;
+}
+input.BajaModal2{
+    background-color: #c9c9c9;
+    box-shadow: 0em 0px 0px 5px #c9c9c9;
+}
+input.BajaModal2:hover {
+    background-color: #24d73e;
+    box-shadow: 0em 0px 0px 5px #24d73e;
+}
+input.BajaModal2:checked {
+    background-color: #34cb4a;
+    box-shadow: 0em 0px 0px 5px #34cb4a;
+}
+
 .custom-select-sm {
-    padding: 0.25rem 0.5rem; /* Ajusta el relleno para hacerlo más pequeño */
-    font-size: 0.875rem; /* Reduce el tamaño de la fuente */
+    padding: 0.25rem 0.5rem; /* Ajusta el relleno para hacerlo mÃ¡s pequeÃ±o */
+    font-size: 0.875rem; /* Reduce el tamaÃ±o de la fuente */
     padding-left: 20px;
 }
 
 .form-select option:checked {
-    background-color: #007bff; /* Cambia el color de fondo según tus preferencias */
-    color: #fff; /* Cambia el color del texto según tus preferencias */
+    background-color: #007bff; /* Cambia el color de fondo segÃºn tus preferencias */
+    color: #fff; /* Cambia el color del texto segÃºn tus preferencias */
 }
 .custom-modal-width {
     max-width: 600px;
@@ -33,14 +90,14 @@
 }
 
 .input-wrapper {
-    max-width: 80%; /* Ajusta el valor según el ancho deseado */
+    max-width: 80%; /* Ajusta el valor segÃºn el ancho deseado */
     margin: 0 auto; /* Para centrar horizontalmente el campo de entrada dentro del div */
     display: inline-block;
 }
 
 .small-input {
-    font-size: 14px; /* Tamaño de fuente más pequeño */
-    padding: 5px 10px; /* Espaciado más pequeño */
+    font-size: 14px; /* TamaÃ±o de fuente mÃ¡s pequeÃ±o */
+    padding: 5px 10px; /* Espaciado mÃ¡s pequeÃ±o */
 }
 
 .imagenes {
@@ -50,15 +107,72 @@
 }
 
 select {
-    ; /* Ancho personalizado */
+; /* Ancho personalizado */
     padding: 10px; /* Espaciado interior */
     border: 1px solid #000000; /* Borde personalizado */
     border-radius: 4px; /* Esquinas redondeadas */
-    font-size: 30px; /* Tamaño de fuente personalizado */
+    font-size: 30px; /* TamaÃ±o de fuente personalizado */
     background-color: white; /* Fondo blanco */
     display: block;
 }
 
 .required-field-error {
-    border-bottom: 2px solid red; /* Agrega una línea roja debajo del campo vacío */
+    border-bottom: 2px solid red; /* Agrega una lÃ­nea roja debajo del campo vacÃ­o */
+}
+
+.text-section-Biblioteca {
+    max-width: 85%;
+}
+
+.pillBiblioteca {
+    color: #fff;
+    border-radius: 20px;
+    padding: 3px 10px;
+    cursor: pointer;
+}
+
+#tiempoSeleccionado {
+    display: inline-block; /* Los select se muestran en línea */
+    margin-left: 20px; /* Ajusta el margen según tus necesidades */
+}
+
+@media (max-width: 768px) {
+
+    .text-section-Biblioteca {
+        max-width: 100%;
+    }
+    #tiempoSeleccionado2{
+        display: none;
+    }
+
+    #tiempoSeleccionadoMobile{
+        display: inline-block !important;
+        margin-left: 40px !important;
+    }
+
+    .semaforoModal2 {
+        position: absolute;
+        display: block;
+        margin-right: 115px;
+        margin-top: 45px;
+        width: auto;
+        background-color: #ffffff;
+    }
+
+    .pillBiblioteca{
+        font-size: 9px;
+    }
+
+    #enlaceBtn {
+        margin-right: 20px;
+    }
+
+    .card {
+        max-height: 610px !important;
+    }
+
+
+    .cta-section .borrar-container {
+        margin-right: 220px;
+    }
 }

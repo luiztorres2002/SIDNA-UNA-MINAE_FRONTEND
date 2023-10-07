@@ -1,5 +1,4 @@
 const apiKeys = [
-    'c87cc9459be1e416eb33b0cf4c6900dc37a60142cfcd0fd5028110440e38cb2e',
     '2b1a27f35ed5df433b2ea68367b91471c08d2a4c9e560dbaea946220ff6c2e02',
     'f7bed0b72cb036e58cf01c0ca21769520437a7384f825789dca5322d14e19367',
     'f6136e266d9e40ee213e1b95a60b46b06a9e650465baf4f3fc0fe5d2bba1e3b3',
@@ -52,7 +51,7 @@ class Busqueda {
             radioButton.addEventListener('change', function() {
                 if (this.checked) {
                     self.entidad['prioridad'] = this.value;
-                    console.log(`Prioridad nueva seleccionada: ${this.value}`);
+
                 }
             });
         });
@@ -268,15 +267,17 @@ class Busqueda {
 
         const response = await fetch(corsProxyUrl + apiUrl);
         const searchData = await response.json();
+
         const newsResults = searchData.news_results;
 
         if (newsResults.length === 0) {
             noticiasCoincidentes.innerHTML = '<p>No se encontraron noticias.</p>';
         } else {
+            const imageUrls = [];
             for (const [index, result] of newsResults.entries()) {
                 contadorNoticias++;
 
-                let imageUrl = result.thumbnail;
+                let imageUrl = '';
 
                 try {
 
@@ -286,7 +287,7 @@ class Busqueda {
                     const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
                     const ogImage = newsDocument.querySelector('meta[property="og:image"]');
                     imageUrl = ogImage ? ogImage.getAttribute('content') : result.thumbnail;
-
+                    imageUrls.push(imageUrl);
                 } catch (error) {
                     console.error(`Error al obtener datos de noticia (${result.link}):`, error);
                 }
@@ -311,13 +312,9 @@ class Busqueda {
                                   <input type="radio" name="rag1" class="Media" value="Media">
                                   <input type="radio" name="rag1" class="Baja" value="Baja">
                                 </div>
-                                <a class="vista_previa" href="${result.link}" id="enlanceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
-                                <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i>
-                                      <div class="iframe-preview">
-                                        <iframe  src="${result.link}" style="border:0px #FFFFFF none;" name="test" scrolling="no" frameborder="0" marginheight="0px" marginwidth="0px" height="2000px" width="1000px"></iframe>
-                                      </div>
-                                </a>
-
+                                <a href="${result.link}" id="enlanceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
+                    <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i></a>
+                   
                             </div>
                         </div>
                     </div>
@@ -331,7 +328,7 @@ class Busqueda {
                     const descripcion = newsResults[index].snippet;
                     const fuente = newsResults[index].source;
                     const fecha = newsResults[index].date;
-                    const imagen = imageUrl;
+                    const imagen = imageUrls[index];
 
                     colorButtons.forEach((button, colorIndex) => {
                         const selectedColor = button.value;
@@ -671,8 +668,8 @@ class Busqueda {
     }
 
     modalmarcarclose = () => {
-            this.reset();
-            this.modalmarcar.hide();
+        this.reset();
+        this.modalmarcar.hide();
     }
 
     emptyEntity = () => {
@@ -732,10 +729,6 @@ class Busqueda {
         this.modalmarcar.hide();
         this.modalexito.show();
     }
-
-
-
-
 
 }
 

@@ -1,6 +1,7 @@
 package logic;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 public class NoticiaMarcada {
@@ -24,6 +25,8 @@ public class NoticiaMarcada {
 
     private String UsuarioCedula;
 
+    private List<Etiqueta> etiquetas;
+
 
     public NoticiaMarcada() {
     }
@@ -39,6 +42,14 @@ public class NoticiaMarcada {
         Imagen = imagen;
         FechaGuardado = fechaGuardado;
         UsuarioCedula = usuarioCedula;
+    }
+
+    public List<Etiqueta> getEtiquetas() {
+        return etiquetas;
+    }
+
+    public void setEtiquetas(List<Etiqueta> etiquetas) {
+        this.etiquetas = etiquetas;
     }
 
     public int getId() {

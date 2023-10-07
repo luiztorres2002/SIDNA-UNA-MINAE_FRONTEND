@@ -19,6 +19,7 @@ public class Service {
 
     Database database;
     RolDao rolDao;
+    EtiquetaDao etiquetaDao;
 
     DepartamentoDao departamentoDao;
 
@@ -39,6 +40,8 @@ public class Service {
         usuarioDao = new UsuarioDao(database);
 
         noticiaExternaDao = new NoticiaExternaDao(database);
+
+        etiquetaDao = new EtiquetaDao(database);
 
         noticiaMarcadaDao = new NoticiaMarcadaDao(database);
 

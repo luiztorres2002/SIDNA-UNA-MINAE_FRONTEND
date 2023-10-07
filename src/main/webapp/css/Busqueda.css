@@ -22,20 +22,6 @@ select {
     font-family: 'FontAwesome', 'Second Font name'
 }
 
-
-
-
-.card-text-truncate {
-    width: 100%;
-    max-width: 500px;
-    background-color: #696969;
-    border: 0;
-    box-shadow: 0 7px 7px rgba(0, 0, 0, 0.18);
-    margin: 1em auto;
-    display: flex;
-    flex-direction: column;
-}
-
 .card.dark {
     color: #fff;
 }

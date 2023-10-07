@@ -15,17 +15,17 @@ import java.util.List;
 
 
 @Path("/NoticiasMarcadas")
-    public class NoticiasMarcadas {
-        @POST
-        @Consumes(MediaType.APPLICATION_JSON)
-        public void create(NoticiaMarcada noticiaMarcada){
-            try {
-                Service service = Service.instance();
-                service.noticiaMarcadaAdd(noticiaMarcada);
-            } catch (Exception ex) {
-                throw new NotAcceptableException();
-            }
+public class NoticiasMarcadas {
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void create(NoticiaMarcada noticiaMarcada){
+        try {
+            Service service = Service.instance();
+            service.noticiaMarcadaAdd(noticiaMarcada);
+        } catch (Exception ex) {
+            throw new NotAcceptableException();
         }
+    }
     @GET
     @Path("/{usuarioCedula}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -37,7 +37,6 @@ import java.util.List;
         } catch (SQLException e) {
             throw new InternalServerErrorException(e);
         }
-    }//test
-
     }
 
+}

@@ -42,7 +42,7 @@ public class EtiquetaDao {
             statement.executeUpdate();
         } catch (SQLException e) {
 
-            e.printStackTrace(); // Prints the exception stack trace to the console.
+            e.printStackTrace();
 
         }
     }
@@ -62,6 +62,27 @@ public class EtiquetaDao {
 
         return null;
     }
+
+    public List<Etiqueta> getEtiquetasByNoticiaMarcadaId(int noticiaMarcadaId) throws SQLException {
+        List<Etiqueta> etiquetas = new ArrayList<>();
+        String sql = "SELECT E.* FROM ETIQUETA E " +
+                "INNER JOIN NOTICIAMARCADA_ETIQUETA NE ON E.PK_EtiquetaId = NE.FKETIQUETA " +
+                "WHERE NE.FK_NOTICIAMARCADAETIQUETA_NOTICIAMARCADAID = ?";
+
+        try (PreparedStatement statement = db.prepareStatement(sql)) {
+            statement.setInt(1, noticiaMarcadaId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Etiqueta etiqueta = mapResultSetToEtiqueta(resultSet);
+                    etiquetas.add(etiqueta);
+                }
+            }
+        }
+
+        return etiquetas;
+    }
+
 
     private Etiqueta mapResultSetToEtiqueta(ResultSet resultSet) throws SQLException {
         int etiquetaId = resultSet.getInt("PK_EtiquetaId");

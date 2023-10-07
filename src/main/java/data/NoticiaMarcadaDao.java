@@ -3,6 +3,7 @@ package data;
 import jakarta.ws.rs.NotFoundException;
 import logic.Departamento;
 import logic.Etiqueta;
+import data.EtiquetaDao;
 import logic.NoticiaExterna;
 import logic.NoticiaMarcada;
 
@@ -18,9 +19,11 @@ public class NoticiaMarcadaDao {
 
     Database db;
     UsuarioDao usuarioDao;
+    EtiquetaDao etiquetaDao;
 
     public NoticiaMarcadaDao(Database db) {
         this.db = db;
+        etiquetaDao = new EtiquetaDao(db);
     }
 
     public void create(NoticiaMarcada noticiaMarcada) throws Exception{
@@ -45,19 +48,30 @@ public class NoticiaMarcadaDao {
 
     }
 
-    public List<NoticiaMarcada> getAllNoticiasMarcadas(String usuarioCedula) throws SQLException{
-        String sql = "SELECT * FROM NOTICIA_MARCADA where Fk_NoticiaMarcada_UsuarioCedula = ?";
-        List<NoticiaMarcada> noticiaMarcada = new ArrayList<>();
+    public List<NoticiaMarcada> getAllNoticiasMarcadas(String usuarioCedula) throws SQLException {
+        String sql = "SELECT * FROM NOTICIA_MARCADA WHERE Fk_NoticiaMarcada_UsuarioCedula = ?";
+        List<NoticiaMarcada> noticiasMarcadas = new ArrayList<>();
+
         try (PreparedStatement statement = db.prepareStatement(sql)) {
             statement.setString(1, usuarioCedula);
+
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    noticiaMarcada.add(mapResultSetToNoticiaMarcada(resultSet));
+                    NoticiaMarcada noticiaMarcada = mapResultSetToNoticiaMarcada(resultSet);
+                    List<Etiqueta> etiquetas = etiquetaDao.getEtiquetasByNoticiaMarcadaId(noticiaMarcada.getId());
+                    noticiaMarcada.setEtiquetas(etiquetas);
+
+                    noticiasMarcadas.add(noticiaMarcada);
                 }
-                return noticiaMarcada;
+
+                return noticiasMarcadas;
             }
         }
     }
+
+
+
+
     private NoticiaMarcada mapResultSetToNoticiaMarcada(ResultSet resultSet) throws SQLException {
         int NoticiaMarcadaId = resultSet.getInt("PK_NoticiaMarcada_Id");
         String titulo = resultSet.getString("Titulo");
