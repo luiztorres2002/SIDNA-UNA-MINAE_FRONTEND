@@ -33,7 +33,7 @@ class Etiqueta {
         this.dom.querySelector("#categorias #modal #cancelModal").addEventListener('click', this.hidemodal);
         this.dom.querySelector("#etiquetaAgregar").addEventListener('click', () => {
             const descripcion = this.dom.querySelector("#txtNombre").value;
-            this.agregarEtiqueta2( descripcion);
+            this.agregarEtiqueta2(descripcion);
         });
         this.dom.querySelector("#categorias #modalEditar #formEdit #save").addEventListener('click', () => {
             const etiquetaId = this.dom.querySelector("#categorias #modalEditar #formEdit #etiquetaId").value;
@@ -88,7 +88,7 @@ class Etiqueta {
     </div>
   `;
     }
-    hidemodal = () =>{
+    hidemodal = () => {
 
         this.modal.hide();
         this.modal.resetForm();
@@ -199,11 +199,12 @@ class Etiqueta {
         event.preventDefault();
     }
 
-    renderizarPaginaConEtiquetas= () => {
+    renderizarPaginaConEtiquetas = () => {
         let tableRows = '';
 
         this.state.etiquetas.forEach((etiqueta, index) => {
-            const { descripcion, etiquetaId, estado } = etiqueta;
+            const {descripcion, etiquetaId, estado} = etiqueta;
+            const noticias = this.contarNoticiasAsociadas(etiquetaId);
             const isChecked = estado ? 'checked' : '';
             const row = `
     <tr data-row="${index + 1}">
@@ -218,7 +219,7 @@ class Etiqueta {
         <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
         <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
         <div class="toggle-container">
-        <span class="number">10</span>
+        <span id="noticiasAsociadas" class="number">${noticias}</span>
         </div>
         <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
             <div class="toggle-container">
@@ -256,7 +257,9 @@ class Etiqueta {
                 this.editarEtiqueta(etiquetaId, descripcion);
             });
         });
-        toggleSwitches.forEach((toggleSwitch) => {toggleSwitch.addEventListener("change", this.actualizarEstadoFila);});
+        toggleSwitches.forEach((toggleSwitch) => {
+            toggleSwitch.addEventListener("change", this.actualizarEstadoFila);
+        });
 
     }
     renderModalEditar = () => {
@@ -541,6 +544,10 @@ class Etiqueta {
         event.preventDefault();
     }
 
+    contarNoticiasAsociadas = (etiquetaId) => {
+        return etiquetaId;
+    }
+
     search = async () => {
         const searchInput = this.dom.querySelector("#buscadorEtiqueta");
         const modal = this.dom.querySelector("#modalError");
@@ -815,8 +822,6 @@ class Etiqueta {
     }
 
 
-
-
     renderModalSuccessEti = () => {
         return `
         <div id="sucess" class="modal fade">
@@ -862,8 +867,6 @@ class Etiqueta {
         this.resetForm();
         this.reset();
     }
-
-
 
 
 }
