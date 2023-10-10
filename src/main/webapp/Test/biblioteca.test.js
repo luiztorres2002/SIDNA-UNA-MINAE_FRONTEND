@@ -253,3 +253,31 @@ describe('verificarCamposLlenados', () => {
         document.body.innerHTML = ''; // Limpia el entorno de prueba
     });
 });
+
+
+
+describe('Test para la función cargar', () => {
+    async function cargarBiblioteca() {
+        try {
+            const response = await fetch('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas/4-0258-0085');
+            if(!response.ok){
+                return 'error';
+                console.log('No se han cargado las noticias de manera correcta')
+            }
+            else{
+                return 'success';
+                console.log('La noticia ha sido ingresada con exito');
+            }
+        } catch (error) {
+            return 'error';
+        }
+    };
+
+    it('debería obtener las noticias de manera exitosa', async () => {
+        fetch.mockResolvedValue({ ok: true });
+        const result = await cargarBiblioteca();
+        expect(result).toEqual('success');
+        expect(fetch).toHaveBeenCalled();
+    });
+});
+

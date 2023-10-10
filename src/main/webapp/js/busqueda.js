@@ -1,5 +1,4 @@
 const apiKeys = [
-    '2b1a27f35ed5df433b2ea68367b91471c08d2a4c9e560dbaea946220ff6c2e02',
     'f7bed0b72cb036e58cf01c0ca21769520437a7384f825789dca5322d14e19367',
     'f6136e266d9e40ee213e1b95a60b46b06a9e650465baf4f3fc0fe5d2bba1e3b3',
     '60f7edca87ed3fbaa81fa2e4e1676aba4ed4f3f23a5a4d527aa694edd4b1dc1d',
@@ -548,7 +547,7 @@ class Busqueda {
         try {
             const response = await fetch(request);
             if (!response.ok) {
-                this.showModalError()
+                this.showModalError();
                 return;
             }
             else{

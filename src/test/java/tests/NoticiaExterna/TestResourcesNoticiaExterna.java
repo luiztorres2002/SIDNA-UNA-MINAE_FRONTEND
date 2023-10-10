@@ -46,8 +46,6 @@ public class TestResourcesNoticiaExterna {
         } catch (Exception e) {
         assert false : "Se produjo una excepción durante la ejecución del método create: " + e.getMessage();
         }
-
-
     }
 
 }

@@ -43,7 +43,8 @@ public class NoticiaMarcadaDao {
         if (count == 0) {
             throw new Exception("No se creo");
         }else{
-            this.registrarNoticiaEtiqueta(noticiaMarcada.getTitulo(),"Costa Rica Medio Ambiente",noticiaMarcada.getUsuarioCedula());
+            this.registrarNoticiaEtiqueta(noticiaMarcada.getTitulo(),"Costa Rica",noticiaMarcada.getUsuarioCedula());
+            this.registrarNoticiaEtiqueta(noticiaMarcada.getTitulo(),"Medio Ambiente",noticiaMarcada.getUsuarioCedula());
         }
 
     }
