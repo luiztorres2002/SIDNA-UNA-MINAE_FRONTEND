@@ -520,7 +520,6 @@ class Busqueda {
                     const buttonColor = coloresBoton[index % coloresBoton.length];
                     const elementoNoticiaCoincidente = document.createElement('div');
                     elementoNoticiaCoincidente.classList.add('noticia-coincidente');
-
                     elementoNoticiaCoincidente.innerHTML = `
                     <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};">
                         <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.thumbnail}'; this.classList.add('card-img-top', 'card-img-custom');">
