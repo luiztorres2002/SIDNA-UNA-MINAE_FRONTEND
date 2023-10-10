@@ -6,6 +6,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import logic.Etiqueta;
+import logic.NoticiasAsociadas;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -105,6 +106,19 @@ public class Etiquetas {
             return Response.ok().build();
         } catch (SQLException ex) {
             throw new InternalServerErrorException(ex);
+        }
+    }
+
+    @GET
+    @Path("/contarNoticias/{etiquetaID}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<NoticiasAsociadas> getAllEtiquetasByUsuario(@PathParam("etiquetaID") int etiquetaID) {
+        try {
+            Database db = new Database();
+            EtiquetaDao etiquetaDao = new EtiquetaDao(db);
+            return etiquetaDao.getNoticiasAsociadas(etiquetaID);
+        } catch (SQLException e) {
+            throw new InternalServerErrorException(e);
         }
     }
 }

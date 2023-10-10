@@ -544,6 +544,7 @@ class Etiqueta {
         event.preventDefault();
     }
 
+    //TODO vara para contar noticias
     contarNoticiasAsociadas = (etiquetaId) => {
         return etiquetaId;
     }
