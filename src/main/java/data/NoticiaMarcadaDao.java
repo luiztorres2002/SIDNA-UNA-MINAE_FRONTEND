@@ -64,7 +64,6 @@ public class NoticiaMarcadaDao {
 
                     noticiasMarcadas.add(noticiaMarcada);
                 }
-
                 return noticiasMarcadas;
             }
         }
