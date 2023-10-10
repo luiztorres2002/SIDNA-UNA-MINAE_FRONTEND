@@ -1,11 +1,25 @@
 package logic;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Etiqueta {
     private int etiquetaId;
     private String descripcion;
     private String usuarioCedula;
 
     private Boolean estado;
+
+    @JsonCreator
+    public Etiqueta(@JsonProperty("etiquetaId") int etiquetaId,
+                    @JsonProperty("descripcion") String descripcion,
+                    @JsonProperty("usuarioCedula") String usuarioCedula,
+                    @JsonProperty("estado") Boolean estado) {
+        this.etiquetaId = etiquetaId;
+        this.descripcion = descripcion;
+        this.usuarioCedula = usuarioCedula;
+        this.estado = estado;
+    }
 
     public Etiqueta() {
     }

@@ -145,7 +145,8 @@ class Etiqueta {
     </div>
   </div>
 </div>
- <div class="table-responsive" style="max-height: 600px; overflow-y: auto; overflow-x: hidden; background-color: white">
+ <div class="table-responsive" style="overflow: auto; max-height: 600px; overflow-y: auto; overflow-x: hidden; background-color: white">
+ <div id="tableContainer">
   <table class="table table-fixed" id="tablaEtiquetas" style="display: none">  
   <thead>
         <tr>
@@ -159,6 +160,7 @@ class Etiqueta {
     <tbody id="etiquetasTableBody">
       
 </table>
+</div>
 </div>
                 </div>
             </form>
@@ -397,9 +399,9 @@ class Etiqueta {
         <ul class="ftco-footer-social p-0 text-center">
         </ul>
         <form action="#" id="formadd" class="signup-form">
-        <input type="hidden" id="etiquetaId" name="etiquetaId" value="">
+        <input type="hidden" id="etiquetaId" name="etiquetaId" value="" >
          <div class="form-group mb-2">
-            <input type="text" id="txtNombre" class="form-control mt-4">
+            <input type="text" id="txtNombre" class="form-control mt-4" autocomplete="off">
         </div>
           <div class="form-group mb-2">
             <button type="submit" id="etiquetaAgregar" class="form-control mt-3 btn btn-primary rounded submit px-3">Aceptar</button>
@@ -493,12 +495,17 @@ class Etiqueta {
     agregarEtiqueta2 = (descripcion) => {
         event.preventDefault();
         const url = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/';
+        const requestBody = {
+            descripcion: descripcion,
+            usuarioCedula: "4-0258-0085",
+            estado: true
+        };
         const options = {
             method: 'POST',
             headers: {
-                'Content-Type': 'text/plain'
+                'Content-Type': 'application/json'
             },
-            body: descripcion
+            body: JSON.stringify(requestBody)
         };
 
         fetch(url, options)
@@ -544,11 +551,11 @@ class Etiqueta {
     search = async () => {
         const searchInput = this.dom.querySelector("#buscadorEtiqueta");
         const modal = this.dom.querySelector("#modalError");
-        const searchTerm = searchInput.value.toLowerCase();
-        const rows = document.querySelectorAll('tbody tr');
+        const searchTerm = searchInput.value.trim().toLowerCase();
+        const nameColumn = document.querySelectorAll('#tablaEtiquetas tbody tr td:nth-child(1)');
         let encontrados = false;
 
-        if (searchTerm.trim() === "") {
+        if (searchTerm === "") {
             const etiquetaDescriptionElement = document.getElementById('mensaje');
             const modalFooter = modal.querySelector('.modal-footer');
             if (modalFooter) {
@@ -562,15 +569,20 @@ class Etiqueta {
             return;
         }
 
-        rows.forEach((row) => {
-            const cellText = row.textContent.toLowerCase();
-            if (cellText.includes(searchTerm)) {
+        nameColumn.forEach((cell) => {
+            const cellText = cell.textContent.trim().toLowerCase();
+            if (cellText === searchTerm) {
+                const row = cell.parentElement;
                 row.classList.remove("disabled-row");
                 row.classList.add('highlight');
-                encontrados = true;
 
-            } else {
-                row.classList.remove('highlight');
+                // Scroll the table container to the matching row
+                const tableContainer = document.getElementById('tableContainer');
+                if (tableContainer) {
+                    row.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start', container: tableContainer });
+                }
+
+                encontrados = true;
             }
         });
 
@@ -594,6 +606,9 @@ class Etiqueta {
     createNew = () => {
         this.reset();
         this.state.mode = 'A';
+        const txtNombre = document.getElementById("txtNombre");
+        txtNombre.value = "";
+        txtNombre.textContent="";
         this.showModal();
 
     }
