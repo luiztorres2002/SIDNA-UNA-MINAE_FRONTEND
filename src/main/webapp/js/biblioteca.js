@@ -14,7 +14,6 @@ class Biblioteca {
 
     constructor() {
         this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A', noticias: []};
-
         this.dom = this.render();
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
         this.modalerror = new bootstrap.Modal(this.dom.querySelector('#modalError'));
@@ -27,7 +26,6 @@ class Biblioteca {
         this.dom.querySelector("#biblioteca #sucessmodal #sucessbuton").addEventListener('click', this.hideModalExito);
         this.dom.querySelector("#biblioteca #modalcampo #dismisscampo").addEventListener('click', this.hideModalCampo);
         this.cargarBiblioteca();
-
 
     }
 
@@ -398,9 +396,8 @@ class Biblioteca {
 
         return true;
     }
-    renderizarNoticias = async () => {
+    renderizarNoticias = () => {
         const bordeColores = ['#84bd00', '#006ba6', '#fed141'];
-        const botonColores = ['#006ba6', '#84bd00'];
 
         const noticiasCoincidentes = document.getElementById('noticiasBiblioteca');
 
@@ -410,7 +407,6 @@ class Biblioteca {
             const fechaDate = new Date(fechaGuardado);
             const fechaFormateada = fechaDate.toLocaleDateString();
             const colorBorde = bordeColores[index % bordeColores.length];
-            const colorBoton = botonColores[index % botonColores.length];
             const elementoNoticiaCoincidente = document.createElement('div');
             elementoNoticiaCoincidente.classList.add('noticiaBiblioteca');
 
@@ -451,7 +447,7 @@ class Biblioteca {
                 const pill = document.createElement("div");
                 pill.className = "pillBiblioteca";
                 pill.innerHTML = `
-    <span class="pill-text">${etiqueta.descripcion}</span>
+            <span class="pill-text">${etiqueta.descripcion}</span>
 `;
                 pill.style.backgroundColor = colorBorde;
                 pillsContainer1.appendChild(pill);
@@ -464,8 +460,7 @@ class Biblioteca {
         try {
             const response = await fetch('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas/4-0258-0085');
             const data = await response.json();
-            console.log(data);
-            this.state.noticias = data;
+            this.state.noticias = data.reverse();
             this.renderizarNoticias();
         } catch (error) {
             console.log('Error al cargar la lista de noticias:', error);

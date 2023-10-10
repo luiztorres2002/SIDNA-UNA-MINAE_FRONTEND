@@ -17,12 +17,13 @@
 
 }
 
+
+
 .semaforoModal2 {
     display: block;
     background-color: #ffffff;
     width: 42px;
     height: 25px;
-    /* margin: auto; */
     margin-bottom: 55px;
     margin-right: 8px;
     border-radius: 100px;
@@ -121,7 +122,7 @@ select {
 }
 
 .text-section-Biblioteca {
-    max-width: 85%;
+    max-width: 95%;
 }
 
 .pillBiblioteca {
@@ -132,8 +133,8 @@ select {
 }
 
 #tiempoSeleccionado {
-    display: inline-block; /* Los select se muestran en línea */
-    margin-left: 20px; /* Ajusta el margen según tus necesidades */
+    display: inline-block;
+    margin-left: 20px;
 }
 
 @media (max-width: 768px) {
@@ -142,6 +143,10 @@ select {
         max-width: 100%;
     }
     #tiempoSeleccionado2{
+        display: none;
+    }
+
+    #prioridadSeleccionada{
         display: none;
     }
 
