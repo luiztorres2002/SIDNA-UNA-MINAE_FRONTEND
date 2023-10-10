@@ -545,8 +545,14 @@ class Etiqueta {
     }
 
     //TODO vara para contar noticias
-    contarNoticiasAsociadas = (etiquetaId) => {
-        return etiquetaId;
+    contarNoticiasAsociadas = async (etiquetaId) => {
+        try{
+            const url = await fetch(`http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/contarNoticias/${etiquetaId}`);
+            const data = await url.json();
+            this.state.etiquetas = data;
+        }catch (error){
+            console.log("Error al contar las Noticias");
+        }
     }
 
     search = async () => {

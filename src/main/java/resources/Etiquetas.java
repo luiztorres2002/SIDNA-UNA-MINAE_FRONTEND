@@ -112,7 +112,7 @@ public class Etiquetas {
     @GET
     @Path("/contarNoticias/{etiquetaID}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<NoticiasAsociadas> getAllEtiquetasByUsuario(@PathParam("etiquetaID") int etiquetaID) {
+    public int getAllEtiquetasByUsuario(@PathParam("etiquetaID") int etiquetaID) {
         try {
             Database db = new Database();
             EtiquetaDao etiquetaDao = new EtiquetaDao(db);
