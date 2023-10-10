@@ -635,7 +635,6 @@ class Biblioteca {
             diaa = '09';
         }
 
-
         this.entity["fecha"] = anio+"-"+mes+"-"+diaa;
 
         delete this.entity['dia'];
