@@ -42,7 +42,7 @@ class App {
     renderMenu = () => {
         return `
         <header id="menu">
-            <a id="logonav" href="#" ><img src="images/Minae.png"  width="300" height="110" style="margin-right: 200px;"></a>
+            <a id="logonav" href="#" ><img src="images/Minae.png"  width="300" height="65" style="margin-right: 200px;"></a>
         <ul class="navbar" id='menuItems'>
             
         </ul>
@@ -68,7 +68,7 @@ class App {
            <div class="container">
                 <div class="row">
                     <div class="col-sm-6 col-md-3 item">
-                            <a id="logonav" href="#" ><img src="images/Minae.png"  width="300" height="110" style="margin-right: 200px;"></a>
+                            <a id="logonav" href="#" ><img src="images/Minae.png"  width="320" height="70" style="margin-right: 200px;"></a>
                     </div>
                     <div class="col-sm-6 col-md-3 item">
                         <h3>Contáctenos</h3>

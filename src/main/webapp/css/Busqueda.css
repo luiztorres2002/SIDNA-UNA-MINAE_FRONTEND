@@ -1,6 +1,6 @@
 .card {
     max-width: 62em !important;
-    max-height: 12em !important;
+    max-height: 13em !important;
     flex-direction: row !important;
     background-color: #ffffff !important;
     box-shadow: 4px 5px 13px 2px #7a7d74 !important;
@@ -137,7 +137,7 @@ select {
     max-height: 38px !important;
     margin: 0 auto;
     border-radius: 6px !important;
-    border: 1px solid #006ba6;
+    border: 1px solid #1c2858;
     transition: max-height 0.3s, max-width 0.3s;
 }
 
@@ -186,28 +186,28 @@ select {
 
 
 .pill {
-    background-color: #007bff;
+    background-color: #1c2858;
 }
 
 .pill:nth-child(1) {
-    background-color: #006ba6;
+    background-color: #1c2858;
 }
 
 .pill:nth-child(2) {
-    background-color: #fed141;
+    background-color: #cdab68;
 }
 
 .pill:nth-child(3) {
-    background-color: #84bd00;
+    background-color: #1c2858;
 }
 .pill:nth-child(4) {
-    background-color: #006ba6;
+    background-color: #cdab68;
 }
 .pill:nth-child(5) {
-    background-color: #fed141;
+    background-color: #1c2858;
 }
 .pill:nth-child(6) {
-    background-color: #84bd00;
+    background-color: #cdab68;
 }
 
 .traffic-light {

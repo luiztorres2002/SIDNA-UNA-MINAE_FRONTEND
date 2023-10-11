@@ -26,6 +26,19 @@ public class NoticiasMarcadas {
             throw new NotAcceptableException();
         }
     }
+
+    @POST
+    @Path("/Externa")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void createExterna(NoticiaMarcada noticiaMarcada) {
+        try {
+            Service service = Service.instance();
+            service.noticiaMarcadaAdd2(noticiaMarcada);
+        } catch (Exception ex) {
+            throw new NotAcceptableException();
+        }
+    }
+
     @GET
     @Path("/{usuarioCedula}")
     @Produces(MediaType.APPLICATION_JSON)

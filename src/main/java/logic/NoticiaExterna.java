@@ -19,18 +19,31 @@ public class NoticiaExterna {
 
     private Usuario usuario;
 
+    private String Imagen;
+
     public NoticiaExterna() {
     }
 
-    public NoticiaExterna(int id, String titulo, String descripcion, Date fecha, String prioridad, String fuente, String enlace, Usuario usuario) {
+
+    public NoticiaExterna(int id, String titulo, String descripcion, Date fecha, String prioridad, String fuente, String enlace, String imagen, Usuario usuario) {
         this.id = id;
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.fecha = fecha;
         this.prioridad = prioridad;
         this.fuente = fuente;
+        this.Imagen = imagen;
         this.enlace = enlace;
         this.usuario = usuario;
+    }
+
+
+    public String getImagen() {
+        return Imagen;
+    }
+
+    public void setImagen(String imagen) {
+        Imagen = imagen;
     }
 
     public int getId() {
@@ -108,6 +121,7 @@ public class NoticiaExterna {
                 ", fuente='" + fuente + '\'' +
                 ", enlace='" + enlace + '\'' +
                 ", usuario=" + usuario +
+                ", imagen='" + Imagen +
                 '}';
     }
 }
