@@ -45,7 +45,27 @@ public class NoticiaMarcadaDao {
         }else{
             this.registrarNoticiaEtiqueta(noticiaMarcada.getTitulo(),"Costa Rica Medio Ambiente",noticiaMarcada.getUsuarioCedula());
         }
+    }
 
+    public void create2(NoticiaMarcada noticiaMarcada) throws Exception{
+        String sql = "insert into NOTICIA_MARCADA(Titulo,Descripcion,Fecha,Prioridad,Fuente,Enlace,Imagen,Fechaguardado,FK_NoticiaMarcada_UsuarioCedula) values (?,?,?,?,?,?,?,SYSDATETIME(),?)";
+        PreparedStatement stm = db.prepareStatement(sql);
+        stm.setString(1,noticiaMarcada.getTitulo());
+        stm.setString(2,noticiaMarcada.getDescripcion());
+        java.util.Date fechaUtil = noticiaMarcada.getFechaGuardado();
+        java.sql.Date fechaSql = new java.sql.Date(fechaUtil.getTime());
+        stm.setString(3, noticiaMarcada.getFecha());
+        stm.setString(4,noticiaMarcada.getPrioridad());
+        stm.setString(5,noticiaMarcada.getFuente());
+        stm.setString(6,noticiaMarcada.getEnlace());
+        stm.setString(7,noticiaMarcada.getImagen());
+        stm.setString(8,noticiaMarcada.getUsuarioCedula());
+        int count = db.executeUpdate(stm);
+        if (count == 0) {
+            throw new Exception("No se creo");
+        }else{
+            this.registrarNoticiaEtiqueta(noticiaMarcada.getTitulo(),"Noticia Externa",noticiaMarcada.getUsuarioCedula());
+        }
     }
 
     public List<NoticiaMarcada> getAllNoticiasMarcadas(String usuarioCedula) throws SQLException {

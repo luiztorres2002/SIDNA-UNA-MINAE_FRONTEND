@@ -65,6 +65,11 @@ public class Service {
         noticiaMarcada.setId(1);
         noticiaMarcadaDao.create(noticiaMarcada);
     }
+    public void noticiaMarcadaAdd2(NoticiaMarcada noticiaMarcada) throws Exception {
+        noticiaMarcada.setUsuarioCedula("4-0258-0085");
+        noticiaMarcada.setId(1);
+        noticiaMarcadaDao.create2(noticiaMarcada);
+    }
 
 
 

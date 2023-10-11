@@ -276,8 +276,8 @@ class Busqueda {
 
     async mostrarDestacadas() {
         let contadorNoticias = 0;
-        const bordeColores = ['#84bd00', '#006ba6', '#fed141'];
-        const botonColores = ['#006ba6', '#84bd00'];
+        const bordeColores = ['#1c2858', '#cdab68'];
+        const botonColores = ['#cdab68', '#1c2858'];
         const storedNewsJSON = localStorage.getItem('storedNews');
         const storedNews = JSON.parse(storedNewsJSON);
         console.log(storedNews);
@@ -362,16 +362,32 @@ class Busqueda {
             const imageUrls = [];
             for (const [index, result] of newsResults.entries()) {
                 contadorNoticias++;
-
                 let imageUrl = '';
-
                 try {
-                    const proxyUrl = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
-                    const newsResponse = await fetch(proxyUrl + result.link);
-                    const newsHtml = await newsResponse.text();
-                    const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
-                    const ogImage = newsDocument.querySelector('meta[property="og:image"]');
-                    imageUrl = ogImage ? ogImage.getAttribute('content') : result.thumbnail;
+                    const proxyUrl1 = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
+                    const proxyUrl2 = 'https://corsproxy.io/?';
+
+                    try {
+                        const newsResponse = await fetch(proxyUrl2 + result.link);
+                        const newsHtml = await newsResponse.text();
+                        const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
+                        const ogImage = newsDocument.querySelector('meta[property="og:image"]');
+                        imageUrl = ogImage ? ogImage.getAttribute('content') : result.thumbnail;
+                    } catch (error1) {
+                        console.error(`Error al obtener datos de noticia con el primer proxy (${result.link}):`, error1);
+
+                        try {
+                            const newsResponse2 = await fetch(proxyUrl1 + result.link);
+                            const newsHtml2 = await newsResponse2.text();
+                            const newsDocument2 = new DOMParser().parseFromString(newsHtml2, 'text/html');
+                            const ogImage2 = newsDocument2.querySelector('meta[property="og:image"]');
+                            imageUrl = ogImage2 ? ogImage2.getAttribute('content') : result.thumbnail;
+                        } catch (error2) {
+                            console.error(`Error al obtener datos de noticia con el segundo proxy (${result.link}):`, error2);
+
+                        }
+                    }
+
                     imageUrls.push(imageUrl);
                 } catch (error) {
                     console.error(`Error al obtener datos de noticia (${result.link}):`, error);
@@ -403,6 +419,7 @@ class Busqueda {
                     </div>
                 </div>
             </div>
+            </div>
         `;
 
                 const semaforoButtons = elementoNoticiaCoincidente.querySelectorAll('input[type="radio"]');
@@ -428,16 +445,8 @@ class Busqueda {
                 const result = newsResults[i];
 
                 try {
-                    const proxyUrl = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
-                    const newsResponse = await fetch(proxyUrl + result.link);
-                    const newsHtml = await newsResponse.text();
-                    const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
-
-                    // Verificar si existe una imagen de alta calidad en la página de noticias
-                    const ogImage = newsDocument.querySelector('meta[property="og:image"]');
-
-                    if (ogImage) {
-                        updatedNewsResults[i].thumbnail = ogImage.getAttribute('content');
+                    if (imageUrls[i]) {
+                        updatedNewsResults[i].thumbnail = imageUrls[i];
                     }
                 } catch (error) {
                     console.error(`Error al obtener datos de noticia (${result.link}):`, error);
@@ -459,8 +468,10 @@ class Busqueda {
 
     async  corresponderPalabraClaveEnNoticias() {
         let contadorNoticias = 0;
-        const coloresBorde = ['#84bd00', '#006ba6', '#fed141'];
-        const coloresBoton = ['#006ba6',  '#84bd00'];
+        const coloresBorde = ['#1c2858', '#cdab68'];
+        const coloresBoton = ['#cdab68', '#1c2858'];
+
+
 
         const keyword = busqueda;
         const noticiasCoincidentes = document.querySelector('#noticiasCoincidentes');
@@ -650,6 +661,7 @@ class Busqueda {
 
     add = async () => {
         event.preventDefault();
+        console.log(this.entidad);
         const request = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas', {
             method: 'POST',
             headers: {
@@ -657,7 +669,6 @@ class Busqueda {
             },
             body: JSON.stringify(this.entidad)
         });
-
         try {
             const response = await fetch(request);
             if (!response.ok) {

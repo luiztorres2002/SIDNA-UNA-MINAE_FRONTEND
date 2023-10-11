@@ -80,7 +80,7 @@ class Etiqueta {
             <p id="etiqueta-description" style="font-size: 1.0em; font-weight: bold;">Your dynamic content here...</p>
           </div>
           <div class="modal-footer justify-content-lg-start" style="border-top: none;">
-            <button id="confirm-si" type="submit" style="background-color: #84bd00" class="rounded text-light">Aceptar</button>
+            <button id="confirm-si" type="submit" style="background-color: #cdab68" class="rounded text-light">Aceptar</button>
             <button id="confirm-no" type="submit" style="background-color: white" class="rounded" data-dismiss="modal">Cancelar</button>
           </div>
         </div>
@@ -131,7 +131,7 @@ class Etiqueta {
     <div class="btn-group me-2">
         <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 120px; line-height: 5px;"><span class="font-weight-bold">+</span> <span class="texto-agregar">Agregar</span></button>
     </div>
-    <input class="form-control me-2 fontAwesome" id="buscadorEtiqueta" autocomplete="off" type="text" style="width: 200px; margin-left: 700px; height: 38px; border-radius: 5px; border: 1px solid #006ba6;" placeholder="&#xf002; Buscar Etiqueta...">
+    <input class="form-control me-2 fontAwesome" id="buscadorEtiqueta" autocomplete="off" type="text" style="width: 200px; margin-left: 700px; height: 38px; border-radius: 5px; border: 1px solid #1c2858;" placeholder="&#xf002; Buscar Etiqueta...">
     <div class="btn-group me-2">
          <button type="button" class="btn btn-custom-outline-success2" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
             <i class="fas fa-search"></i>
@@ -140,7 +140,7 @@ class Etiqueta {
 </div>
 <div class="centered-container">
   <div class="d-flex justify-content-center align-items-center">
-    <div class="spinner-border" role="status" style="color: #84bd00">
+    <div class="spinner-border" role="status" style="color: #cdab68">
       <span class="visually-hidden">Loading...</span>
     </div>
   </div>
@@ -285,7 +285,7 @@ class Etiqueta {
           </div>
 
           <div class="form-group mb-2 align-content-lg-end">
-            <button id="save" type="submit" style="background-color: #84bd00" class="rounded text-dark">Guardar</button>
+            <button id="save" type="submit" style="background-color: #cdab68" class="rounded text-light">Guardar</button>
             <button id="cancel" type="submit" style="background-color: white" class="rounded">Cancelar</button>
           </div>
         </form>
