@@ -84,6 +84,21 @@ public class EtiquetaDao {
         return etiquetas;
     }
 
+    public List<Etiqueta> getEtiquetasHabilitadas(String cedula) throws SQLException {
+        String sql = "SELECT * FROM ETIQUETA WHERE FK_Etiqueta_UsuarioCedula = ? AND Estado = ?";
+        List<Etiqueta> etiquetas = new ArrayList<>();
+        try (PreparedStatement statement = db.prepareStatement(sql)) {
+            statement.setString(1, cedula);
+            statement.setBoolean(2, true);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    etiquetas.add(mapResultSetToEtiqueta(resultSet));
+                }
+                return etiquetas;
+            }
+        }
+    }
+
 
     private Etiqueta mapResultSetToEtiqueta(ResultSet resultSet) throws SQLException {
         int etiquetaId = resultSet.getInt("PK_EtiquetaId");

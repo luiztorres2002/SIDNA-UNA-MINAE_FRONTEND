@@ -28,6 +28,22 @@ public class Etiquetas {
         }
     }
 
+    @GET
+    @Path("/habilitadas/{usuarioCedula}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Etiqueta> getEtiquetasByCedulaAndEstado(@PathParam("usuarioCedula") String usuarioCedula) {
+        try {
+            Database db = new Database();
+            EtiquetaDao etiquetaDao = new EtiquetaDao(db);
+
+            List<Etiqueta> resultado = etiquetaDao.getEtiquetasHabilitadas(usuarioCedula);
+
+            return resultado;
+        } catch (SQLException e) {
+            throw new InternalServerErrorException(e);
+        }
+    }
+
     @PUT
     @Path("/cambiarEstado/{etiquetaId}/{nuevoEstado}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -52,27 +68,24 @@ public class Etiquetas {
     }
 
     @POST
-    @Consumes(MediaType.TEXT_PLAIN)
-    public Response addEtiqueta(String descripcion) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addEtiqueta(Etiqueta etiqueta) {
         try {
             Database database = new Database();
             EtiquetaDao etiquetaDao = new EtiquetaDao(database);
-            Etiqueta etiqueta = new Etiqueta();
-            etiqueta.setDescripcion(descripcion);
-            etiqueta.setEstado(true);
-            etiqueta.setUsuarioCedula("4-0258-0085");
 
-            List<Etiqueta> etiquetas = getAllEtiquetasByUsuario(etiqueta.getUsuarioCedula());
+            String descripcion = etiqueta.getDescripcion();
+            String cedula = etiqueta.getUsuarioCedula();
+
+            List<Etiqueta> etiquetas = getAllEtiquetasByUsuario(cedula);
             for (Etiqueta value : etiquetas) {
                 if (Objects.equals(value.getDescripcion().toLowerCase(), descripcion.toLowerCase())) {
                     return Response.status(Response.Status.NOT_FOUND).build();
                 }
             }
-
-            if (descripcion.isEmpty()) {
-                return Response.status(Response.Status.NOT_FOUND).build();
+            if (descripcion.isEmpty() || cedula.isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST).build();
             }
-
             etiquetaDao.addEtiqueta(etiqueta);
             return Response.ok().build();
         } catch (SQLException ex) {

@@ -80,7 +80,7 @@ class Etiqueta {
             <p id="etiqueta-description" style="font-size: 1.0em; font-weight: bold;">Your dynamic content here...</p>
           </div>
           <div class="modal-footer justify-content-lg-start" style="border-top: none;">
-            <button id="confirm-si" type="submit" style="background-color: #84bd00" class="rounded text-light">Aceptar</button>
+            <button id="confirm-si" type="submit" style="background-color: #cdab68" class="rounded text-light">Aceptar</button>
             <button id="confirm-no" type="submit" style="background-color: white" class="rounded" data-dismiss="modal">Cancelar</button>
           </div>
         </div>
@@ -131,7 +131,7 @@ class Etiqueta {
     <div class="btn-group me-2">
         <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 120px; line-height: 5px;"><span class="font-weight-bold">+</span> <span class="texto-agregar">Agregar</span></button>
     </div>
-    <input class="form-control me-2 fontAwesome" id="buscadorEtiqueta" autocomplete="off" type="text" style="width: 200px; margin-left: 700px; height: 38px; border-radius: 5px; border: 1px solid #006ba6;" placeholder="&#xf002; Buscar Etiqueta...">
+    <input class="form-control me-2 fontAwesome" id="buscadorEtiqueta" autocomplete="off" type="text" style="width: 200px; margin-left: 700px; height: 38px; border-radius: 5px; border: 1px solid #1c2858;" placeholder="&#xf002; Buscar Etiqueta...">
     <div class="btn-group me-2">
          <button type="button" class="btn btn-custom-outline-success2" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
             <i class="fas fa-search"></i>
@@ -140,12 +140,13 @@ class Etiqueta {
 </div>
 <div class="centered-container">
   <div class="d-flex justify-content-center align-items-center">
-    <div class="spinner-border" role="status" style="color: #84bd00">
+    <div class="spinner-border" role="status" style="color: #cdab68">
       <span class="visually-hidden">Loading...</span>
     </div>
   </div>
 </div>
- <div class="table-responsive" style="max-height: 600px; overflow-y: auto; overflow-x: hidden; background-color: white">
+ <div class="table-responsive" style="overflow: auto; max-height: 600px; overflow-y: auto; overflow-x: hidden; background-color: white">
+ <div id="tableContainer">
   <table class="table table-fixed" id="tablaEtiquetas" style="display: none">  
   <thead>
         <tr>
@@ -159,6 +160,7 @@ class Etiqueta {
     <tbody id="etiquetasTableBody">
       
 </table>
+</div>
 </div>
                 </div>
             </form>
@@ -286,7 +288,7 @@ class Etiqueta {
           </div>
 
           <div class="form-group mb-2 align-content-lg-end">
-            <button id="save" type="submit" style="background-color: #84bd00" class="rounded text-dark">Guardar</button>
+            <button id="save" type="submit" style="background-color: #cdab68" class="rounded text-light">Guardar</button>
             <button id="cancel" type="submit" style="background-color: white" class="rounded">Cancelar</button>
           </div>
         </form>
@@ -400,9 +402,9 @@ class Etiqueta {
         <ul class="ftco-footer-social p-0 text-center">
         </ul>
         <form action="#" id="formadd" class="signup-form">
-        <input type="hidden" id="etiquetaId" name="etiquetaId" value="">
+        <input type="hidden" id="etiquetaId" name="etiquetaId" value="" >
          <div class="form-group mb-2">
-            <input type="text" id="txtNombre" class="form-control mt-4">
+            <input type="text" id="txtNombre" class="form-control mt-4" autocomplete="off">
         </div>
           <div class="form-group mb-2">
             <button type="submit" id="etiquetaAgregar" class="form-control mt-3 btn btn-primary rounded submit px-3">Aceptar</button>
@@ -496,12 +498,17 @@ class Etiqueta {
     agregarEtiqueta2 = (descripcion) => {
         event.preventDefault();
         const url = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/';
+        const requestBody = {
+            descripcion: descripcion,
+            usuarioCedula: "4-0258-0085",
+            estado: true
+        };
         const options = {
             method: 'POST',
             headers: {
-                'Content-Type': 'text/plain'
+                'Content-Type': 'application/json'
             },
-            body: descripcion
+            body: JSON.stringify(requestBody)
         };
 
         fetch(url, options)
@@ -558,11 +565,11 @@ class Etiqueta {
     search = async () => {
         const searchInput = this.dom.querySelector("#buscadorEtiqueta");
         const modal = this.dom.querySelector("#modalError");
-        const searchTerm = searchInput.value.toLowerCase();
-        const rows = document.querySelectorAll('tbody tr');
+        const searchTerm = searchInput.value.trim().toLowerCase();
+        const nameColumn = document.querySelectorAll('#tablaEtiquetas tbody tr td:nth-child(1)');
         let encontrados = false;
 
-        if (searchTerm.trim() === "") {
+        if (searchTerm === "") {
             const etiquetaDescriptionElement = document.getElementById('mensaje');
             const modalFooter = modal.querySelector('.modal-footer');
             if (modalFooter) {
@@ -576,15 +583,20 @@ class Etiqueta {
             return;
         }
 
-        rows.forEach((row) => {
-            const cellText = row.textContent.toLowerCase();
-            if (cellText.includes(searchTerm)) {
+        nameColumn.forEach((cell) => {
+            const cellText = cell.textContent.trim().toLowerCase();
+            if (cellText === searchTerm) {
+                const row = cell.parentElement;
                 row.classList.remove("disabled-row");
                 row.classList.add('highlight');
-                encontrados = true;
 
-            } else {
-                row.classList.remove('highlight');
+                // Scroll the table container to the matching row
+                const tableContainer = document.getElementById('tableContainer');
+                if (tableContainer) {
+                    row.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start', container: tableContainer });
+                }
+
+                encontrados = true;
             }
         });
 
@@ -608,6 +620,9 @@ class Etiqueta {
     createNew = () => {
         this.reset();
         this.state.mode = 'A';
+        const txtNombre = document.getElementById("txtNombre");
+        txtNombre.value = "";
+        txtNombre.textContent="";
         this.showModal();
 
     }

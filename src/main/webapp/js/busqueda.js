@@ -1,14 +1,14 @@
 const apiKeys = [
-    '2b1a27f35ed5df433b2ea68367b91471c08d2a4c9e560dbaea946220ff6c2e02',
     'f7bed0b72cb036e58cf01c0ca21769520437a7384f825789dca5322d14e19367',
     'f6136e266d9e40ee213e1b95a60b46b06a9e650465baf4f3fc0fe5d2bba1e3b3',
     '60f7edca87ed3fbaa81fa2e4e1676aba4ed4f3f23a5a4d527aa694edd4b1dc1d',
-    '61123b1e9ba1ef16edf7f09f39fa5be91ca9a0609d9be31b9e7e5a2b36db6bd2',
     '51c4b495ff9b138324e629bacd6555f0700996f3ea0c5824244731938998b453'
 ];
 
 let currentApiKeyIndex = 0;
 let busqueda ="";
+let noticiasArray = [];
+sugerencias = [];
 
 class Busqueda {
 
@@ -42,9 +42,13 @@ class Busqueda {
         this.dom.querySelector("#busqueda #marcar #cancelModal").addEventListener('click', this.hidemodal);
         this.dom.querySelector("#busqueda  #modalError #dismissButton").addEventListener('click', this.hideModalError);
         this.dom.querySelector("#busqueda  #sucessmodal #sucessbuton").addEventListener('click', this.hideModalExito);
+        const searchInput = this.dom.querySelector("#search-input");
+        searchInput.addEventListener("input", (event) => this.inputCambio(event));
         setTimeout(() => {
             this.mostrarDestacadas();
+            this.getSugerencias();
         }, 100);
+
         const semaforoContainer = this.dom.querySelector('.semaforoModal');
         const radioButtons = semaforoContainer.querySelectorAll('input[type="radio"]');
         radioButtons.forEach(radioButton => {
@@ -85,11 +89,11 @@ class Busqueda {
         </div>
     </div>
     <div class="container justify-content-center" id="tituloBusqueda" style="text-align: center; font-family: Verdana; font-size: 28px;"> 
-            Últimas noticias ambientales
+            Últimas Noticias Ambientales
         </div>
    <div class="d-flex justify-content-center">
             <form id="form" style="width: 85%;"">
-           <div class="input-group mb-3 mt-10" style="display: flex; align-items: center; justify-content: center;">
+           <div class="input-group mt-10" style="display: flex; align-items: center; justify-content: center;">
     <div class="btn-group me-2">
 
 <select id="tiempoSeleccionado" style="border: none; width: 90px; margin-right:90px; margin-left: 100px";>
@@ -105,13 +109,13 @@ class Busqueda {
             <div id="search-input" class="editable-input fontAwesome" contenteditable="true" data-placeholder="&#xf002; Buscar..."></div>
             <div id="pills-container" class="pill-container"></div>
         </div>
-        
     <div class="btn-group me-2">
          <button type="button" class="btn btn-custom-outline-success" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
             <i class="fas fa-search"></i>
          </button>
     </div>
 </div>
+<div id="caja-sugerencia" class="caja-sugerencia" style="display: none"></div>
 <div id="pillsMobile-container" class="pill-container"></div>
 <div class="search-results-container">
     <div id="noticiasCoincidentes"></div> 
@@ -128,16 +132,16 @@ class Busqueda {
 
 
         setTimeout(() => {
-            const pillsContainer = document.getElementById("pills-container");
+            const pillsContainer1 = document.getElementById("pills-container");
             const pillsContainer2 = document.getElementById("pillsMobile-container");
             const searchInput = document.getElementById("search-input");
+
             searchInput.addEventListener("keyup", (event) => {
                 if (event.key === "Enter" || event.key === "," || event.key === "-") {
                     event.preventDefault();
                     const searchValue = searchInput.textContent.trim();
                     if (searchValue) {
-
-                        const cleanedValue = searchValue.replace(/[,-]/g, "").trim();
+                        const cleanedValue = searchValue.replace(/[,.-]/g, "").trim();
                         if (cleanedValue) {
                             this.crearBurbuja(cleanedValue);
                             searchInput.textContent = "";
@@ -147,15 +151,38 @@ class Busqueda {
                 }
             });
 
-            pillsContainer.addEventListener("click", (event) => {
+            pillsContainer1.addEventListener("click", (event) => {
                 if (event.target.classList.contains("close-icon")) {
-                    event.target.parentElement.remove();
+                    const pillElement = event.target.parentElement;
+                    pillElement.remove();
+
+                    const pillText = pillElement.querySelector(".pill-text").textContent.trim();
+                    const pillElements2 = pillsContainer2.querySelectorAll(".pill");
+                    pillElements2.forEach((pillElement2) => {
+                        const pillText2 = pillElement2.querySelector(".pill-text").textContent.trim();
+                        if (pillText === pillText2) {
+                            pillElement2.remove();
+                        }
+                    });
+
                     this.actualizarTexto();
                 }
             });
+
             pillsContainer2.addEventListener("click", (event) => {
                 if (event.target.classList.contains("close-icon")) {
-                    event.target.parentElement.remove();
+                    const pillElement = event.target.parentElement;
+                    pillElement.remove();
+
+                    const pillText = pillElement.querySelector(".pill-text").textContent.trim();
+                    const pillElements1 = pillsContainer1.querySelectorAll(".pill");
+                    pillElements1.forEach((pillElement1) => {
+                        const pillText1 = pillElement1.querySelector(".pill-text").textContent.trim();
+                        if (pillText === pillText1) {
+                            pillElement1.remove();
+                        }
+                    });
+
                     this.actualizarTexto();
                 }
             });
@@ -228,7 +255,7 @@ class Busqueda {
         const searchValue = searchInput.textContent.trim();
         let fullText = searchValue + " " + combinedText;
         fullText = fullText.replace(/\s+/g, " ").trim();
-        console.log("Combined Text:", fullText);
+        console.log("Texto:", fullText);
         busqueda=fullText;
     }
 
@@ -247,16 +274,75 @@ class Busqueda {
         pillsContainer2.appendChild(pill2);
     }
 
-
     async mostrarDestacadas() {
         let contadorNoticias = 0;
-        const bordeColores = ['#84bd00', '#006ba6', '#fed141'];
-        const botonColores = ['#006ba6',  '#84bd00'];
+        const bordeColores = ['#1c2858', '#cdab68'];
+        const botonColores = ['#cdab68', '#1c2858'];
+        const storedNewsJSON = localStorage.getItem('storedNews');
+        const storedNews = JSON.parse(storedNewsJSON);
+        console.log(storedNews);
 
         const noticiasCoincidentes = document.querySelector('#noticiasCoincidentes');
         noticiasCoincidentes.innerHTML = '';
 
+        const lastUpdatedTime = localStorage.getItem('lastUpdatedTime');
 
+
+        if (lastUpdatedTime && (Date.now() - parseInt(lastUpdatedTime)) < 3600000) {
+
+            const storedNews = JSON.parse(localStorage.getItem('storedNews'));
+            if (storedNews) {
+                for (const [index, result] of storedNews.entries()) {
+                    contadorNoticias++;
+
+                    let imageUrl = result.thumbnail;
+
+                    const colorBorde = bordeColores[index % bordeColores.length];
+                    const colorBoton = botonColores[index % botonColores.length];
+                    const elementoNoticiaCoincidente = document.createElement('div');
+                    elementoNoticiaCoincidente.classList.add('noticia-coincidente');
+
+                    elementoNoticiaCoincidente.innerHTML = `
+                    <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${result.link}">
+                        <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.thumbnail}'; this.classList.add('card-img-top', 'card-img-custom');">
+                        <div class="card-body">
+                            <div class="text-section">
+                                <h5 class="card-title fw-bold">${result.title}</h5>
+                                <p class="card-text">${result.snippet}</p>
+                            </div>
+                            <div class="cta-section">
+                                <p class="card-text">${result.date}</p>
+                                <div class="traffic-light">
+                                  <input type="radio" name="rag1" class="Alta" value="Alta">
+                                  <input type="radio" name="rag1" class="Media" value="Media">
+                                  <input type="radio" name="rag1" class="Baja" value="Baja">
+                                </div>
+                                <a href="${result.link}" id="enlanceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
+                    <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i></a>
+                               
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                    const semaforoButtons = elementoNoticiaCoincidente.querySelectorAll('input[type="radio"]');
+                    const newsSource = `${result.link}`;
+                    const titulo = `${result.title}`;
+                    const descripcion = `${result.snippet}`;
+                    const fuente = `${result.source}`;
+                    const fecha = `${result.date}`;
+
+                    semaforoButtons.forEach((button, colorIndex) => {
+                        const selectedColor = button.value;
+                        const infoText = `${selectedColor}`;
+                        button.addEventListener('click', this.modalmarcarshow.bind(this, titulo, descripcion, newsSource, fuente, infoText, fecha, imageUrl));
+                    });
+
+                    noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
+                }
+                return;
+            }
+        }
         const apiKey = apiKeys[currentApiKeyIndex];
         currentApiKeyIndex = (currentApiKeyIndex + 1) % apiKeys.length;
 
@@ -276,17 +362,32 @@ class Busqueda {
             const imageUrls = [];
             for (const [index, result] of newsResults.entries()) {
                 contadorNoticias++;
-
                 let imageUrl = '';
-
                 try {
+                    const proxyUrl1 = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
+                    const proxyUrl2 = 'https://corsproxy.io/?';
 
-                    const corsProxyUrl = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
-                    const newsResponse = await fetch(corsProxyUrl + result.link);
-                    const newsHtml = await newsResponse.text();
-                    const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
-                    const ogImage = newsDocument.querySelector('meta[property="og:image"]');
-                    imageUrl = ogImage ? ogImage.getAttribute('content') : result.thumbnail;
+                    try {
+                        const newsResponse = await fetch(proxyUrl2 + result.link);
+                        const newsHtml = await newsResponse.text();
+                        const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
+                        const ogImage = newsDocument.querySelector('meta[property="og:image"]');
+                        imageUrl = ogImage ? ogImage.getAttribute('content') : result.thumbnail;
+                    } catch (error1) {
+                        console.error(`Error al obtener datos de noticia con el primer proxy (${result.link}):`, error1);
+
+                        try {
+                            const newsResponse2 = await fetch(proxyUrl1 + result.link);
+                            const newsHtml2 = await newsResponse2.text();
+                            const newsDocument2 = new DOMParser().parseFromString(newsHtml2, 'text/html');
+                            const ogImage2 = newsDocument2.querySelector('meta[property="og:image"]');
+                            imageUrl = ogImage2 ? ogImage2.getAttribute('content') : result.thumbnail;
+                        } catch (error2) {
+                            console.error(`Error al obtener datos de noticia con el segundo proxy (${result.link}):`, error2);
+
+                        }
+                    }
+
                     imageUrls.push(imageUrl);
                 } catch (error) {
                     console.error(`Error al obtener datos de noticia (${result.link}):`, error);
@@ -298,57 +399,81 @@ class Busqueda {
                 elementoNoticiaCoincidente.classList.add('noticia-coincidente');
 
                 elementoNoticiaCoincidente.innerHTML = `
-                    <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${result.link}">
-                        <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.thumbnail}'; this.classList.add('card-img-top', 'card-img-custom');">
-                        <div class="card-body">
-                            <div class="text-section">
-                                <h5 class="card-title fw-bold">${result.title}</h5>
-                                <p class="card-text">${result.snippet}</p>
-                            </div>
-                            <div class="cta-section">
-                                <p class="card-text">${result.date}</p>
-                                <div class="traffic-light">
-                                  <input type="radio" name="rag1" class="Alta" value="Alta">
-                                  <input type="radio" name="rag1" class="Media" value="Media">
-                                  <input type="radio" name="rag1" class="Baja" value="Baja">
-                                </div>
-                                <a href="${result.link}" id="enlanceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
-                    <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i></a>
-                   
-                            </div>
-                        </div>
+            <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${result.link}">
+                <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.thumbnail}'; this.classList.add('card-img-top', 'card-img-custom');">
+                <div class="card-body">
+                    <div class="text-section">
+                        <h5 class="card-title fw-bold">${result.title}</h5>
+                        <p class="card-text">${result.snippet}</p>
                     </div>
-                `;
-                this.entity = {};
-                const newsElements = document.querySelectorAll('.noticia-coincidente');
-                newsElements.forEach((element, index) => {
-                    const colorButtons = element.querySelectorAll('input[type="radio"]');
-                    const newsSource = newsResults[index].link;
-                    const titulo = newsResults[index].title;
-                    const descripcion = newsResults[index].snippet;
-                    const fuente = newsResults[index].source;
-                    const fecha = newsResults[index].date;
-                    const imagen = imageUrls[index];
+                    <div class="cta-section">
+                        <p class="card-text">${result.date}</p>
+                        <div class="traffic-light">
+                          <input type="radio" name="rag1" class="Alta" value="Alta">
+                          <input type="radio" name="rag1" class="Media" value="Media">
+                          <input type="radio" name="rag1" class="Baja" value="Baja">
+                        </div>
+                        <a href="${result.link}" id="enlanceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
+            <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i></a>
+           
+                    </div>
+                </div>
+            </div>
+            </div>
+        `;
 
-                    colorButtons.forEach((button, colorIndex) => {
-                        const selectedColor = button.value;
-                        const infoText = `${selectedColor}`;
-                        button.addEventListener('click', this.modalmarcarshow.bind(this, titulo,descripcion,newsSource,fuente,infoText,fecha,imagen));
+                const semaforoButtons = elementoNoticiaCoincidente.querySelectorAll('input[type="radio"]');
+                const newsSource = `${result.link}`;
+                const titulo = `${result.title}`;
+                const descripcion = `${result.snippet}`;
+                const fuente = `${result.source}`;
+                const fecha = `${result.date}`;
+                const imagen = `${imageUrl}`;
 
-                    });
+                semaforoButtons.forEach((button, colorIndex) => {
+                    const selectedColor = button.value;
+                    const infoText = `${selectedColor}`;
+                    button.addEventListener('click', this.modalmarcarshow.bind(this, titulo, descripcion, newsSource, fuente, infoText, fecha, imagen));
                 });
 
                 noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
             }
+
+            const updatedNewsResults = [...newsResults];
+
+            for (let i = 0; i < newsResults.length; i++) {
+                const result = newsResults[i];
+
+                try {
+                    if (imageUrls[i]) {
+                        updatedNewsResults[i].thumbnail = imageUrls[i];
+                    }
+                } catch (error) {
+                    console.error(`Error al obtener datos de noticia (${result.link}):`, error);
+                }
+            }
+
+
+
+            localStorage.setItem('storedNews', JSON.stringify(updatedNewsResults));
+            localStorage.setItem('lastUpdatedTime', Date.now());
+            const storedNewsJSON = localStorage.getItem('storedNews');
+            const storedNews = JSON.parse(storedNewsJSON);
+            console.log(storedNews);
         }
     }
 
+
+
+
     async  corresponderPalabraClaveEnNoticias() {
         let contadorNoticias = 0;
-        const coloresBorde = ['#84bd00', '#006ba6', '#fed141'];
-        const coloresBoton = ['#006ba6',  '#84bd00'];
+        const coloresBorde = ['#1c2858', '#cdab68'];
+        const coloresBoton = ['#cdab68', '#1c2858'];
 
-        const keyword = busqueda.toLowerCase();
+
+
+        const keyword = busqueda;
         const noticiasCoincidentes = document.querySelector('#noticiasCoincidentes');
         noticiasCoincidentes.innerHTML = '';
 
@@ -406,7 +531,6 @@ class Busqueda {
                     const buttonColor = coloresBoton[index % coloresBoton.length];
                     const elementoNoticiaCoincidente = document.createElement('div');
                     elementoNoticiaCoincidente.classList.add('noticia-coincidente');
-
                     elementoNoticiaCoincidente.innerHTML = `
                     <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};">
                         <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.thumbnail}'; this.classList.add('card-img-top', 'card-img-custom');">
@@ -537,6 +661,7 @@ class Busqueda {
 
     add = async () => {
         event.preventDefault();
+        console.log(this.entidad);
         const request = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas', {
             method: 'POST',
             headers: {
@@ -544,7 +669,6 @@ class Busqueda {
             },
             body: JSON.stringify(this.entidad)
         });
-
         try {
             const response = await fetch(request);
             if (!response.ok) {
@@ -562,6 +686,70 @@ class Busqueda {
         } catch (e) {
             alert(e);
         }
+    }
+
+    inputCambio(event) {
+        const buscador = event.target;
+        const palabra = buscador.textContent.trim().toLowerCase();
+
+        if (palabra === "") {
+            this.ocultarCajaSugerencias();
+            return;
+        }
+
+        const sugerenciasFiltradas = sugerencias.filter((sugerencia) => {
+            const descripcionSugerencia = sugerencia.descripcion.toLowerCase();
+            return descripcionSugerencia.startsWith(palabra);
+        });
+
+        this.actualizarCajaSugerencias(sugerenciasFiltradas);
+    }
+
+
+    getSugerencias() {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", `http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/habilitadas/4-0258-0085`, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onload = () => {
+            if (xhr.status === 200) {
+                const data = JSON.parse(xhr.responseText);
+                sugerencias = data;
+            } else {
+                console.error("Error al cargar etiquetas.");
+            }
+        };
+        xhr.send();
+    }
+
+    actualizarCajaSugerencias(etiquetas) {
+        const cajaSugerencias = this.dom.querySelector("#caja-sugerencia");
+        cajaSugerencias.innerHTML = "";
+
+        etiquetas.forEach((etiqueta) => {
+            const sugerencia = document.createElement("div");
+            sugerencia.className = "sugerencia";
+            sugerencia.textContent = etiqueta.descripcion;
+
+
+            sugerencia.addEventListener("click", () => this.clickSugerencia(etiqueta.descripcion));
+
+            cajaSugerencias.appendChild(sugerencia);
+        });
+
+        cajaSugerencias.style.display = etiquetas.length > 0 ? "block" : "none";
+    }
+    clickSugerencia(sugerenciaSeleccionada) {
+        const buscador = this.dom.querySelector("#search-input");
+        buscador.textContent = "";
+        this.crearBurbuja(sugerenciaSeleccionada);
+        this.actualizarTexto();
+
+
+        this.ocultarCajaSugerencias();
+    }
+    ocultarCajaSugerencias() {
+        const cajaSugerencias = this.dom.querySelector("#caja-sugerencia");
+        cajaSugerencias.style.display = "none";
     }
 
 

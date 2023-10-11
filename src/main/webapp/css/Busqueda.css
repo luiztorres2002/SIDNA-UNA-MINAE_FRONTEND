@@ -1,6 +1,6 @@
 .card {
-    max-width: 60em !important;
-    max-height: 12em !important;
+    max-width: 62em !important;
+    max-height: 13em !important;
     flex-direction: row !important;
     background-color: #ffffff !important;
     box-shadow: 4px 5px 13px 2px #7a7d74 !important;
@@ -18,6 +18,58 @@
     width: 10% !important;
 }
 
+#caja-sugerencia {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-left: 285px;
+    width: 63%;
+    z-index: 1;
+}
+
+
+select#tiempoSeleccionado {
+    width: 90px;
+}
+
+/* Set different widths based on selected options */
+select#tiempoSeleccionado option[value="ultimaHora"]:checked {
+    width: 100px !important;
+}
+
+select#tiempoSeleccionado option[value="ultimoDia"]:checked {
+    width: 150px;
+}
+
+select#tiempoSeleccionado option[value="ultimaSemana"]:checked {
+    width: 200px;
+}
+
+select#tiempoSeleccionado option[value="ultimoMes"]:checked {
+    width: 250px;
+}
+
+select#tiempoSeleccionado option[value="ultimoAno"]:checked {
+    width: 300px;
+}
+
+.sugerencia {
+    padding: 8px;
+    cursor: pointer;
+
+}
+
+.sugerencia:last-child {
+    border-bottom: none;
+}
+
+.sugerencia:hover {
+    background-color: #f0f0f0;
+}
+
+
 select {
     font-family: 'FontAwesome', 'Second Font name'
 }
@@ -34,7 +86,7 @@ select {
 }
 
 .card img {
-    max-width: 25%;
+    max-width: 28%;
     padding: 0.5em;
     border-radius: 0.7em;
 }
@@ -85,7 +137,7 @@ select {
     max-height: 38px !important;
     margin: 0 auto;
     border-radius: 6px !important;
-    border: 1px solid #006ba6;
+    border: 1px solid #1c2858;
     transition: max-height 0.3s, max-width 0.3s;
 }
 
@@ -134,28 +186,28 @@ select {
 
 
 .pill {
-    background-color: #007bff;
+    background-color: #1c2858;
 }
 
 .pill:nth-child(1) {
-    background-color: #006ba6;
+    background-color: #1c2858;
 }
 
 .pill:nth-child(2) {
-    background-color: #fed141;
+    background-color: #cdab68;
 }
 
 .pill:nth-child(3) {
-    background-color: #84bd00;
+    background-color: #1c2858;
 }
 .pill:nth-child(4) {
-    background-color: #006ba6;
+    background-color: #cdab68;
 }
 .pill:nth-child(5) {
-    background-color: #fed141;
+    background-color: #1c2858;
 }
 .pill:nth-child(6) {
-    background-color: #84bd00;
+    background-color: #cdab68;
 }
 
 .traffic-light {
@@ -300,6 +352,12 @@ input.BajaModal:checked {
     #tituloBusqueda{
         font-size: 14px !important;
     }
+
+    #caja-sugerencia {
+        margin-left: 40px;
+
+    }
+
     .traffic-light {
         position: absolute;
         display: block;
@@ -381,7 +439,5 @@ input.BajaModal:checked {
         max-width: 150px !important;
         overflow-y: auto;
     }
-
-
 
 }

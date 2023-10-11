@@ -26,7 +26,7 @@ public class TestNoticiaExternaDao {
 
     private Database database = new Database();
 
-    private NoticiaExterna noticiaExterna = new NoticiaExterna(1,"PruebaTitulo", "PruebaDescripcion",null,"Alta","FuentePrueba","Enlace Prueba", null);
+    private NoticiaExterna noticiaExterna = new NoticiaExterna(1,"PruebaTitulo", "PruebaDescripcion",null,"Alta","FuentePrueba","Enlace Prueba","x", null);
 
     @Before
     public void setUp() {

@@ -114,32 +114,32 @@
 
 .btn.btn-custom-outline-success:hover {
     color: #ffffff;
-    background-color: #84bd00;
-    border-color: #84bd00;
+    background-color: #cdab68;
+    border-color: #cdab68;
 }
 
 .btn.btn-custom-outline-success {
-    color: #84bd00;
-    border-color: #84bd00;
+    color: #cdab68;
+    border-color: #cdab68;
     width: 120px;
 }
 
 .btn.btn-custom-outline-success2 {
-    color: #006ba6;
-    border-color: #006ba6;
+    color: #1c2858;
+    border-color: #1c2858;
     width: 70px;
 }
 
 .btn.btn-custom-outline-success2:hover {
     color: #ffffff;
-    background-color: #006ba6;
-    border-color: #006ba6;
+    background-color: #1c2858;
+    border-color: #1c2858;
     width: 70px;
 }
 
 
 .btn.btn-custom-outline-success.btn-outline-success {
-    border-color: #84bd00;
+    border-color: #cdab68;
 }
 
 
@@ -180,29 +180,6 @@ tr.disabled-row {
         font-size: 14px !important;
     }
 
-
-    #Busqueda:hover {
-        background: #006ba6;
-        font-size: 0.68em !important;
-        color: #ffffff;
-
-    }
-
-
-    #Etiquetas:hover {
-        background: #fed141;
-        font-size: 0.68em !important;
-        color: #ffffff;
-
-    }
-
-
-    #Biblioteca:hover {
-        background: #84bd00;
-        font-size: 0.68em !important;
-        color: #ffffff;
-
-    }
 
     .table td.empty {
         width: 100%;
