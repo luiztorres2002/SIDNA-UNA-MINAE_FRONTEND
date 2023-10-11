@@ -130,7 +130,7 @@ public class EtiquetaDao {
         db.executeUpdate(stm);
     }
 
-    public int getNoticiasAsociadas(int etiquetaId) throws SQLException {
+    public List<NoticiasAsociadas> getNoticiasAsociadas(int etiquetaId) throws SQLException {
         List<NoticiasAsociadas> noticiasAsociadas = new ArrayList<>();
         String sql = "select * from NOTICIAMARCADA_ETIQUETA where FKETIQUETA=?";
         try (PreparedStatement statement = db.prepareStatement(sql)) {
@@ -142,7 +142,7 @@ public class EtiquetaDao {
                 }
             }
         }
-        return noticiasAsociadas.size();
+        return noticiasAsociadas;
     }
 
     private NoticiasAsociadas fromAsociadas(ResultSet resultSet) throws SQLException {

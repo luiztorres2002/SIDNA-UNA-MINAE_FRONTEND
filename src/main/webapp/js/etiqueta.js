@@ -16,7 +16,7 @@ class Etiqueta {
     state;
 
     constructor() {
-        this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A', etiquetas: []};
+        this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A', etiquetas: [], noticiasAsociadas: []};
         this.cargarEtiquetas();
         this.dom = this.render();
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
@@ -206,7 +206,8 @@ class Etiqueta {
 
         this.state.etiquetas.forEach((etiqueta, index) => {
             const {descripcion, etiquetaId, estado} = etiqueta;
-            const noticias = this.contarNoticiasAsociadas(etiquetaId);
+            this.contarNoticiasAsociadas(etiquetaId);
+            const noticias = this.state.noticiasAsociadas.length;
             const isChecked = estado ? 'checked' : '';
             const row = `
     <tr data-row="${index + 1}">
@@ -551,12 +552,12 @@ class Etiqueta {
         event.preventDefault();
     }
 
-    //TODO vara para contar noticias
     contarNoticiasAsociadas = async (etiquetaId) => {
         try{
             const url = await fetch(`http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/contarNoticias/${etiquetaId}`);
-            const data = await url.json();
-            this.state.etiquetas = data;
+            this.state.noticiasAsociadas = await url.json();
+            //TODO
+            //await this.cargarEtiquetas();
         }catch (error){
             console.log("Error al contar las Noticias");
         }
