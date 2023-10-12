@@ -303,11 +303,18 @@ class Busqueda {
                     elementoNoticiaCoincidente.classList.add('noticia-coincidente');
 
                     elementoNoticiaCoincidente.innerHTML = `
+                    
                     <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${result.link}">
                         <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.thumbnail}'; this.classList.add('card-img-top', 'card-img-custom');">
                         <div class="card-body">
                             <div class="text-section">
+                                <a class="anchor_preview" href="${result.link}">
                                 <h5 class="card-title fw-bold">${result.title}</h5>
+                                </a>
+                                 <div class="box">
+                                    <iframe src="${result.link}" width = "400px" height = "288px">
+                                    </iframe>
+                                 </div> 
                                 <p class="card-text">${result.snippet}</p>
                             </div>
                             <div class="cta-section">
@@ -317,9 +324,12 @@ class Busqueda {
                                   <input type="radio" name="rag1" class="Media" value="Media">
                                   <input type="radio" name="rag1" class="Baja" value="Baja">
                                 </div>
+                                
                                 <a href="${result.link}" id="enlanceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
-                    <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i></a>
-                               
+                                    <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};">
+                                     </i>
+                                 </a>
+                                 
                             </div>
                         </div>
                     </div>
@@ -414,7 +424,7 @@ class Busqueda {
                           <input type="radio" name="rag1" class="Baja" value="Baja">
                         </div>
                         <a href="${result.link}" id="enlanceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
-            <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i></a>
+                        <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i></a>
            
                     </div>
                 </div>
