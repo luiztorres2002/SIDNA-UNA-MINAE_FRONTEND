@@ -333,7 +333,6 @@ class Busqueda {
                         </div>
                     </div>
                 `;
-
                     const semaforoButtons = elementoNoticiaCoincidente.querySelectorAll('input[type="radio"]');
                     const newsSource = `${result.link}`;
                     const titulo = `${result.title}`;
