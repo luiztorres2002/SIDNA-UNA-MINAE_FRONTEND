@@ -1,12 +1,9 @@
 package resources;
 
 import data.Database;
-import data.EtiquetaDao;
 import data.NoticiaMarcadaDao;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import logic.Etiqueta;
-import logic.NoticiaExterna;
 import logic.NoticiaMarcada;
 import logic.Service;
 

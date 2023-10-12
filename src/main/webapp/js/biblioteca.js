@@ -14,8 +14,8 @@ class Biblioteca {
 
     constructor() {
         this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A', noticias: []};
-
         this.dom = this.render();
+        this.entidad = {};
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
         this.modalerror = new bootstrap.Modal(this.dom.querySelector('#modalError'));
         this.modalexito = new bootstrap.Modal(this.dom.querySelector('#sucessmodal'));
@@ -27,7 +27,6 @@ class Biblioteca {
         this.dom.querySelector("#biblioteca #sucessmodal #sucessbuton").addEventListener('click', this.hideModalExito);
         this.dom.querySelector("#biblioteca #modalcampo #dismisscampo").addEventListener('click', this.hideModalCampo);
         this.cargarBiblioteca();
-
 
     }
 
@@ -73,7 +72,7 @@ class Biblioteca {
     <option value="ultimoMes">Último Mes</option>
     <option value="ultimoAno">Último Año</option>
 </select>
-   <input class="form-control me-2 fontAwesome" id="buscadorEtiqueta" autocomplete="off" type="text" style="width: 100px; margin-left: 200px; height: 38px; border-radius: 5px; border: 1px solid #006ba6;" placeholder="&#xf002; Buscar..."> 
+   <input class="form-control me-2 fontAwesome" id="buscadorEtiqueta" autocomplete="off" type="text" style="width: 100px; margin-left: 200px; height: 38px; border-radius: 5px; border: 1px solid #1c2858;" placeholder="&#xf002; Buscar..."> 
     <div class="btn-group me-2">
          <button type="button" class="btn btn-custom-outline-success" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
             <i class="fas fa-search"></i>
@@ -222,7 +221,7 @@ class Biblioteca {
 
                     <div class="container bg-light">
                             <div class="col-md-12 mt-4 text-center">
-                                 <button type="button" style="font-size: 23px; margin-top: 40px; margin-bottom: 20px; background-color: #006ba6;" id="apply" class="btn btn-primary mt-3">Ingresar Noticia</button>
+                                 <button type="button" style="font-size: 23px; margin-top: 40px; margin-bottom: 20px; background-color: #1c2858;" id="apply" class="btn btn-primary mt-3">Ingresar Noticia</button>
                             </div>
                     </div>
                 </form>
@@ -398,11 +397,15 @@ class Biblioteca {
 
         return true;
     }
-    renderizarNoticias = async () => {
+    renderizarNoticias = () => {
+<<<<<<<<< Temporary merge branch 1
         const bordeColores = ['#84bd00', '#006ba6', '#fed141'];
-        const botonColores = ['#006ba6', '#84bd00'];
+=========
+        const bordeColores = ['#1c2858', '#cdab68'];
+>>>>>>>>> Temporary merge branch 2
 
         const noticiasCoincidentes = document.getElementById('noticiasBiblioteca');
+        noticiasCoincidentes.innerHTML = '';
 
         for (const [index, noticia] of this.state.noticias.entries()) {
             const { titulo, descripcion, prioridad, fuente, enlace, imagen, fechaGuardado, fecha  } = noticia;
@@ -410,7 +413,6 @@ class Biblioteca {
             const fechaDate = new Date(fechaGuardado);
             const fechaFormateada = fechaDate.toLocaleDateString();
             const colorBorde = bordeColores[index % bordeColores.length];
-            const colorBoton = botonColores[index % botonColores.length];
             const elementoNoticiaCoincidente = document.createElement('div');
             elementoNoticiaCoincidente.classList.add('noticiaBiblioteca');
 
@@ -451,7 +453,7 @@ class Biblioteca {
                 const pill = document.createElement("div");
                 pill.className = "pillBiblioteca";
                 pill.innerHTML = `
-    <span class="pill-text">${etiqueta.descripcion}</span>
+            <span class="pill-text">${etiqueta.descripcion}</span>
 `;
                 pill.style.backgroundColor = colorBorde;
                 pillsContainer1.appendChild(pill);
@@ -464,8 +466,7 @@ class Biblioteca {
         try {
             const response = await fetch('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas/4-0258-0085');
             const data = await response.json();
-            console.log(data);
-            this.state.noticias = data;
+            this.state.noticias = data.reverse();
             this.renderizarNoticias();
         } catch (error) {
             console.log('Error al cargar la lista de noticias:', error);
@@ -640,49 +641,58 @@ class Biblioteca {
             diaa = '09';
         }
 
-
         this.entity["fecha"] = anio+"-"+mes+"-"+diaa;
 
         delete this.entity['dia'];
         delete this.entity['mes'];
         delete this.entity['anio'];
+        let imageUrl = "";
+        const enlace = document.getElementById('enlace').value;
+        try {
+            const proxyUrl = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
+            const newsResponse = await fetch(proxyUrl + enlace);
+            const newsHtml = await newsResponse.text();
+            const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
+            const ogImage = newsDocument.querySelector('meta[property="og:image"]');
+            imageUrl = ogImage.getAttribute('content');
+            this.entity['imagen'] = imageUrl;
 
-        const usuarioVacio = {
-            cedula: " ",
-            nombre: " ",
-            primerApellido:  " ",
-            segundoApellido:" ",
-            email:" ",
-            contrasena: " ",
-            departamento:null,
-            rol: null,
-        };
-        this.entity["id"] = "1";
-        this.entity["usuario"] = usuarioVacio;
-        if(this.verificarCamposLlenados()){
-            const request = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasExternas', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(this.entity)
-            });
-            try {
-                const response = await fetch(request);
-                if (!response.ok) {
-                    this.showModalError()
-                    return;
-                }
-                else{
-                    this.showModalExito();
-                    return;
-                }
-            } catch (e) {
-                alert(e);
+        } catch (error) {
+            console.error(`Error al obtener datos de noticia`, error);
+        }
+        this.entidad['id'] = '1';
+        this.entidad['titulo'] = this.entity.titulo;
+        this.entidad['descripcion'] = this.entity.descripcion;
+        this.entidad['fecha'] = this.entity.fecha;
+        this.entidad['prioridad'] = this.entity.prioridad;
+        this.entidad['fuente'] = this.entity.fuente;
+        this.entidad['enlace'] = document.getElementById('enlace').value;
+        this.entidad['fechaGuardado'] = '2023-10-09';
+        this.entidad['usuarioCedula'] = '1';
+        this.entidad['imagen'] = imageUrl;
+        const request2 = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas/Externa', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(this.entidad)
+        });
+        console.log(this.entidad);
+        try {
+            const response = await fetch(request2);
+            if (!response.ok) {
+                this.showModalError()
+                return;
             }
+            else{
+                this.cargarBiblioteca();
+                this.showModalExito();
+                return;
+            }
+        } catch (e) {
+            alert(e);
         }
-        else{
-        }
+
     }
 
 
