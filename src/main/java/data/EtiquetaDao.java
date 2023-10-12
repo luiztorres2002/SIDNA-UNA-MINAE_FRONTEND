@@ -1,6 +1,7 @@
 package data;
 
 import logic.Etiqueta;
+import logic.NoticiasAsociadas;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -127,6 +128,27 @@ public class EtiquetaDao {
         stm.setString(1, etiqueta.getDescripcion());
         stm.setInt(2, etiqueta.getEtiquetaId());
         db.executeUpdate(stm);
+    }
+
+    public List<NoticiasAsociadas> getNoticiasAsociadas(int etiquetaId) throws SQLException {
+        List<NoticiasAsociadas> noticiasAsociadas = new ArrayList<>();
+        String sql = "select * from NOTICIAMARCADA_ETIQUETA where FKETIQUETA=?";
+        try (PreparedStatement statement = db.prepareStatement(sql)) {
+            statement.setInt(1, etiquetaId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    NoticiasAsociadas noticia = fromAsociadas(resultSet);
+                    noticiasAsociadas.add(noticia);
+                }
+            }
+        }
+        return noticiasAsociadas;
+    }
+
+    private NoticiasAsociadas fromAsociadas(ResultSet resultSet) throws SQLException {
+        int noticiaId = resultSet.getInt("FK_NOTICIAMARCADAETIQUETA_NOTICIAMARCADAID");
+        int etiquetaId = resultSet.getInt("FKETIQUETA");
+        return new NoticiasAsociadas(noticiaId, etiquetaId);
     }
 }
 

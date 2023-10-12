@@ -16,7 +16,7 @@ class Etiqueta {
     state;
 
     constructor() {
-        this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A', etiquetas: []};
+        this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A', etiquetas: [], noticiasAsociadas: []};
         this.cargarEtiquetas();
         this.dom = this.render();
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
@@ -33,7 +33,7 @@ class Etiqueta {
         this.dom.querySelector("#categorias #modal #cancelModal").addEventListener('click', this.hidemodal);
         this.dom.querySelector("#etiquetaAgregar").addEventListener('click', () => {
             const descripcion = this.dom.querySelector("#txtNombre").value;
-            this.agregarEtiqueta2( descripcion);
+            this.agregarEtiqueta2(descripcion);
         });
         this.dom.querySelector("#categorias #modalEditar #formEdit #save").addEventListener('click', () => {
             const etiquetaId = this.dom.querySelector("#categorias #modalEditar #formEdit #etiquetaId").value;
@@ -80,7 +80,7 @@ class Etiqueta {
             <p id="etiqueta-description" style="font-size: 1.0em; font-weight: bold;">Your dynamic content here...</p>
           </div>
           <div class="modal-footer justify-content-lg-start" style="border-top: none;">
-            <button id="confirm-si" type="submit" style="background-color: #84bd00" class="rounded text-light">Aceptar</button>
+            <button id="confirm-si" type="submit" style="background-color: #cdab68" class="rounded text-light">Aceptar</button>
             <button id="confirm-no" type="submit" style="background-color: white" class="rounded" data-dismiss="modal">Cancelar</button>
           </div>
         </div>
@@ -88,7 +88,7 @@ class Etiqueta {
     </div>
   `;
     }
-    hidemodal = () =>{
+    hidemodal = () => {
 
         this.modal.hide();
         this.modal.resetForm();
@@ -131,7 +131,7 @@ class Etiqueta {
     <div class="btn-group me-2">
         <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 120px; line-height: 5px;"><span class="font-weight-bold">+</span> <span class="texto-agregar">Agregar</span></button>
     </div>
-    <input class="form-control me-2 fontAwesome" id="buscadorEtiqueta" autocomplete="off" type="text" style="width: 200px; margin-left: 700px; height: 38px; border-radius: 5px; border: 1px solid #006ba6;" placeholder="&#xf002; Buscar Etiqueta...">
+    <input class="form-control me-2 fontAwesome" id="buscadorEtiqueta" autocomplete="off" type="text" style="width: 200px; margin-left: 700px; height: 38px; border-radius: 5px; border: 1px solid #1c2858;" placeholder="&#xf002; Buscar Etiqueta...">
     <div class="btn-group me-2">
          <button type="button" class="btn btn-custom-outline-success2" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
             <i class="fas fa-search"></i>
@@ -140,7 +140,7 @@ class Etiqueta {
 </div>
 <div class="centered-container">
   <div class="d-flex justify-content-center align-items-center">
-    <div class="spinner-border" role="status" style="color: #84bd00">
+    <div class="spinner-border" role="status" style="color: #cdab68">
       <span class="visually-hidden">Loading...</span>
     </div>
   </div>
@@ -201,11 +201,13 @@ class Etiqueta {
         event.preventDefault();
     }
 
-    renderizarPaginaConEtiquetas= () => {
+    renderizarPaginaConEtiquetas = () => {
         let tableRows = '';
 
         this.state.etiquetas.forEach((etiqueta, index) => {
-            const { descripcion, etiquetaId, estado } = etiqueta;
+            const {descripcion, etiquetaId, estado} = etiqueta;
+            this.contarNoticiasAsociadas(etiquetaId);
+            const noticias = this.state.noticiasAsociadas.length;
             const isChecked = estado ? 'checked' : '';
             const row = `
     <tr data-row="${index + 1}">
@@ -220,7 +222,7 @@ class Etiqueta {
         <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
         <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
         <div class="toggle-container">
-        <span class="number">10</span>
+        <span id="noticiasAsociadas" class="number">${noticias}</span>
         </div>
         <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
             <div class="toggle-container">
@@ -258,7 +260,9 @@ class Etiqueta {
                 this.editarEtiqueta(etiquetaId, descripcion);
             });
         });
-        toggleSwitches.forEach((toggleSwitch) => {toggleSwitch.addEventListener("change", this.actualizarEstadoFila);});
+        toggleSwitches.forEach((toggleSwitch) => {
+            toggleSwitch.addEventListener("change", this.actualizarEstadoFila);
+        });
 
     }
     renderModalEditar = () => {
@@ -285,7 +289,7 @@ class Etiqueta {
           </div>
 
           <div class="form-group mb-2 align-content-lg-end">
-            <button id="save" type="submit" style="background-color: #84bd00" class="rounded text-dark">Guardar</button>
+            <button id="save" type="submit" style="background-color: #cdab68" class="rounded text-light">Guardar</button>
             <button id="cancel" type="submit" style="background-color: white" class="rounded">Cancelar</button>
           </div>
         </form>
@@ -546,6 +550,17 @@ class Etiqueta {
             console.error('Error:', error);
         });
         event.preventDefault();
+    }
+
+    contarNoticiasAsociadas = async (etiquetaId) => {
+        try{
+            const url = await fetch(`http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/contarNoticias/${etiquetaId}`);
+            this.state.noticiasAsociadas = await url.json();
+            //TODO
+            //await this.cargarEtiquetas();
+        }catch (error){
+            console.log("Error al contar las Noticias");
+        }
     }
 
     search = async () => {
@@ -830,8 +845,6 @@ class Etiqueta {
     }
 
 
-
-
     renderModalSuccessEti = () => {
         return `
         <div id="sucess" class="modal fade">
@@ -877,8 +890,6 @@ class Etiqueta {
         this.resetForm();
         this.reset();
     }
-
-
 
 
 }
