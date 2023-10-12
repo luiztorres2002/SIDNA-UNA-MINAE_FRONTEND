@@ -27,7 +27,11 @@ public class EtiquetaDao {
             statement.setString(1, usuarioCedula);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    etiquetas.add(mapResultSetToEtiqueta(resultSet));
+                    Etiqueta etiqueta = mapResultSetToEtiqueta(resultSet);
+                    int etiquetaId = etiqueta.getEtiquetaId();
+                    List<NoticiasAsociadas> noticiasAsociadas = getNoticiasAsociadas(etiquetaId);
+                    etiqueta.setNoticiasAsociadas(noticiasAsociadas.size());
+                    etiquetas.add(etiqueta);
                 }
                 return etiquetas;
             }

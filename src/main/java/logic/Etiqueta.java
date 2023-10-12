@@ -8,6 +8,7 @@ public class Etiqueta {
     private String descripcion;
     private String usuarioCedula;
 
+    private int noticiasAsociadas;
     private Boolean estado;
 
     @JsonCreator
@@ -29,6 +30,14 @@ public class Etiqueta {
         this.descripcion = descripcion;
         this.usuarioCedula = usuarioCedula;
         this.estado = estado;
+    }
+
+    public int getNoticiasAsociadas() {
+        return noticiasAsociadas;
+    }
+
+    public void setNoticiasAsociadas(int noticiasAsociadas) {
+        this.noticiasAsociadas = noticiasAsociadas;
     }
 
     public Boolean getEstado() {

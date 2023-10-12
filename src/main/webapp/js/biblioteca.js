@@ -644,6 +644,7 @@ class Biblioteca {
         delete this.entity['anio'];
         let imageUrl = "";
         const enlace = document.getElementById('enlace').value;
+        if(this.verificarCamposLlenados()){
         try {
             const proxyUrl = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
             const newsResponse = await fetch(proxyUrl + enlace);
@@ -687,6 +688,9 @@ class Biblioteca {
             }
         } catch (e) {
             alert(e);
+        }
+        }
+        else{
         }
 
     }
