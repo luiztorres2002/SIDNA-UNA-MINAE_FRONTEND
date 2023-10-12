@@ -28,12 +28,33 @@ public class TestNoticiaMarcadaDao {
 
     private NoticiaMarcadaDao noticiaMarcadaDao = new NoticiaMarcadaDao(new Database());
 
-    NoticiaMarcada noticiaMarcada = new NoticiaMarcada(2, "Prueba", "Prueba", "Hace 2 horas", "Alta", "Prueba", "Prueba",
+    NoticiaMarcada noticiaMarcada = new NoticiaMarcada(2, "Prueba", "Prueba", "Hace 2 horas", "Alta", "Pruebas", "Prueba",
                 "Prueba", new Date(), "4-0258-0085");
 
 
     @Test
     public void create() throws Exception {
+        try {
+            String sql = "INSERT INTO NOTICIA_MARCADA(Titulo, Descripcion, Fecha, Prioridad, Fuente, Enlace, Imagen, Fechaguardado, FK_NoticiaMarcada_UsuarioCedula) VALUES (?, ?, ?, ?, ?, ?, ?, SYSDATETIME(), ?)";
+            PreparedStatement stm = database.prepareStatement(sql);
+            stm.setString(1, noticiaMarcada.getTitulo());
+            stm.setString(2, noticiaMarcada.getDescripcion());
+            stm.setString(3, noticiaMarcada.getFecha());
+            stm.setString(4, noticiaMarcada.getPrioridad());
+            stm.setString(5, noticiaMarcada.getFuente());
+            stm.setString(6, noticiaMarcada.getEnlace());
+            stm.setString(7, noticiaMarcada.getImagen());
+            stm.setString(8, noticiaMarcada.getUsuarioCedula());
+            int rowsAffected = stm.executeUpdate();
+            assert rowsAffected > 0;
+            System.out.println("El test ha sido llevado a cabo de manera exitosa.");
+        } catch (SQLException e) {
+            System.err.println("Se produjo una excepción durante la ejecución de la transacción SQL: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void createexterna() throws Exception {
         try {
             String sql = "INSERT INTO NOTICIA_MARCADA(Titulo, Descripcion, Fecha, Prioridad, Fuente, Enlace, Imagen, Fechaguardado, FK_NoticiaMarcada_UsuarioCedula) VALUES (?, ?, ?, ?, ?, ?, ?, SYSDATETIME(), ?)";
             PreparedStatement stm = database.prepareStatement(sql);

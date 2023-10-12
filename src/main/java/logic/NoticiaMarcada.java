@@ -24,7 +24,6 @@ public class NoticiaMarcada {
     private Date FechaGuardado;
 
     private String UsuarioCedula;
-
     private List<Etiqueta> etiquetas;
 
 

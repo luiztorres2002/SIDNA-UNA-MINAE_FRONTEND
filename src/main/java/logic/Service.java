@@ -23,7 +23,6 @@ public class Service {
 
     DepartamentoDao departamentoDao;
 
-    NoticiaExternaDao noticiaExternaDao;
 
     NoticiaMarcadaDao noticiaMarcadaDao;
 
@@ -39,8 +38,6 @@ public class Service {
 
         usuarioDao = new UsuarioDao(database);
 
-        noticiaExternaDao = new NoticiaExternaDao(database);
-
         etiquetaDao = new EtiquetaDao(database);
 
         noticiaMarcadaDao = new NoticiaMarcadaDao(database);
@@ -49,15 +46,6 @@ public class Service {
     }
 
 
-    //crear o ingresar una nueva noticia externa.
-    public void noticiaExternaAdd(NoticiaExterna noticiaExterna) throws Exception{
-        Departamento departamento = new Departamento(1,"PruebaDepartamento");
-        Rol rol = new Rol(1,"Analista");
-        Usuario usuario = new Usuario("4-0258-0085", "Luis","Torres","Villalobos","torresvillalobos20@gmail.com", "123123123",departamento,rol);
-        noticiaExterna.setUsuario(usuario);
-        noticiaExterna.setId(1);
-        noticiaExternaDao.create(noticiaExterna);
-    }
 
 
     public void noticiaMarcadaAdd(NoticiaMarcada noticiaMarcada) throws Exception {
@@ -68,7 +56,7 @@ public class Service {
     public void noticiaMarcadaAdd2(NoticiaMarcada noticiaMarcada) throws Exception {
         noticiaMarcada.setUsuarioCedula("4-0258-0085");
         noticiaMarcada.setId(1);
-        noticiaMarcadaDao.create2(noticiaMarcada);
+        noticiaMarcadaDao.createexterna(noticiaMarcada);
     }
 
 

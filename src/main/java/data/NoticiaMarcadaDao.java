@@ -1,10 +1,7 @@
 package data;
 
 import jakarta.ws.rs.NotFoundException;
-import logic.Departamento;
 import logic.Etiqueta;
-import data.EtiquetaDao;
-import logic.NoticiaExterna;
 import logic.NoticiaMarcada;
 
 import java.sql.PreparedStatement;
@@ -12,7 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Calendar;
 import java.util.Date;
 
 public class NoticiaMarcadaDao {
@@ -48,7 +44,7 @@ public class NoticiaMarcadaDao {
         }
     }
 
-    public void create2(NoticiaMarcada noticiaMarcada) throws Exception{
+    public void createexterna(NoticiaMarcada noticiaMarcada) throws Exception{
         String sql = "insert into NOTICIA_MARCADA(Titulo,Descripcion,Fecha,Prioridad,Fuente,Enlace,Imagen,Fechaguardado,FK_NoticiaMarcada_UsuarioCedula) values (?,?,?,?,?,?,?,SYSDATETIME(),?)";
         PreparedStatement stm = db.prepareStatement(sql);
         stm.setString(1,noticiaMarcada.getTitulo());

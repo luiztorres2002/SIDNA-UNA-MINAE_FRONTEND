@@ -124,7 +124,7 @@ class Biblioteca {
 
                 <img src="images/Minae.png" class="w-50 mx-auto d-block" alt="...">
                 <ul class="ftco-footer-social p-0 text-center"></ul>
-                <h4 class="mt-4 text-center"> Ingreso de noticia Externa</h4>
+                <h4 class="mt-4 text-center"> Ingreso de noticia de medio externo</h4>
                 <form id="form">
                 <div class="container">
                     <div class="form-group">
@@ -704,4 +704,3 @@ class Biblioteca {
     }
 
 }
-

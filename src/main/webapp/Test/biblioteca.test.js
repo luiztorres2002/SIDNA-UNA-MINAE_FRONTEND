@@ -70,20 +70,15 @@ describe('Test para la función add', () => {
             descripcion: 'Prueba Descripcion',
             titulo: 'Prueba Titulo',
             priordad: 'alta',
-            fecha: '2023-12-12',
+            fechaGuardado: '2023-12-12',
+            fecha: 'hace 2 horas',
             id: '1',
-            usuario: {
-                cedula: ' ',
-                nombre: ' ',
-                primerApellido: ' ',
-                segundoApellido: ' ',
-                email: ' ',
-                contrasena: ' ',
-                departamento: null,
-                rol: null,
-            },
+            usuarioCedula: '4-0258-0085',
+            imagen: 'pruebaimagen',
+
+
         };
-        const request = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasExternas', {
+        const request = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas/Externa', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
