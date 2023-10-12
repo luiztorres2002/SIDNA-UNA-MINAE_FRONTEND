@@ -274,6 +274,7 @@ footer{
 
 
 
+
 *, *::before, *::after {
     box-sizing: border-box;
 }
@@ -288,7 +289,7 @@ footer{
 
 .vista_previa:hover .iframe-preview {
     opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
+    transform: translateX(20%) translateY(50%) scale(1);
 }
 
 .vista_previa:hover {
@@ -316,23 +317,4 @@ footer{
 .iframe-preview iframe {
     transform: scale(.2);
     transform-origin: 0 0;
-}
-
-.disclaimer {
-    background: #fff;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, .5);
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 10px;
-    width: 50%;
-    font-size: 13px;
-    text-align: left;
-    line-height: 1.25;
-}
-
-.disclaimer strong {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
 }
