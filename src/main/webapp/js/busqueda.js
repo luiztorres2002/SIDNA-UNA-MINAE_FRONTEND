@@ -275,13 +275,8 @@ class Busqueda {
 
     async mostrarDestacadas() {
         let contadorNoticias = 0;
-<<<<<<<<< Temporary merge branch 1
-        const bordeColores = ['#84bd00', '#006ba6', '#fed141'];
-        const botonColores = ['#006ba6', '#84bd00'];
-=========
         const bordeColores = ['#1c2858', '#cdab68'];
         const botonColores = ['#cdab68', '#1c2858'];
->>>>>>>>> Temporary merge branch 2
         const storedNewsJSON = localStorage.getItem('storedNews');
         const storedNews = JSON.parse(storedNewsJSON);
         console.log(storedNews);
@@ -338,6 +333,7 @@ class Busqueda {
                         </div>
                     </div>
                 `;
+
                     const semaforoButtons = elementoNoticiaCoincidente.querySelectorAll('input[type="radio"]');
                     const newsSource = `${result.link}`;
                     const titulo = `${result.title}`;
@@ -377,14 +373,6 @@ class Busqueda {
                 contadorNoticias++;
                 let imageUrl = '';
                 try {
-<<<<<<<<< Temporary merge branch 1
-                    const proxyUrl = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
-                    const newsResponse = await fetch(proxyUrl + result.link);
-                    const newsHtml = await newsResponse.text();
-                    const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
-                    const ogImage = newsDocument.querySelector('meta[property="og:image"]');
-                    imageUrl = ogImage ? ogImage.getAttribute('content') : result.thumbnail;
-=========
                     const proxyUrl1 = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
                     const proxyUrl2 = 'https://corsproxy.io/?';
 
@@ -409,7 +397,6 @@ class Busqueda {
                         }
                     }
 
->>>>>>>>> Temporary merge branch 2
                     imageUrls.push(imageUrl);
                 } catch (error) {
                     console.error(`Error al obtener datos de noticia (${result.link}):`, error);
@@ -441,10 +428,7 @@ class Busqueda {
                     </div>
                 </div>
             </div>
-<<<<<<<<< Temporary merge branch 1
-=========
             </div>
->>>>>>>>> Temporary merge branch 2
         `;
 
                 const semaforoButtons = elementoNoticiaCoincidente.querySelectorAll('input[type="radio"]');
@@ -470,21 +454,8 @@ class Busqueda {
                 const result = newsResults[i];
 
                 try {
-<<<<<<<<< Temporary merge branch 1
-                    const proxyUrl = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
-                    const newsResponse = await fetch(proxyUrl + result.link);
-                    const newsHtml = await newsResponse.text();
-                    const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
-
-                    // Verificar si existe una imagen de alta calidad en la página de noticias
-                    const ogImage = newsDocument.querySelector('meta[property="og:image"]');
-
-                    if (ogImage) {
-                        updatedNewsResults[i].thumbnail = ogImage.getAttribute('content');
-=========
                     if (imageUrls[i]) {
                         updatedNewsResults[i].thumbnail = imageUrls[i];
->>>>>>>>> Temporary merge branch 2
                     }
                 } catch (error) {
                     console.error(`Error al obtener datos de noticia (${result.link}):`, error);
@@ -509,11 +480,8 @@ class Busqueda {
         const coloresBorde = ['#1c2858', '#cdab68'];
         const coloresBoton = ['#cdab68', '#1c2858'];
 
-<<<<<<<<< Temporary merge branch 1
-=========
 
 
->>>>>>>>> Temporary merge branch 2
         const keyword = busqueda;
         const noticiasCoincidentes = document.querySelector('#noticiasCoincidentes');
         noticiasCoincidentes.innerHTML = '';
@@ -713,7 +681,7 @@ class Busqueda {
         try {
             const response = await fetch(request);
             if (!response.ok) {
-                this.showModalError();
+                this.showModalError()
                 return;
             }
             else{

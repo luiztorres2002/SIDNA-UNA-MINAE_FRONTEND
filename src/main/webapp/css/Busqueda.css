@@ -38,7 +38,7 @@ select#tiempoSeleccionado {
     width: 90px;
 }
 
-/* Set different widths based on selected options */
+
 select#tiempoSeleccionado option[value="ultimaHora"]:checked {
     width: 100px !important;
 }

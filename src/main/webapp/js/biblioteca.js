@@ -27,6 +27,36 @@ class Biblioteca {
         this.dom.querySelector("#biblioteca #sucessmodal #sucessbuton").addEventListener('click', this.hideModalExito);
         this.dom.querySelector("#biblioteca #modalcampo #dismisscampo").addEventListener('click', this.hideModalCampo);
         this.cargarBiblioteca();
+        const enlaceInput = this.dom.querySelector("#biblioteca #modal #enlace");
+        enlaceInput.addEventListener('blur', function() {
+            const url = enlaceInput.value;
+
+            const proxyUrl = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
+            fetch(proxyUrl+url)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+
+                    const ogTitle = doc.querySelector('meta[property="og:title"]');
+                    const title = ogTitle ? ogTitle.getAttribute('content') : '';
+
+
+                    const ogDescription = doc.querySelector('meta[property="og:description"]');
+                    const description = ogDescription ? ogDescription.getAttribute('content') : '';
+
+                    const ogSiteName = doc.querySelector('meta[property="og:site_name"]');
+                    const fuente = ogSiteName ? ogSiteName.getAttribute('content') : '';
+
+
+                    document.getElementById('titulo').value = title;
+                    document.getElementById('descripcion').value = description;
+                    document.getElementById('fuente').value = fuente;
+                })
+                .catch(error => {
+                    console.error('Error al obtener los datos:', error);
+                });
+        });
 
     }
 
@@ -124,14 +154,14 @@ class Biblioteca {
 
                 <img src="images/Minae.png" class="w-50 mx-auto d-block" alt="...">
                 <ul class="ftco-footer-social p-0 text-center"></ul>
-                <h4 class="mt-4 text-center"> Ingreso de noticia Externa</h4>
+                <h4 class="mt-4 text-center"> Ingreso de noticia de medio externo</h4>
                 <form id="form">
                 <div class="container">
                     <div class="form-group">
                         <legend id="titulolegend" class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; font-family: Verdana">
                             <i class="fas fa-newspaper mr-2"></i> Título:
                         </legend>
-                        <input type="text" class="form-control col-md-12  mborder border-dark" id="titulo" name="titulo" style="font-size: 20px;">
+                        <input type="text" class="form-control col-md-12  mborder border-dark" autocomplete="off" id="titulo" name="titulo" style="font-size: 20px;">
                     </div>
                     </div>
                     <div class="container">
@@ -152,7 +182,7 @@ class Biblioteca {
         </legend>
         <div class="row">
           <div class="col">
-            <input type="text" class="form-control border border-dark" id="dia" name="dia" style="font-size: 20px; padding: 10px;" placeholder="Día">
+            <input type="text" class="form-control border border-dark" autocomplete="off" id="dia" name="dia" style="font-size: 20px; padding: 10px;" placeholder="Día">
           </div>
           <div class="col">
             <select class="form-select border border-dark dropup" id="mes" name="mes" style="font-size: 20px; padding: 10px;">
@@ -172,7 +202,7 @@ class Biblioteca {
             </select>
           </div>
           <div class="col">
-            <input type="text" class="form-control border border-dark" id="anio" name="anio" style="font-size: 20px; padding: 10px;" placeholder="Año">
+            <input type="text" class="form-control border border-dark" autocomplete="off" id="anio" name="anio" style="font-size: 20px; padding: 10px;" placeholder="Año">
           </div>
         </div>
       </div>
@@ -203,7 +233,7 @@ class Biblioteca {
         <legend id="fuentelegend" class="col-form-label pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 10px; font-family: Verdana">
           <i class="fas fa-info-circle mr-2"></i> Fuente
         </legend>
-        <input type="text" class="form-control border border-dark" id="fuente" name="fuente" style="font-size: 20px;">
+        <input type="text" class="form-control border border-dark"  autocomplete="off" id="fuente" name="fuente" style="font-size: 20px;">
       </div>
     </div>
     <div class="col-md-6">
@@ -211,7 +241,7 @@ class Biblioteca {
         <legend id="enlacelegend" class="col-form-label pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 10px; font-family: Verdana">
           <i class="fas fa-link mr-2"></i> Enlace
         </legend>
-        <input type="text" class="form-control border border-dark" id="enlace" name="enlace" style="font-size: 20px;">
+        <input type="text" class="form-control border border-dark" autocomplete="off" id="enlace" name="enlace" style="font-size: 20px;">
       </div>
     </div>
   </div>
@@ -398,11 +428,7 @@ class Biblioteca {
         return true;
     }
     renderizarNoticias = () => {
-<<<<<<<<< Temporary merge branch 1
-        const bordeColores = ['#84bd00', '#006ba6', '#fed141'];
-=========
         const bordeColores = ['#1c2858', '#cdab68'];
->>>>>>>>> Temporary merge branch 2
 
         const noticiasCoincidentes = document.getElementById('noticiasBiblioteca');
         noticiasCoincidentes.innerHTML = '';
@@ -649,50 +675,50 @@ class Biblioteca {
         let imageUrl = "";
         const enlace = document.getElementById('enlace').value;
         if(this.verificarCamposLlenados()){
-        try {
-            const proxyUrl = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
-            const newsResponse = await fetch(proxyUrl + enlace);
-            const newsHtml = await newsResponse.text();
-            const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
-            const ogImage = newsDocument.querySelector('meta[property="og:image"]');
-            imageUrl = ogImage.getAttribute('content');
-            this.entity['imagen'] = imageUrl;
+            try {
+                const proxyUrl = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
+                const newsResponse = await fetch(proxyUrl + enlace);
+                const newsHtml = await newsResponse.text();
+                const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
+                const ogImage = newsDocument.querySelector('meta[property="og:image"]');
+                imageUrl = ogImage.getAttribute('content');
+                this.entity['imagen'] = imageUrl;
 
-        } catch (error) {
-            console.error(`Error al obtener datos de noticia`, error);
-        }
-        this.entidad['id'] = '1';
-        this.entidad['titulo'] = this.entity.titulo;
-        this.entidad['descripcion'] = this.entity.descripcion;
-        this.entidad['fecha'] = this.entity.fecha;
-        this.entidad['prioridad'] = this.entity.prioridad;
-        this.entidad['fuente'] = this.entity.fuente;
-        this.entidad['enlace'] = document.getElementById('enlace').value;
-        this.entidad['fechaGuardado'] = '2023-10-09';
-        this.entidad['usuarioCedula'] = '1';
-        this.entidad['imagen'] = imageUrl;
-        const request2 = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas/Externa', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(this.entidad)
-        });
-        console.log(this.entidad);
-        try {
-            const response = await fetch(request2);
-            if (!response.ok) {
-                this.showModalError()
-                return;
+            } catch (error) {
+                console.error(`Error al obtener datos de noticia`, error);
             }
-            else{
-                this.cargarBiblioteca();
-                this.showModalExito();
-                return;
+            this.entidad['id'] = '1';
+            this.entidad['titulo'] = this.entity.titulo;
+            this.entidad['descripcion'] = this.entity.descripcion;
+            this.entidad['fecha'] = this.entity.fecha;
+            this.entidad['prioridad'] = this.entity.prioridad;
+            this.entidad['fuente'] = this.entity.fuente;
+            this.entidad['enlace'] = document.getElementById('enlace').value;
+            this.entidad['fechaGuardado'] = '2023-10-09';
+            this.entidad['usuarioCedula'] = '1';
+            this.entidad['imagen'] = imageUrl;
+            const request2 = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas/Externa', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(this.entidad)
+            });
+            console.log(this.entidad);
+            try {
+                const response = await fetch(request2);
+                if (!response.ok) {
+                    this.showModalError()
+                    return;
+                }
+                else{
+                    this.cargarBiblioteca();
+                    this.showModalExito();
+                    return;
+                }
+            } catch (e) {
+                alert(e);
             }
-        } catch (e) {
-            alert(e);
-        }
         }
         else{
         }
@@ -712,4 +738,3 @@ class Biblioteca {
     }
 
 }
-
