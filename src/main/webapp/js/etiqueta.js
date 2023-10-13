@@ -205,9 +205,7 @@ class Etiqueta {
         let tableRows = '';
 
         this.state.etiquetas.forEach((etiqueta, index) => {
-            const {descripcion, etiquetaId, estado} = etiqueta;
-            this.contarNoticiasAsociadas(etiquetaId);
-            const noticias = this.state.noticiasAsociadas.length;
+            const {descripcion, etiquetaId, estado, noticiasAsociadas} = etiqueta;
             const isChecked = estado ? 'checked' : '';
             const row = `
     <tr data-row="${index + 1}">
@@ -222,7 +220,8 @@ class Etiqueta {
         <td class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none"></td>
         <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
         <div class="toggle-container">
-        <span id="noticiasAsociadas" class="number">${noticias}</span>
+        <span id="noticiasAsociadas" class="number">${noticiasAsociadas}</span>
+
         </div>
         <td class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none">
             <div class="toggle-container">
@@ -471,6 +470,7 @@ class Etiqueta {
         } catch (error) {
             console.log('Error al cargar la lista de etiquetas:', error);
         }
+        console.log(this.state.etiquetas);
     }
 
     cambiarEstadoEtiqueta = (etiquetaId, nuevoEstado) => {
@@ -557,10 +557,11 @@ class Etiqueta {
             const url = await fetch(`http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/contarNoticias/${etiquetaId}`);
             this.state.noticiasAsociadas = await url.json();
             //TODO
-            //await this.cargarEtiquetas();
+       
         }catch (error){
             console.log("Error al contar las Noticias");
         }
+
     }
 
     search = async () => {
