@@ -1,10 +1,6 @@
 .card {
     max-width: 62em !important;
-<<<<<<<<< Temporary merge branch 1
-    max-height: 12em !important;
-=========
     max-height: 13em !important;
->>>>>>>>> Temporary merge branch 2
     flex-direction: row !important;
     background-color: #ffffff !important;
     box-shadow: 4px 5px 13px 2px #7a7d74 !important;
@@ -38,7 +34,7 @@ select#tiempoSeleccionado {
     width: 90px;
 }
 
-
+/* Set different widths based on selected options */
 select#tiempoSeleccionado option[value="ultimaHora"]:checked {
     width: 100px !important;
 }
