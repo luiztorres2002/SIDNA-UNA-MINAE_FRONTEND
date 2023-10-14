@@ -39,8 +39,12 @@ public class NoticiaMarcadaDao {
         if (count == 0) {
             throw new Exception("No se creo");
         }else{
-            this.registrarNoticiaEtiqueta(noticiaMarcada.getTitulo(),"Costa Rica",noticiaMarcada.getUsuarioCedula());
-            this.registrarNoticiaEtiqueta(noticiaMarcada.getTitulo(),"Medio Ambiente",noticiaMarcada.getUsuarioCedula());
+            List<Etiqueta> etiquetas = noticiaMarcada.getEtiquetas();
+
+            for (Etiqueta etiqueta : etiquetas) {
+                String descripcion = etiqueta.getDescripcion();
+                this.registrarNoticiaEtiqueta(noticiaMarcada.getTitulo(), descripcion, noticiaMarcada.getUsuarioCedula());
+            }
         }
     }
 

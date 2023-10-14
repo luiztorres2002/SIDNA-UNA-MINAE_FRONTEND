@@ -122,7 +122,7 @@ class Etiqueta {
         <div class="linea-amarilla"></div>
         <div class="linea-verde"></div>
     </div>
-    <div class="container justify-content-center" id="tituloEtiqueta" style="text-align: center; font-family: Verdana; font-size: 28px;"> 
+    <div class="container justify-content-center" id="tituloEtiqueta" style="text-align: center; font-family: Verdana; font-size: 32px;"> 
             Etiquetas
         </div>
    <div class="d-flex justify-content-center">
@@ -284,7 +284,7 @@ class Etiqueta {
           <input type="hidden" id="etiquetaId" name="etiquetaId" value="">
           
           <div class="form-group mb-2">
-            <input id="input" type="text" class="form-control" style="border-right-color: white; border-left-color: white; border-top-color: white; border-bottom-color: black">
+            <input id="input" type="text" autocomplete="off"  class="form-control" style="border-right-color: white; border-left-color: white; border-top-color: white; border-bottom-color: black">
           </div>
 
           <div class="form-group mb-2 align-content-lg-end">

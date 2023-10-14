@@ -687,6 +687,7 @@ class Biblioteca {
             } catch (error) {
                 console.error(`Error al obtener datos de noticia`, error);
             }
+            let descripciones = ["Notica Externa"];
             this.entidad['id'] = '1';
             this.entidad['titulo'] = this.entity.titulo;
             this.entidad['descripcion'] = this.entity.descripcion;
@@ -697,7 +698,12 @@ class Biblioteca {
             this.entidad['fechaGuardado'] = '2023-10-09';
             this.entidad['usuarioCedula'] = '1';
             this.entidad['imagen'] = imageUrl;
-            const request2 = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas/Externa', {
+            const etiquetasDescripcion = [];
+            descripciones.forEach(descripcion => {
+                etiquetasDescripcion.push({ descripcion });
+            });
+            this.entidad['etiquetas'] = etiquetasDescripcion;
+            const request2 = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

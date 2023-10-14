@@ -34,7 +34,7 @@ select#tiempoSeleccionado {
     width: 90px;
 }
 
-/* Set different widths based on selected options */
+
 select#tiempoSeleccionado option[value="ultimaHora"]:checked {
     width: 100px !important;
 }
@@ -117,13 +117,32 @@ select {
     max-height: 700px;
     max-width: 3000px;
     overflow-y: auto;
+    overflow-x: hidden;
 
 }
 
-
-
-#loading-spinner {
+.image-overlay {
+    position: relative;
+    display: inline-block;
 }
+
+.imagen-hover-container {
+    position: absolute;
+    margin-left: 550px;
+    top: 0;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    width: 900px;
+    height: auto;
+    display: none;
+}
+
+.imagen-hover {
+    max-width: 100%;
+    max-height: 100%;
+    margin-bottom: 100px;
+}
+
 
 .popup-message {
 
@@ -431,13 +450,13 @@ input.BajaModal:checked {
     .search-results-container {
         max-height: 630px;
         max-width: 3000px;
-        overflow-y: auto;
+        overflow-y: hidden;
     }
 
     .search-container {
         max-height: 600px;
         max-width: 150px !important;
-        overflow-y: auto;
+        overflow-y: hidden;
     }
 
 }

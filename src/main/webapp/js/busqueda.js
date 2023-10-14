@@ -6,7 +6,8 @@ const apiKeys = [
 
 let currentApiKeyIndex = 0;
 let busqueda ="";
-let noticiasArray = [];
+let etiquetas = [];
+
 sugerencias = [];
 
 class Busqueda {
@@ -35,7 +36,9 @@ class Busqueda {
         this.modalmarcar = new bootstrap.Modal(this.dom.querySelector('#marcar'));
         this.modalerror = new bootstrap.Modal(this.dom.querySelector('#modalError'));
         this.modalexito = new bootstrap.Modal(this.dom.querySelector('#sucessmodal'));
-        this.dom.querySelector("#busqueda #buscar").addEventListener('click', this.corresponderPalabraClaveEnNoticias);
+        this.dom.querySelector("#busqueda #buscar").addEventListener('click', () => {
+            this.corresponderPalabraClaveEnNoticias();
+        });
         this.dom.querySelector("#busqueda #marcar #formmarcar #marcarb").addEventListener('click', this.add);
         this.dom.querySelector("#busqueda #marcar #formmarcar #marcarcancelarb").addEventListener('click', this.modalmarcarclose);
         this.dom.querySelector("#busqueda #marcar #cancelModal").addEventListener('click', this.hidemodal);
@@ -163,7 +166,10 @@ class Busqueda {
                             pillElement2.remove();
                         }
                     });
-
+                    etiquetas = etiquetas.filter(pill => {
+                        return pill !== pillText;
+                    });
+                    console.log(etiquetas);
                     this.actualizarTexto();
                 }
             });
@@ -181,7 +187,10 @@ class Busqueda {
                             pillElement1.remove();
                         }
                     });
-
+                    etiquetas = etiquetas.filter(pill => {
+                        return pill !== pillText;
+                    });
+                    console.log(etiquetas);
                     this.actualizarTexto();
                 }
             });
@@ -254,7 +263,6 @@ class Busqueda {
         const searchValue = searchInput.textContent.trim();
         let fullText = searchValue + " " + combinedText;
         fullText = fullText.replace(/\s+/g, " ").trim();
-        console.log("Texto:", fullText);
         busqueda=fullText;
     }
 
@@ -271,6 +279,8 @@ class Busqueda {
         const pill2 = pill1.cloneNode(true);
         pillsContainer1.appendChild(pill1);
         pillsContainer2.appendChild(pill2);
+        etiquetas.push(text);
+        console.log(etiquetas);
     }
 
     async mostrarDestacadas() {
@@ -303,35 +313,33 @@ class Busqueda {
 
                     elementoNoticiaCoincidente.innerHTML = `
                     
-                    <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${result.link}">
-                        <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.thumbnail}'; this.classList.add('card-img-top', 'card-img-custom');">
-                        <div class="card-body">
-                            <div class="text-section">
-                                <a class="anchor_preview" href="${result.link}">
-                                <h5 class="card-title fw-bold">${result.title}</h5>
-                                </a>
-                                 <div class="box">
-                                    <iframe src="${result.link}" width = "400px" height = "288px">
-                                    </iframe>
-                                 </div> 
-                                <p class="card-text">${result.snippet}</p>
-                            </div>
-                            <div class="cta-section">
-                                <p class="card-text">${result.date}</p>
-                                <div class="traffic-light">
-                                  <input type="radio" name="rag1" class="Alta" value="Alta">
-                                  <input type="radio" name="rag1" class="Media" value="Media">
-                                  <input type="radio" name="rag1" class="Baja" value="Baja">
-                                </div>
-                                
-                                <a href="${result.link}" id="enlanceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
-                                    <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};">
-                                     </i>
-                                 </a>
-                                 
-                            </div>
-                        </div>
-                    </div>
+                    <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde}" data-link="${result.link}">
+    <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.thumbnail}'; this.classList.add('card-img-top', 'card-img-custom');">
+    <div class="card-body">
+        <div class="text-section">
+            <h5 class="card-title fw-bold">${result.title}</h5>
+            <p class="card-text">${result.snippet}</p>
+        </div>
+        <div class="cta-section">
+            <p class="card-text">${result.date}</p>
+            <div class="traffic-light">
+                <input type="radio" name="rag1" class="Alta" value="Alta">
+                <input type="radio" name="rag1" class="Media" value="Media">
+                <input type="radio" name="rag1" class="Baja" value="Baja">
+            </div>
+            <div class="image-overlay">
+                <a class="vista_previa" href="${result.link}" id="enlaceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
+                    <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i>
+                </a>
+                <div class="imagen-hover-container">
+                    <div class="spinner-border" role="status" style="color: #cdab68; margin-left: 20px; margin-bottom: 40px"></div>
+                    <img src="" alt=""  class="imagen-hover">
+                </div>
+            </div>
+            </div>
+            </div>
+            </div>
+
                 `;
 
                     const semaforoButtons = elementoNoticiaCoincidente.querySelectorAll('input[type="radio"]');
@@ -340,11 +348,50 @@ class Busqueda {
                     const descripcion = `${result.snippet}`;
                     const fuente = `${result.source}`;
                     const fecha = `${result.date}`;
+                    let descripciones = ["Costa Rica", "Medio Ambiente"];
 
                     semaforoButtons.forEach((button, colorIndex) => {
                         const selectedColor = button.value;
                         const infoText = `${selectedColor}`;
-                        button.addEventListener('click', this.modalmarcarshow.bind(this, titulo, descripcion, newsSource, fuente, infoText, fecha, imageUrl));
+                        button.addEventListener('click', this.modalmarcarshow.bind(this, titulo, descripcion, newsSource, fuente, infoText, fecha, imageUrl,descripciones));
+                    });
+
+                    const enlaceBtn = elementoNoticiaCoincidente.querySelector('#enlaceBtn');
+                    const imagenHoverContainer = elementoNoticiaCoincidente.querySelector('.imagen-hover-container');
+                    const imagenHover = elementoNoticiaCoincidente.querySelector('.imagen-hover');
+                    const spinner = imagenHoverContainer.querySelector('.spinner-border');
+
+                    var myHeaders = new Headers();
+                    myHeaders.append("apikey", "mjTW5uT9m5BiB1V47ByXTNd6kdDG5gBv");
+
+                    var requestOptions = {
+                        method: 'GET',
+                        redirect: 'follow',
+                        headers: myHeaders
+                    };
+
+                    enlaceBtn.addEventListener('mouseenter', async function () {
+                        imagenHoverContainer.style.display = 'block';
+                        if (!imagenHover.src) {
+                            spinner.style.display = 'block';
+                        }
+
+                        try {
+                            const screenshotResponse = await fetch("https://api.apilayer.com/screenshot?url=" + result.link, requestOptions);
+                            const screenshotData = await screenshotResponse.json();
+                            const imagenPreview = screenshotData.screenshot_url;
+
+                            imagenHover.src = imagenPreview;
+                            imagenHover.style.display = 'block';
+                            spinner.style.display = 'none';
+
+                        } catch (error) {
+                            imagenHoverContainer.style.display = 'none';
+                        }
+                    });
+
+                    imagenHoverContainer.addEventListener('mouseleave', () => {
+                        imagenHoverContainer.style.display = 'none';
                     });
 
                     noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
@@ -396,7 +443,6 @@ class Busqueda {
 
                         }
                     }
-
                     imageUrls.push(imageUrl);
                 } catch (error) {
                     console.error(`Error al obtener datos de noticia (${result.link}):`, error);
@@ -424,7 +470,6 @@ class Busqueda {
                         </div>
                         <a href="${result.link}" id="enlanceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
                         <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i></a>
-           
                     </div>
                 </div>
             </div>
@@ -462,8 +507,6 @@ class Busqueda {
                 }
             }
 
-
-
             localStorage.setItem('storedNews', JSON.stringify(updatedNewsResults));
             localStorage.setItem('lastUpdatedTime', Date.now());
             const storedNewsJSON = localStorage.getItem('storedNews');
@@ -472,16 +515,10 @@ class Busqueda {
         }
     }
 
-
-
-
     async  corresponderPalabraClaveEnNoticias() {
         let contadorNoticias = 0;
-        const coloresBorde = ['#1c2858', '#cdab68'];
-        const coloresBoton = ['#cdab68', '#1c2858'];
-
-
-
+        const bordeColores = ['#1c2858', '#cdab68'];
+        const botonColores = ['#cdab68', '#1c2858'];
         const keyword = busqueda;
         const noticiasCoincidentes = document.querySelector('#noticiasCoincidentes');
         noticiasCoincidentes.innerHTML = '';
@@ -519,44 +556,84 @@ class Busqueda {
             if (newsResults.length === 0) {
                 noticiasCoincidentes.innerHTML = '<p>No se encontraron noticias.</p>';
             } else {
+                const imageUrls = [];
                 for (const [index, result] of newsResults.entries()) {
                     contadorNoticias++;
-
-
-                    let imageUrl = result.thumbnail;
-
+                    let imageUrl = '';
                     try {
-                        const corsProxyUrl = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
-                        const newsResponse = await fetch(corsProxyUrl + result.link);
-                        const newsHtml = await newsResponse.text();
-                        const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
-                        const ogImage = newsDocument.querySelector('meta[property="og:image"]');
-                        imageUrl = ogImage ? ogImage.getAttribute('content') : result.thumbnail;
+                        const proxyUrl1 = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
+                        const proxyUrl2 = 'https://corsproxy.io/?';
+
+                        try {
+                            const newsResponse = await fetch(proxyUrl2 + result.link);
+                            const newsHtml = await newsResponse.text();
+                            const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
+                            const ogImage = newsDocument.querySelector('meta[property="og:image"]');
+                            imageUrl = ogImage ? ogImage.getAttribute('content') : result.thumbnail;
+                        } catch (error1) {
+                            console.error(`Error al obtener datos de noticia con el primer proxy (${result.link}):`, error1);
+
+                            try {
+                                const newsResponse2 = await fetch(proxyUrl1 + result.link);
+                                const newsHtml2 = await newsResponse2.text();
+                                const newsDocument2 = new DOMParser().parseFromString(newsHtml2, 'text/html');
+                                const ogImage2 = newsDocument2.querySelector('meta[property="og:image"]');
+                                imageUrl = ogImage2 ? ogImage2.getAttribute('content') : result.thumbnail;
+                            } catch (error2) {
+                                console.error(`Error al obtener datos de noticia con el segundo proxy (${result.link}):`, error2);
+
+                            }
+                        }
+
+                        imageUrls.push(imageUrl);
                     } catch (error) {
                         console.error(`Error al obtener datos de noticia (${result.link}):`, error);
                     }
 
-                    const colorBorde = coloresBorde[index % coloresBorde.length];
-                    const buttonColor = coloresBoton[index % coloresBoton.length];
-                    const elementoNoticiaCoincidente = document.createElement('div');
-                    elementoNoticiaCoincidente.classList.add('noticia-coincidente');
-                    elementoNoticiaCoincidente.innerHTML = `
-                    <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};">
-                        <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.thumbnail}'; this.classList.add('card-img-top', 'card-img-custom');">
-                        <div class="card-body">
-                            <div class="text-section">
-                                <h5 class="card-title fw-bold">${result.title}</h5>
-                                <p class="card-text">${result.snippet}</p>
-                            </div>
-                            <div class="cta-section">
-                                <p class="card-text">${result.date}</p>
-                                <a href="${result.link}" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
-                    <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${buttonColor}"></i></a>
-                            </div>
-                        </div>
+                    const colorBorde = bordeColores[index % bordeColores.length];
+                    const colorBoton = botonColores[index % botonColores.length];
+                    const elementoNoticiaCoincidente2 = document.createElement('div');
+                    elementoNoticiaCoincidente2.classList.add('noticia-coincidente');
+
+                    elementoNoticiaCoincidente2.innerHTML = `
+            <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${result.link}">
+                <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.thumbnail}'; this.classList.add('card-img-top', 'card-img-custom');">
+                <div class="card-body">
+                    <div class="text-section">
+                        <h5 class="card-title fw-bold">${result.title}</h5>
+                        <p class="card-text">${result.snippet}</p>
                     </div>
-                `;
-                    noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
+                    <div class="cta-section">
+                        <p class="card-text">${result.date}</p>
+                        <div class="traffic-light">
+                          <input type="radio" name="rag1" class="Alta" value="Alta">
+                          <input type="radio" name="rag1" class="Media" value="Media">
+                          <input type="radio" name="rag1" class="Baja" value="Baja">
+                        </div>
+                        <a href="${result.link}" id="enlanceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
+                        <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i></a>
+           
+                    </div>
+                </div>
+            </div>
+            </div>
+        `;
+                    const semaforoButtons2 = elementoNoticiaCoincidente2.querySelectorAll('input[type="radio"]');
+                    const newsSource = `${result.link}`;
+                    const titulo = `${result.title}`;
+                    const descripcion = `${result.snippet}`;
+                    const fuente = `${result.source}`;
+                    const fecha = `${result.date}`;
+                    const imagen = `${imageUrl}`;
+                    const descripciones = etiquetas;
+                    semaforoButtons2.forEach((button, colorIndex) => {
+                        const selectedColor = button.value;
+                        const infoText = `${selectedColor}`;
+                        button.addEventListener('click', () => {
+                            this.modalmarcarshow(titulo, descripcion, newsSource, fuente, infoText, fecha, imagen, descripciones);
+                        });
+                    });
+                    noticiasCoincidentes.appendChild(elementoNoticiaCoincidente2);
                 }
             }
             busqueda = "";
@@ -565,6 +642,7 @@ class Busqueda {
         } catch (error) {
             console.error('Error al obtener datos de la API:', error);
         }
+        etiquetas = [];
     }
 
 
@@ -670,7 +748,6 @@ class Busqueda {
 
     add = async () => {
         event.preventDefault();
-        console.log(this.entidad);
         const request = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas', {
             method: 'POST',
             headers: {
@@ -832,7 +909,7 @@ class Busqueda {
     }
 
 
-    modalmarcarshow = (titulo,descripcion, enlace, fuente,infotext,fecha,imagen) => {
+    modalmarcarshow = (titulo,descripcion, enlace, fuente,infotext,fecha,imagen, descripciones) => {
         this.entidad['id'] = '1';
         this.entidad['titulo'] = titulo;
         this.entidad['descripcion'] = descripcion;
@@ -843,6 +920,11 @@ class Busqueda {
         this.entidad['fechaGuardado'] = '2023-11-11';
         this.entidad['usuarioCedula'] = '1';
         this.entidad['imagen'] = imagen;
+        const etiquetasDescripcion = [];
+        descripciones.forEach(descripcion => {
+            etiquetasDescripcion.push({ descripcion });
+        });
+        this.entidad['etiquetas'] = etiquetasDescripcion;
         let radioToSelect;
         switch (infotext) {
             case "Alta":
@@ -928,6 +1010,3 @@ class Busqueda {
     }
 
 }
-
-
-
