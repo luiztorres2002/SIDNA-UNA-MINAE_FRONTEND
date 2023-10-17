@@ -62,5 +62,13 @@ public class TestEtiquetas {
         }
     }
 
+    @Test
+    public void contarNoticiasAsociadas()throws Exception{
+        Etiqueta etiqueta = etiquetaDao.getEtiquetaById(1);
+        int asociadas = etiquetaDao.getNoticiasAsociadas(etiqueta.getEtiquetaId()).size();
+        assert asociadas == 5; //Cada uno cambia el valor al correspondiente
+        System.out.println("Test Contar Noticias Asociadas a Etiqueta Exitoso");
+    }
+
 }
 
