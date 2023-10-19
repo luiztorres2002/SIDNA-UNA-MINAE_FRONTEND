@@ -22,7 +22,7 @@ class Etiqueta {
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
         this.modalerror = new bootstrap.Modal(this.dom.querySelector('#modalError'));
         this.dom.querySelector("#categorias #agregar").addEventListener('click', this.createNew);
-        this.dom.querySelector("#categorias #buscar").addEventListener('click', this.search);
+        this.dom.querySelector("#categorias #buscarE").addEventListener('click', this.search);
         this.modalEditar = new bootstrap.Modal(this.dom.querySelector('#modalEditar'));
         this.modalexitoEditar = new bootstrap.Modal(this.dom.querySelector("#sucessmodalEditar"));
         this.modalCampoEditar = new bootstrap.Modal(this.dom.querySelector("#modalcampoEditar"));
@@ -133,7 +133,7 @@ class Etiqueta {
     </div>
     <input class="form-control me-2 fontAwesome" id="buscadorEtiqueta" autocomplete="off" type="text" style="width: 200px; margin-left: 700px; height: 38px; border-radius: 5px; border: 1px solid #1c2858;" placeholder="&#xf002; Buscar Etiqueta...">
     <div class="btn-group me-2">
-         <button type="button" class="btn btn-custom-outline-success2" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
+         <button type="button" class="btn btn-custom-outline-success2" id="buscarE" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
             <i class="fas fa-search"></i>
          </button>
     </div>

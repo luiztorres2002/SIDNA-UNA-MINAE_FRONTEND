@@ -351,9 +351,16 @@ input.BajaModal:checked {
     margin-left: 4px;
     cursor: pointer;
 }
-
-
 @media (max-width: 1669px) {
+    .search-container {
+        max-height: 600px;
+        max-width: 520px !important;
+        overflow-y: auto;
+    }
+
+}
+
+@media (max-width: 1109px) {
     .search-container {
         max-height: 600px;
         max-width: 220px !important;
@@ -450,13 +457,18 @@ input.BajaModal:checked {
     .search-results-container {
         max-height: 630px;
         max-width: 3000px;
-        overflow-y: hidden;
     }
 
     .search-container {
         max-height: 600px;
         max-width: 150px !important;
         overflow-y: hidden;
+    }
+
+    @media (max-width: 375px) {
+        #buscar {
+            margin-left: 10px !important;
+        }
     }
 
 }

@@ -463,7 +463,7 @@ class Biblioteca {
                         <a class="borrar-container">
                             <i class="fas fa-trash-can" id="borrarBtn" style="font-size: 1.3em; margin-top: 9px; color: #f10;"></i>
                         </a>
-                        <a href="${enlace}" id="enlaceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${fuente}" style="margin-bottom: 6px;">
+                        <a href="${enlace}" id="enlaceBtn2" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${fuente}" style="margin-bottom: 6px;">
                             <i class="fas fa-share" style="font-size: 1.5em; color: ${colorBorde};"></i>
                         </a>
                     </div>

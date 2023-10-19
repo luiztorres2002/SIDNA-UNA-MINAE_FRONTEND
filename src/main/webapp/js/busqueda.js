@@ -289,7 +289,6 @@ class Busqueda {
         const botonColores = ['#cdab68', '#1c2858'];
         const storedNewsJSON = localStorage.getItem('storedNews');
         const storedNews = JSON.parse(storedNewsJSON);
-        console.log(storedNews);
 
         const noticiasCoincidentes = document.querySelector('#noticiasCoincidentes');
         noticiasCoincidentes.innerHTML = '';
@@ -468,10 +467,16 @@ class Busqueda {
                           <input type="radio" name="rag1" class="Media" value="Media">
                           <input type="radio" name="rag1" class="Baja" value="Baja">
                         </div>
-                        <a href="${result.link}" id="enlanceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
-                        <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i></a>
-                    </div>
+            <div class="image-overlay">
+                <a class="vista_previa" href="${result.link}" id="enlaceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
+                    <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i>
+                </a>
+                <div class="imagen-hover-container">
+                    <div class="spinner-border" role="status" style="color: #cdab68; margin-left: 20px; margin-bottom: 40px"></div>
+                    <img src="" alt=""  class="imagen-hover">
                 </div>
+            </div>
+            </div>
             </div>
             </div>
         `;
@@ -488,6 +493,44 @@ class Busqueda {
                     const selectedColor = button.value;
                     const infoText = `${selectedColor}`;
                     button.addEventListener('click', this.modalmarcarshow.bind(this, titulo, descripcion, newsSource, fuente, infoText, fecha, imagen));
+                });
+
+                const enlaceBtn = elementoNoticiaCoincidente.querySelector('#enlaceBtn');
+                const imagenHoverContainer = elementoNoticiaCoincidente.querySelector('.imagen-hover-container');
+                const imagenHover = elementoNoticiaCoincidente.querySelector('.imagen-hover');
+                const spinner = imagenHoverContainer.querySelector('.spinner-border');
+
+                var myHeaders = new Headers();
+                myHeaders.append("apikey", "mjTW5uT9m5BiB1V47ByXTNd6kdDG5gBv");
+
+                var requestOptions = {
+                    method: 'GET',
+                    redirect: 'follow',
+                    headers: myHeaders
+                };
+
+                enlaceBtn.addEventListener('mouseenter', async function () {
+                    imagenHoverContainer.style.display = 'block';
+                    if (!imagenHover.src) {
+                        spinner.style.display = 'block';
+                    }
+
+                    try {
+                        const screenshotResponse = await fetch("https://api.apilayer.com/screenshot?url=" + result.link, requestOptions);
+                        const screenshotData = await screenshotResponse.json();
+                        const imagenPreview = screenshotData.screenshot_url;
+
+                        imagenHover.src = imagenPreview;
+                        imagenHover.style.display = 'block';
+                        spinner.style.display = 'none';
+
+                    } catch (error) {
+                        imagenHoverContainer.style.display = 'none';
+                    }
+                });
+
+                imagenHoverContainer.addEventListener('mouseleave', () => {
+                    imagenHoverContainer.style.display = 'none';
                 });
 
                 noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
@@ -511,7 +554,6 @@ class Busqueda {
             localStorage.setItem('lastUpdatedTime', Date.now());
             const storedNewsJSON = localStorage.getItem('storedNews');
             const storedNews = JSON.parse(storedNewsJSON);
-            console.log(storedNews);
         }
     }
 
@@ -610,11 +652,16 @@ class Busqueda {
                           <input type="radio" name="rag1" class="Media" value="Media">
                           <input type="radio" name="rag1" class="Baja" value="Baja">
                         </div>
-                        <a href="${result.link}" id="enlanceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
-                        <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i></a>
-           
-                    </div>
+            <div class="image-overlay">
+                <a class="vista_previa" href="${result.link}" id="enlaceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
+                    <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i>
+                </a>
+                <div class="imagen-hover-container">
+                    <div class="spinner-border" role="status" style="color: #cdab68; margin-left: 20px; margin-bottom: 40px"></div>
+                    <img src="" alt=""  class="imagen-hover">
                 </div>
+            </div>
+            </div>
             </div>
             </div>
         `;
@@ -633,6 +680,45 @@ class Busqueda {
                             this.modalmarcarshow(titulo, descripcion, newsSource, fuente, infoText, fecha, imagen, descripciones);
                         });
                     });
+
+                    const enlaceBtn = elementoNoticiaCoincidente2.querySelector('#enlaceBtn');
+                    const imagenHoverContainer = elementoNoticiaCoincidente2.querySelector('.imagen-hover-container');
+                    const imagenHover = elementoNoticiaCoincidente2.querySelector('.imagen-hover');
+                    const spinner = imagenHoverContainer.querySelector('.spinner-border');
+
+                    var myHeaders = new Headers();
+                    myHeaders.append("apikey", "mjTW5uT9m5BiB1V47ByXTNd6kdDG5gBv");
+
+                    var requestOptions = {
+                        method: 'GET',
+                        redirect: 'follow',
+                        headers: myHeaders
+                    };
+
+                    enlaceBtn.addEventListener('mouseenter', async function () {
+                        imagenHoverContainer.style.display = 'block';
+                        if (!imagenHover.src) {
+                            spinner.style.display = 'block';
+                        }
+
+                        try {
+                            const screenshotResponse = await fetch("https://api.apilayer.com/screenshot?url=" + result.link, requestOptions);
+                            const screenshotData = await screenshotResponse.json();
+                            const imagenPreview = screenshotData.screenshot_url;
+
+                            imagenHover.src = imagenPreview;
+                            imagenHover.style.display = 'block';
+                            spinner.style.display = 'none';
+
+                        } catch (error) {
+                            imagenHoverContainer.style.display = 'none';
+                        }
+                    });
+
+                    imagenHoverContainer.addEventListener('mouseleave', () => {
+                        imagenHoverContainer.style.display = 'none';
+                    });
+
                     noticiasCoincidentes.appendChild(elementoNoticiaCoincidente2);
                 }
             }
