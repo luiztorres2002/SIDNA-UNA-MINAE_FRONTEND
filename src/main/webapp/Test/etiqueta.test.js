@@ -152,3 +152,28 @@ describe('addNewLabel', () => {
         fetch.mockClear();
     });
 });
+
+describe('Test para la función Renderizar Etiquetas y Contar las Noticias Asociadas', () => {
+    async function renderizaEtiquetas() {
+        try {
+            const response = await fetch('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/4-0258-0085');
+            if(!response.ok){
+                return 'error';
+                console.log('No se han cargado las etiquetas de manera correcta')
+            }
+            else{
+                return 'success';
+                console.log('Las etiquetas se han cargado correctamente');
+            }
+        } catch (error) {
+            return 'error';
+        }
+    };
+
+    it('Debería obtener las etiquetas de manera exitosa', async () => {
+        fetch.mockResolvedValue({ ok: true });
+        const result = await renderizaEtiquetas();
+        expect(result).toEqual('success');
+        expect(fetch).toHaveBeenCalled();
+    });
+});

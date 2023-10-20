@@ -556,8 +556,6 @@ class Etiqueta {
         try{
             const url = await fetch(`http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/contarNoticias/${etiquetaId}`);
             this.state.noticiasAsociadas = await url.json();
-            //TODO
-       
         }catch (error){
             console.log("Error al contar las Noticias");
         }
