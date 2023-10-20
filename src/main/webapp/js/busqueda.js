@@ -9,7 +9,6 @@ let busqueda ="";
 let etiquetas = [];
 
 sugerencias = [];
-
 class Busqueda {
 
     dom;
