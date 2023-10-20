@@ -1,7 +1,7 @@
 const apiKeys = [
-    'f6136e266d9e40ee213e1b95a60b46b06a9e650465baf4f3fc0fe5d2bba1e3b3',
-    '60f7edca87ed3fbaa81fa2e4e1676aba4ed4f3f23a5a4d527aa694edd4b1dc1d',
-    '51c4b495ff9b138324e629bacd6555f0700996f3ea0c5824244731938998b453'
+    '51c4b495ff9b138324e629bacd6555f0700996f3ea0c5824244731938998b453',
+    '10e6d46bc874a27148fb9c8d920114c3f6647dafe0186583cd1ce44f50dee601',
+    'db984f9b5828130bac3fdf655e2bd6d90765b8a6995ddb330111d638d5ee4fb9'
 ];
 
 let currentApiKeyIndex = 0;
@@ -313,7 +313,7 @@ class Busqueda {
                     elementoNoticiaCoincidente.innerHTML = `
                     
                     <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde}" data-link="${result.link}">
-    <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.thumbnail}'; this.classList.add('card-img-top', 'card-img-custom');">
+    <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.backup}'; this.classList.add('card-img-top', 'card-img-custom');">
     <div class="card-body">
         <div class="text-section">
             <h5 class="card-title fw-bold">${result.title}</h5>
@@ -480,7 +480,6 @@ class Busqueda {
             </div>
             </div>
         `;
-
                 const semaforoButtons = elementoNoticiaCoincidente.querySelectorAll('input[type="radio"]');
                 const newsSource = `${result.link}`;
                 const titulo = `${result.title}`;
@@ -533,6 +532,7 @@ class Busqueda {
                     imagenHoverContainer.style.display = 'none';
                 });
 
+                newsResults[index].backup= result.thumbnail;
                 noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
             }
 
@@ -545,6 +545,7 @@ class Busqueda {
                     if (imageUrls[i]) {
                         updatedNewsResults[i].thumbnail = imageUrls[i];
                     }
+
                 } catch (error) {
                     console.error(`Error al obtener datos de noticia (${result.link}):`, error);
                 }
@@ -552,8 +553,8 @@ class Busqueda {
 
             localStorage.setItem('storedNews', JSON.stringify(updatedNewsResults));
             localStorage.setItem('lastUpdatedTime', Date.now());
-            const storedNewsJSON = localStorage.getItem('storedNews');
-            const storedNews = JSON.parse(storedNewsJSON);
+
+
         }
     }
 
