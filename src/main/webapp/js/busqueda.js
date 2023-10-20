@@ -7,7 +7,6 @@ const apiKeys = [
 let currentApiKeyIndex = 0;
 let busqueda ="";
 let etiquetas = [];
-
 sugerencias = [];
 class Busqueda {
 
