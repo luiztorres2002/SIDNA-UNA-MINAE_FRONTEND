@@ -687,7 +687,7 @@ class Biblioteca {
             } catch (error) {
                 console.error(`Error al obtener datos de noticia`, error);
             }
-            let descripciones = ["Notica Externa"];
+            let descripciones = ["Noticia Externa"];
             this.entidad['id'] = '1';
             this.entidad['titulo'] = this.entity.titulo;
             this.entidad['descripcion'] = this.entity.descripcion;
