@@ -16,7 +16,13 @@ class Etiqueta {
     state;
 
     constructor() {
-        this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A', etiquetas: [], noticiasAsociadas: []};
+        this.state = {
+            'entities': new Array(),
+            'entity': this.emptyEntity(),
+            'mode': 'A',
+            etiquetas: [],
+            noticiasAsociadas: []
+        };
         this.cargarEtiquetas();
         this.dom = this.render();
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
@@ -47,9 +53,6 @@ class Etiqueta {
         this.dom.querySelector("#categorias #error #errorb").addEventListener('click', this.hideModalError);
         this.dom.querySelector("#categorias #sucess #sucessb").addEventListener('click', this.hideModalExito);
 
-        // this.dom.querySelector("#categorias #modalError #dismissButton").addEventListener('click', this.hideModalError);
-        // this.dom.querySelector("#categorias #sucessmodal #sucessbuton").addEventListener('click', this.hideModalExito);
-        // this.dom.querySelector("#categorias #modalcampo #dismisscampo").addEventListener('click', this.hideModalCampo);
 
         const searchInput = this.dom.querySelector("#buscadorEtiqueta");
 
@@ -150,7 +153,6 @@ class Etiqueta {
   <table class="table table-fixed" id="tablaEtiquetas" style="display: none">  
   <thead>
         <tr>
-        
             <th class="empty" style="border-right:none; border-left:none; border-bottom:none; border-top:none; background-color: white;">Nombre de Etiqueta</th>
             <th class="large" style="border-right:none; border-left:none; border-bottom:none; border-top:none; background-color: white;"></th>
             <th class="empty2" style="border-right:none; border-left:none; border-bottom:none; border-top:none; background-color: white;" >Noticias Asociadas</th>
@@ -177,29 +179,6 @@ class Etiqueta {
         }
     }
 
-    agregarEtiqueta = async (etiquetaId, nombre) => {
-        this.load();
-        const request = new Request(`http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/${etiquetaId}?txtNombre=${nombre}`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(this.entity)
-        });
-        try {
-            const response = await fetch(request);
-            if (!response.ok) {
-                console.log(this.entity);
-                return;
-            }
-            this.cargarEtiquetas();
-            this.renderizarPaginaConEtiquetas();
-            this.reset();
-            this.resetFormAdd();
-            this.modal.hide();
-        } catch (e) {
-            alert(e);
-        }
-        event.preventDefault();
-    }
 
     renderizarPaginaConEtiquetas = () => {
         let tableRows = '';
@@ -459,7 +438,7 @@ class Etiqueta {
     }
     cargarEtiquetas = async () => {
         try {
-            const response = await fetch('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/4-0258-0085');
+            const response = await fetch(`${backend}/etiquetas/4-0258-0085`);
             const data = await response.json();
             this.state.etiquetas = data;
             this.renderizarPaginaConEtiquetas();
@@ -474,7 +453,7 @@ class Etiqueta {
     }
 
     cambiarEstadoEtiqueta = (etiquetaId, nuevoEstado) => {
-        const url = `http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/cambiarEstado/${etiquetaId}/${nuevoEstado}`;
+        const url = `${backend}/etiquetas/cambiarEstado/${etiquetaId}/${nuevoEstado}`;
         fetch(url, {
             method: 'PUT',
             headers: {
@@ -498,7 +477,7 @@ class Etiqueta {
 
     agregarEtiqueta2 = (descripcion) => {
         event.preventDefault();
-        const url = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/';
+        const url = `${backend}/etiquetas/`;
         const requestBody = {
             descripcion: descripcion,
             usuarioCedula: "4-0258-0085",
@@ -530,7 +509,7 @@ class Etiqueta {
     };
 
     saveEdit = (etiquetaId, descripcion) => {
-        const url = `http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/editar/${etiquetaId}?input=${descripcion}`;
+        const url = `${backend}/etiquetas/editar/${etiquetaId}?input=${descripcion}`;
         fetch(url, {
             method: 'PUT',
             headers: {
@@ -552,15 +531,6 @@ class Etiqueta {
         event.preventDefault();
     }
 
-    contarNoticiasAsociadas = async (etiquetaId) => {
-        try{
-            const url = await fetch(`http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/contarNoticias/${etiquetaId}`);
-            this.state.noticiasAsociadas = await url.json();
-        }catch (error){
-            console.log("Error al contar las Noticias");
-        }
-
-    }
 
     search = async () => {
         const searchInput = this.dom.querySelector("#buscadorEtiqueta");
@@ -593,7 +563,12 @@ class Etiqueta {
                 // Scroll the table container to the matching row
                 const tableContainer = document.getElementById('tableContainer');
                 if (tableContainer) {
-                    row.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start', container: tableContainer });
+                    row.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'nearest',
+                        inline: 'start',
+                        container: tableContainer
+                    });
                 }
 
                 encontrados = true;
@@ -622,7 +597,7 @@ class Etiqueta {
         this.state.mode = 'A';
         const txtNombre = document.getElementById("txtNombre");
         txtNombre.value = "";
-        txtNombre.textContent="";
+        txtNombre.textContent = "";
         this.showModal();
 
     }

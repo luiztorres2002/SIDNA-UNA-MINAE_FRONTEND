@@ -18,6 +18,14 @@
     width: 10% !important;
 }
 
+#loading-spinner2 {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 #caja-sugerencia {
     position: absolute;
     background-color: #fff;
@@ -344,9 +352,6 @@ input.BajaModal:checked {
 }
 
 
-
-
-
 .close-icon {
     margin-left: 4px;
     cursor: pointer;
@@ -360,13 +365,32 @@ input.BajaModal:checked {
 
 }
 
-@media (max-width: 1109px) {
+@media (max-width: 1110px) {
+    .search-container {
+        max-height: 600px;
+        max-width: 420px !important;
+        overflow-y: auto;
+    }
+}
+
+@media (max-width: 996px) {
     .search-container {
         max-height: 600px;
         max-width: 220px !important;
         overflow-y: auto;
     }
 
+    #pillsMobile-container {
+        display: block;
+        display: flex;
+    }
+    .pill{
+        font-size: 15px;
+    }
+
+    #pills-container{
+        display: none;
+    }
 }
 @media (max-width: 768px) {
     .card {

@@ -141,7 +141,7 @@ public class NoticiaMarcada {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id, Titulo, Descripcion, Fecha, Prioridad, Fuente, Enlace, Imagen, FechaGuardado,etiquetas, UsuarioCedula);
+        return Objects.hash(Id, Titulo, Descripcion, Fecha, Prioridad, Fuente, Enlace, Imagen, FechaGuardado, etiquetas, UsuarioCedula);
     }
 
     @Override

@@ -4,10 +4,12 @@ const apiKeys = [
     'db984f9b5828130bac3fdf655e2bd6d90765b8a6995ddb330111d638d5ee4fb9'
 ];
 
+
 let currentApiKeyIndex = 0;
-let busqueda ="";
+let busqueda = "";
 let etiquetas = [];
 sugerencias = [];
+
 class Busqueda {
 
     dom;
@@ -29,7 +31,7 @@ class Busqueda {
         this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A'};
         this.dom = this.render();
         const self = this;
-        this.entidad ={};
+        this.entidad = {};
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
         this.modalmarcar = new bootstrap.Modal(this.dom.querySelector('#marcar'));
         this.modalerror = new bootstrap.Modal(this.dom.querySelector('#modalError'));
@@ -45,14 +47,25 @@ class Busqueda {
         const searchInput = this.dom.querySelector("#search-input");
         searchInput.addEventListener("input", (event) => this.inputCambio(event));
         setTimeout(() => {
-            this.mostrarDestacadas();
+            const lastUpdatedTime = localStorage.getItem('lastUpdatedTime');
+            if (lastUpdatedTime && (Date.now() - parseInt(lastUpdatedTime)) < 3600000) {
+                this.mostrarNoticiasAlmacenadas()
+                    .catch((error) => {
+                        console.error('Error mostrando noticias almacenadas:', error);
+                    });
+            } else {
+                this.obtenerNoticias()
+                    .catch((error) => {
+                        console.error('Error obteniendo noticias:', error);
+                    });
+            }
             this.getSugerencias();
         }, 100);
 
         const semaforoContainer = this.dom.querySelector('.semaforoModal');
         const radioButtons = semaforoContainer.querySelectorAll('input[type="radio"]');
         radioButtons.forEach(radioButton => {
-            radioButton.addEventListener('change', function() {
+            radioButton.addEventListener('change', function () {
                 if (this.checked) {
                     self.entidad['prioridad'] = this.value;
 
@@ -76,66 +89,57 @@ class Busqueda {
     }
 
     renderBody = () => {
-        const body= `
+        const body = `
             <div class="linea-azul"></div>
-        <div class="linea-amarilla"></div>
-        <div class="linea-verde"></div>
-       
-     
-        <div id="loading-spinner" style="display: none;">
-        
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    </div>
-    <div class="container justify-content-center" id="tituloBusqueda" style="text-align: center; font-family: Verdana; font-size: 28px;"> 
-            Últimas Noticias Ambientales
-        </div>
-   <div class="d-flex justify-content-center">
-            <form id="form" style="width: 85%;"">
-           <div class="input-group mt-10" style="display: flex; align-items: center; justify-content: center;">
-    <div class="btn-group me-2">
-
-<select id="tiempoSeleccionado" style="border: none; width: 90px; margin-right:90px; margin-left: 100px";>
-    <option value="" selected disabled>Fecha</option>
-    <option value="ultimaHora">Última Hora</option>
-    <option value="ultimoDia">Último Día</option>
-    <option value="ultimaSemana">Última Semana</option>
-    <option value="ultimoMes">Último Mes</option>
-    <option value="ultimoAno">Último Año</option>
-</select>
-    </div>
-    <div class="search-container">
-            <div id="search-input" class="editable-input fontAwesome" contenteditable="true" data-placeholder="&#xf002; Buscar..."></div>
-            <div id="pills-container" class="pill-container"></div>
-        </div>
-    <div class="btn-group me-2">
-         <button type="button" class="btn btn-custom-outline-success" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
-            <i class="fas fa-search"></i>
-         </button>
-    </div>
-</div>
-<div id="caja-sugerencia" class="caja-sugerencia" style="display: none"></div>
-<div id="pillsMobile-container" class="pill-container"></div>
-<div class="search-results-container">
-    <div id="noticiasCoincidentes"></div> 
-    <div class="d-flex justify-content-center">
-   
-    </div>
-</div>
+            <div class="linea-amarilla"></div>
+            <div class="linea-verde"></div>
+            </div>
+            <div class="container justify-content-center" id="tituloBusqueda" style="text-align: center; font-family: Verdana; font-size: 28px;"> 
+                    Últimas Noticias Ambientales
                 </div>
-            </form>
-        </div>
+           <div class="d-flex justify-content-center">
+                    <form id="form" style="width: 85%;"">
+                   <div class="input-group mt-10" style="display: flex; align-items: center; justify-content: center;">
+            <div class="btn-group me-2">
         
+        <select id="tiempoSeleccionado" style="border: none; width: 90px; margin-right:90px; margin-left: 100px";>
+            <option value="" selected disabled>Fecha</option>
+            <option value="ultimaHora">Última Hora</option>
+            <option value="ultimoDia">Último Día</option>
+            <option value="ultimaSemana">Última Semana</option>
+            <option value="ultimoMes">Último Mes</option>
+            <option value="ultimoAno">Último Año</option>
+        </select>
+            </div>
+            <div class="search-container">
+                    <div id="search-input" class="editable-input fontAwesome" contenteditable="true" data-placeholder="&#xf002; Buscar..."></div>
+                    <div id="pills-container" class="pill-container"></div>
+                </div>
+            <div class="btn-group me-2">
+                 <button type="button" class="btn btn-custom-outline-success" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
+                    <i class="fas fa-search"></i>
+                 </button>
+            </div>
+        </div>
+        <div id="caja-sugerencia" class="caja-sugerencia" style="display: none"></div>
+        <div id="pillsMobile-container" class="pill-container"></div>
+        <div class="spinner-border" role="status" style="color: #cdab68;margin-left: 50%;margin-top: 30%;display: none;">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="search-results-container">
+            <div id="noticiasCoincidentes"></div> 
+            <div class="d-flex justify-content-center">
+           
+             </div>
+             </div>
+                </div>
+        </form>
+        </div>
        `;
-
-
-
         setTimeout(() => {
             const pillsContainer1 = document.getElementById("pills-container");
             const pillsContainer2 = document.getElementById("pillsMobile-container");
             const searchInput = document.getElementById("search-input");
-
             searchInput.addEventListener("keyup", (event) => {
                 if (event.key === "Enter" || event.key === "," || event.key === "-") {
                     event.preventDefault();
@@ -199,7 +203,7 @@ class Busqueda {
 
     renderModalError = () => {
         return `
-<div id="modalError" class="modal fade">
+        <div id="modalError" class="modal fade">
           <div class="modal-dialog modal-error">
             <div class="modal-content">
                 <div class="modal-header">
@@ -216,9 +220,7 @@ class Busqueda {
                 </div>
             </div>
             </div>
-        </div>  
-
-    
+        </div> 
         `;
     }
 
@@ -245,7 +247,6 @@ class Busqueda {
     `;
     }
 
-
     actualizarTexto() {
         const searchInput = document.getElementById("search-input");
         const pillsContainer = document.getElementById("pills-container");
@@ -261,7 +262,7 @@ class Busqueda {
         const searchValue = searchInput.textContent.trim();
         let fullText = searchValue + " " + combinedText;
         fullText = fullText.replace(/\s+/g, " ").trim();
-        busqueda=fullText;
+        busqueda = fullText;
     }
 
     crearBurbuja(text) {
@@ -281,132 +282,28 @@ class Busqueda {
         console.log(etiquetas);
     }
 
-    async mostrarDestacadas() {
-        let contadorNoticias = 0;
+
+    async obtenerNoticias() {
         const bordeColores = ['#1c2858', '#cdab68'];
         const botonColores = ['#cdab68', '#1c2858'];
-        const storedNewsJSON = localStorage.getItem('storedNews');
-        const storedNews = JSON.parse(storedNewsJSON);
-
-        const noticiasCoincidentes = document.querySelector('#noticiasCoincidentes');
-        noticiasCoincidentes.innerHTML = '';
-
-        const lastUpdatedTime = localStorage.getItem('lastUpdatedTime');
-
-
-        if (lastUpdatedTime && (Date.now() - parseInt(lastUpdatedTime)) < 3600000) {
-
-            const storedNews = JSON.parse(localStorage.getItem('storedNews'));
-            if (storedNews) {
-                for (const [index, result] of storedNews.entries()) {
-                    contadorNoticias++;
-
-                    let imageUrl = result.thumbnail;
-
-                    const colorBorde = bordeColores[index % bordeColores.length];
-                    const colorBoton = botonColores[index % botonColores.length];
-                    const elementoNoticiaCoincidente = document.createElement('div');
-                    elementoNoticiaCoincidente.classList.add('noticia-coincidente');
-
-                    elementoNoticiaCoincidente.innerHTML = `
-                    
-                    <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde}" data-link="${result.link}">
-    <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.backup}'; this.classList.add('card-img-top', 'card-img-custom');">
-    <div class="card-body">
-        <div class="text-section">
-            <h5 class="card-title fw-bold">${result.title}</h5>
-            <p class="card-text">${result.snippet}</p>
-        </div>
-        <div class="cta-section">
-            <p class="card-text">${result.date}</p>
-            <div class="traffic-light">
-                <input type="radio" name="rag1" class="Alta" value="Alta">
-                <input type="radio" name="rag1" class="Media" value="Media">
-                <input type="radio" name="rag1" class="Baja" value="Baja">
-            </div>
-            <div class="image-overlay">
-                <a class="vista_previa" href="${result.link}" id="enlaceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
-                    <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i>
-                </a>
-                <div class="imagen-hover-container">
-                    <div class="spinner-border" role="status" style="color: #cdab68; margin-left: 20px; margin-bottom: 40px"></div>
-                    <img src="" alt=""  class="imagen-hover">
-                </div>
-            </div>
-            </div>
-            </div>
-            </div>
-
-                `;
-
-                    const semaforoButtons = elementoNoticiaCoincidente.querySelectorAll('input[type="radio"]');
-                    const newsSource = `${result.link}`;
-                    const titulo = `${result.title}`;
-                    const descripcion = `${result.snippet}`;
-                    const fuente = `${result.source}`;
-                    const fecha = `${result.date}`;
-                    let descripciones = ["Costa Rica", "Medio Ambiente"];
-
-                    semaforoButtons.forEach((button, colorIndex) => {
-                        const selectedColor = button.value;
-                        const infoText = `${selectedColor}`;
-                        button.addEventListener('click', this.modalmarcarshow.bind(this, titulo, descripcion, newsSource, fuente, infoText, fecha, imageUrl,descripciones));
-                    });
-
-                    const enlaceBtn = elementoNoticiaCoincidente.querySelector('#enlaceBtn');
-                    const imagenHoverContainer = elementoNoticiaCoincidente.querySelector('.imagen-hover-container');
-                    const imagenHover = elementoNoticiaCoincidente.querySelector('.imagen-hover');
-                    const spinner = imagenHoverContainer.querySelector('.spinner-border');
-
-                    var myHeaders = new Headers();
-                    myHeaders.append("apikey", "mjTW5uT9m5BiB1V47ByXTNd6kdDG5gBv");
-
-                    var requestOptions = {
-                        method: 'GET',
-                        redirect: 'follow',
-                        headers: myHeaders
-                    };
-
-                    enlaceBtn.addEventListener('mouseenter', async function () {
-                        imagenHoverContainer.style.display = 'block';
-                        if (!imagenHover.src) {
-                            spinner.style.display = 'block';
-                        }
-
-                        try {
-                            const screenshotResponse = await fetch("https://api.apilayer.com/screenshot?url=" + result.link, requestOptions);
-                            const screenshotData = await screenshotResponse.json();
-                            const imagenPreview = screenshotData.screenshot_url;
-
-                            imagenHover.src = imagenPreview;
-                            imagenHover.style.display = 'block';
-                            spinner.style.display = 'none';
-
-                        } catch (error) {
-                            imagenHoverContainer.style.display = 'none';
-                        }
-                    });
-
-                    imagenHoverContainer.addEventListener('mouseleave', () => {
-                        imagenHoverContainer.style.display = 'none';
-                    });
-
-                    noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
-                }
-                return;
-            }
-        }
         const apiKey = apiKeys[currentApiKeyIndex];
         currentApiKeyIndex = (currentApiKeyIndex + 1) % apiKeys.length;
-
         console.log('API Key usada:', apiKey);
 
         const corsProxyUrl = 'https://corsproxy.io/?';
         const apiUrl = `https://serpapi.com/search?api_key=${apiKey}&q=costa%20rica%20medio%20ambiente&location=Costa%20Rica&google_domain=google.co.cr&gl=cr&lr=lang_es&hl=es&tbm=nws&&tbs=sbd:1&num=35`;
 
+        const TIMEOUT_MS = 9000;
+        const fetchConTimeout = async (url) => {
+            return Promise.race([
+                fetch(url),
+                new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('Tiempo de espera excedido')), TIMEOUT_MS)
+                )
+            ]);
+        };
         const response = await fetch(corsProxyUrl + apiUrl);
         const searchData = await response.json();
-
         const newsResults = searchData.news_results;
 
         if (newsResults.length === 0) {
@@ -414,30 +311,29 @@ class Busqueda {
         } else {
             const imageUrls = [];
             for (const [index, result] of newsResults.entries()) {
-                contadorNoticias++;
                 let imageUrl = '';
-                try {
-                    const proxyUrl1 = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
-                    const proxyUrl2 = 'https://corsproxy.io/?';
+                const proxyUrl1 = `${backend}/proxy?url=`;
+                const proxyUrl2 = 'https://corsproxy.io/?';
 
-                    try {
-                        const newsResponse = await fetch(proxyUrl2 + result.link);
-                        const newsHtml = await newsResponse.text();
+                try {
+                    const encodedLink = encodeURIComponent(result.link);
+                    const response1 = await fetchConTimeout(proxyUrl2 + encodedLink);
+                    if (response1.ok) {
+                        const newsHtml = await response1.text();
                         const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
                         const ogImage = newsDocument.querySelector('meta[property="og:image"]');
                         imageUrl = ogImage ? ogImage.getAttribute('content') : result.thumbnail;
-                    } catch (error1) {
-                        console.error(`Error al obtener datos de noticia con el primer proxy (${result.link}):`, error1);
 
-                        try {
-                            const newsResponse2 = await fetch(proxyUrl1 + result.link);
-                            const newsHtml2 = await newsResponse2.text();
+                    } else {
+                        const response2 = await fetchConTimeout(proxyUrl1 + encodedLink);
+                        if (response2.ok) {
+                            const newsHtml2 = await response2.text();
                             const newsDocument2 = new DOMParser().parseFromString(newsHtml2, 'text/html');
                             const ogImage2 = newsDocument2.querySelector('meta[property="og:image"]');
                             imageUrl = ogImage2 ? ogImage2.getAttribute('content') : result.thumbnail;
-                        } catch (error2) {
-                            console.error(`Error al obtener datos de noticia con el segundo proxy (${result.link}):`, error2);
 
+                        } else {
+                            console.error(`Error al obtener datos de noticia con ambos proxies (${result.link})`);
                         }
                     }
                     imageUrls.push(imageUrl);
@@ -449,7 +345,6 @@ class Busqueda {
                 const colorBoton = botonColores[index % botonColores.length];
                 const elementoNoticiaCoincidente = document.createElement('div');
                 elementoNoticiaCoincidente.classList.add('noticia-coincidente');
-
                 elementoNoticiaCoincidente.innerHTML = `
             <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${result.link}">
                 <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.thumbnail}'; this.classList.add('card-img-top', 'card-img-custom');">
@@ -461,9 +356,9 @@ class Busqueda {
                     <div class="cta-section">
                         <p class="card-text">${result.date}</p>
                         <div class="traffic-light">
-                          <input type="radio" name="rag1" class="Alta" value="Alta">
-                          <input type="radio" name="rag1" class="Media" value="Media">
-                          <input type="radio" name="rag1" class="Baja" value="Baja">
+                          <input type="radio" name="rag1" class="Alta" value="Alta" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Alta">
+                          <input type="radio" name="rag1" class="Media" value="Media" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Media">
+                          <input type="radio" name="rag1" class="Baja" value="Baja" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Baja">
                         </div>
             <div class="image-overlay">
                 <a class="vista_previa" href="${result.link}" id="enlaceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
@@ -484,12 +379,12 @@ class Busqueda {
                 const descripcion = `${result.snippet}`;
                 const fuente = `${result.source}`;
                 const fecha = `${result.date}`;
-                const imagen = `${imageUrl}`;
+                let descripciones = ["Costa Rica", "Medio Ambiente"];
 
                 semaforoButtons.forEach((button, colorIndex) => {
                     const selectedColor = button.value;
                     const infoText = `${selectedColor}`;
-                    button.addEventListener('click', this.modalmarcarshow.bind(this, titulo, descripcion, newsSource, fuente, infoText, fecha, imagen));
+                    button.addEventListener('click', this.modalmarcarshow.bind(this, titulo, descripcion, newsSource, fuente, infoText, fecha, imageUrl, descripciones));
                 });
 
                 const enlaceBtn = elementoNoticiaCoincidente.querySelector('#enlaceBtn');
@@ -499,64 +394,146 @@ class Busqueda {
 
                 var myHeaders = new Headers();
                 myHeaders.append("apikey", "mjTW5uT9m5BiB1V47ByXTNd6kdDG5gBv");
-
                 var requestOptions = {
                     method: 'GET',
                     redirect: 'follow',
                     headers: myHeaders
                 };
-
                 enlaceBtn.addEventListener('mouseenter', async function () {
                     imagenHoverContainer.style.display = 'block';
                     if (!imagenHover.src) {
                         spinner.style.display = 'block';
                     }
-
                     try {
                         const screenshotResponse = await fetch("https://api.apilayer.com/screenshot?url=" + result.link, requestOptions);
                         const screenshotData = await screenshotResponse.json();
                         const imagenPreview = screenshotData.screenshot_url;
-
                         imagenHover.src = imagenPreview;
                         imagenHover.style.display = 'block';
                         spinner.style.display = 'none';
-
                     } catch (error) {
                         imagenHoverContainer.style.display = 'none';
                     }
                 });
-
                 imagenHoverContainer.addEventListener('mouseleave', () => {
                     imagenHoverContainer.style.display = 'none';
                 });
 
-                newsResults[index].backup= result.thumbnail;
+                newsResults[index].backup = result.thumbnail;
+                newsResults[index].thumbnail = imageUrl;
                 noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
             }
 
-            const updatedNewsResults = [...newsResults];
 
-            for (let i = 0; i < newsResults.length; i++) {
-                const result = newsResults[i];
-
-                try {
-                    if (imageUrls[i]) {
-                        updatedNewsResults[i].thumbnail = imageUrls[i];
-                    }
-
-                } catch (error) {
-                    console.error(`Error al obtener datos de noticia (${result.link}):`, error);
-                }
-            }
-
-            localStorage.setItem('storedNews', JSON.stringify(updatedNewsResults));
+            localStorage.setItem('storedNews', JSON.stringify(newsResults));
             localStorage.setItem('lastUpdatedTime', Date.now());
-
-
         }
     }
 
-    async  corresponderPalabraClaveEnNoticias() {
+    async mostrarNoticiasAlmacenadas() {
+        const bordeColores = ['#1c2858', '#cdab68'];
+        const botonColores = ['#cdab68', '#1c2858'];
+        const storedNewsJSON = localStorage.getItem('storedNews');
+        const noticiasCoincidentes = document.querySelector('#noticiasCoincidentes');
+        noticiasCoincidentes.innerHTML = '';
+
+        const lastUpdatedTime = localStorage.getItem('lastUpdatedTime');
+
+        if (lastUpdatedTime && (Date.now() - parseInt(lastUpdatedTime)) < 3600000) {
+            const storedNews = JSON.parse(storedNewsJSON);
+            if (storedNews) {
+                for (const [index, result] of storedNews.entries()) {
+                    let imageUrl = result.thumbnail;
+
+                    const colorBorde = bordeColores[index % bordeColores.length];
+                    const colorBoton = botonColores[index % botonColores.length];
+                    const elementoNoticiaCoincidente = document.createElement('div');
+                    elementoNoticiaCoincidente.classList.add('noticia-coincidente');
+                    elementoNoticiaCoincidente.innerHTML = `
+                    <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde}" data-link="${result.link}">
+                    <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.backup}'; this.classList.add('card-img-top', 'card-img-custom');">
+                    <div class="card-body">
+                        <div class="text-section">
+                            <h5 class="card-title fw-bold">${result.title}</h5>
+                            <p class="card-text">${result.snippet}</p>
+                        </div>
+                        <div class="cta-section">
+                            <p class="card-text">${result.date}</p>
+                            <div class="traffic-light">
+                              <input type="radio" name="rag1" class="Alta" value="Alta" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Alta">
+                              <input type="radio" name="rag1" class="Media" value="Media" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Media">
+                              <input type="radio" name="rag1" class="Baja" value="Baja" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Baja">
+                            </div>
+                            <div class="image-overlay">
+                                <a class="vista_previa" href="${result.link}" id="enlaceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
+                                    <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i>
+                                </a>
+                                <div class="imagen-hover-container">
+                                    <div class="spinner-border" role="status" style="color: #cdab68; margin-left: 20px; margin-bottom: 40px"></div>
+                                    <img src="" alt=""  class="imagen-hover">
+                                </div>
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                `;
+
+                    const semaforoButtons = elementoNoticiaCoincidente.querySelectorAll('input[type="radio"]');
+                    const newsSource = `${result.link}`;
+                    const titulo = `${result.title}`;
+                    const descripcion = `${result.snippet}`;
+                    const fuente = `${result.source}`;
+                    const fecha = `${result.date}`;
+                    let descripciones = ["Costa Rica", "Medio Ambiente"];
+
+                    semaforoButtons.forEach((button, colorIndex) => {
+                        const selectedColor = button.value;
+                        const infoText = `${selectedColor}`;
+                        button.addEventListener('click', this.modalmarcarshow.bind(this, titulo, descripcion, newsSource, fuente, infoText, fecha, imageUrl, descripciones));
+                    });
+
+                    const enlaceBtn = elementoNoticiaCoincidente.querySelector('#enlaceBtn');
+                    const imagenHoverContainer = elementoNoticiaCoincidente.querySelector('.imagen-hover-container');
+                    const imagenHover = elementoNoticiaCoincidente.querySelector('.imagen-hover');
+                    const spinner = imagenHoverContainer.querySelector('.spinner-border');
+
+                    var myHeaders = new Headers();
+                    myHeaders.append("apikey", "mjTW5uT9m5BiB1V47ByXTNd6kdDG5gBv");
+                    var requestOptions = {
+                        method: 'GET',
+                        redirect: 'follow',
+                        headers: myHeaders
+                    };
+                    enlaceBtn.addEventListener('mouseenter', async function () {
+                        imagenHoverContainer.style.display = 'block';
+                        if (!imagenHover.src) {
+                            spinner.style.display = 'block';
+                        }
+                        try {
+                            const screenshotResponse = await fetch("https://api.apilayer.com/screenshot?url=" + result.link, requestOptions);
+                            const screenshotData = await screenshotResponse.json();
+                            const imagenPreview = screenshotData.screenshot_url;
+                            imagenHover.src = imagenPreview;
+                            imagenHover.style.display = 'block';
+                            spinner.style.display = 'none';
+                        } catch (error) {
+                            imagenHoverContainer.style.display = 'none';
+                        }
+                    });
+
+                    imagenHoverContainer.addEventListener('mouseleave', () => {
+                        imagenHoverContainer.style.display = 'none';
+                    });
+
+                    noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
+                }
+            }
+        }
+    }
+
+    async corresponderPalabraClaveEnNoticias() {
+        const spinner = document.querySelector('.spinner-border');
+        spinner.style.display = 'block';
         let contadorNoticias = 0;
         const bordeColores = ['#1c2858', '#cdab68'];
         const botonColores = ['#cdab68', '#1c2858'];
@@ -584,7 +561,6 @@ class Busqueda {
             } else if (tiempoSeleccionado === 'ultimoAno') {
                 tiempoQuery = 'qdr:y';
             }
-
             const apiUrl = `https://serpapi.com/search?api_key=${apiKey}&q=${keyword}&location=Costa%20Rica&google_domain=google.co.cr&gl=cr&lr=lang_es&hl=es&tbm=nws&tbs=sbd:1${tiempoQuery ? `,${tiempoQuery}` : ''}&num=35`;
             const corsProxyUrl = 'https://corsproxy.io/?';
             const response = await fetch(corsProxyUrl + apiUrl);
@@ -594,15 +570,19 @@ class Busqueda {
             const tiempoSeleccionadoSelect = document.querySelector('#tiempoSeleccionado');
             tiempoSeleccionadoSelect.value = '';
 
-            if (newsResults.length === 0) {
-                noticiasCoincidentes.innerHTML = '<p>No se encontraron noticias.</p>';
+            if (newsResults === undefined) {
+                noticiasCoincidentes.innerHTML = '<p style="margin-top: 25%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 24px;">No se encontraron noticias.</p>';
+                const spinner = document.querySelector('.spinner-border');
+                spinner.style.display = 'none';
             } else {
+                const spinner = document.querySelector('.spinner-border');
+                spinner.style.display = 'none';
                 const imageUrls = [];
                 for (const [index, result] of newsResults.entries()) {
                     contadorNoticias++;
                     let imageUrl = '';
                     try {
-                        const proxyUrl1 = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
+                        const proxyUrl1 = `${backend}/proxy?url=`;
                         const proxyUrl2 = 'https://corsproxy.io/?';
 
                         try {
@@ -647,9 +627,9 @@ class Busqueda {
                     <div class="cta-section">
                         <p class="card-text">${result.date}</p>
                         <div class="traffic-light">
-                          <input type="radio" name="rag1" class="Alta" value="Alta">
-                          <input type="radio" name="rag1" class="Media" value="Media">
-                          <input type="radio" name="rag1" class="Baja" value="Baja">
+                          <input type="radio" name="rag1" class="Alta" value="Alta" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Alta">
+                          <input type="radio" name="rag1" class="Media" value="Media" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Media">
+                          <input type="radio" name="rag1" class="Baja" value="Baja" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Baja">
                         </div>
             <div class="image-overlay">
                 <a class="vista_previa" href="${result.link}" id="enlaceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
@@ -721,13 +701,10 @@ class Busqueda {
                     noticiasCoincidentes.appendChild(elementoNoticiaCoincidente2);
                 }
             }
-            busqueda = "";
-
             console.log(`Total de Noticias Identificadas: ${contadorNoticias}`);
         } catch (error) {
             console.error('Error al obtener datos de la API:', error);
         }
-        etiquetas = [];
     }
 
 
@@ -774,7 +751,6 @@ class Busqueda {
     }
 
 
-
     renderModal = () => {
         return `
 <div id="modal" class="modal fade" tabindex="-1">
@@ -819,21 +795,10 @@ class Busqueda {
         `;
     }
 
-    load = () => {
-        const form = this.dom.querySelector("#busqueda #modal #form");
-        const formData = new FormData(form);
-        this.entity = {};
-
-        for (let [key, value] of formData.entries()) {
-            this.entity[key] = value;
-        }
-    }
-
-
 
     add = async () => {
         event.preventDefault();
-        const request = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas', {
+        const request = new Request(`${backend}/NoticiasMarcadas`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -845,8 +810,7 @@ class Busqueda {
             if (!response.ok) {
                 this.showModalError()
                 return;
-            }
-            else{
+            } else {
                 this.showModalExito();
                 const noticia = document.querySelector(`[data-link="${this.entidad.enlace}"]`);
                 if (noticia) {
@@ -879,7 +843,7 @@ class Busqueda {
 
     getSugerencias() {
         const xhr = new XMLHttpRequest();
-        xhr.open("GET", `http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/etiquetas/habilitadas/4-0258-0085`, true);
+        xhr.open("GET", `${backend}/etiquetas/habilitadas/4-0258-0085`, true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onload = () => {
             if (xhr.status === 200) {
@@ -909,6 +873,7 @@ class Busqueda {
 
         cajaSugerencias.style.display = etiquetas.length > 0 ? "block" : "none";
     }
+
     clickSugerencia(sugerenciaSeleccionada) {
         const buscador = this.dom.querySelector("#search-input");
         buscador.textContent = "";
@@ -918,11 +883,11 @@ class Busqueda {
 
         this.ocultarCajaSugerencias();
     }
+
     ocultarCajaSugerencias() {
         const cajaSugerencias = this.dom.querySelector("#caja-sugerencia");
         cajaSugerencias.style.display = "none";
     }
-
 
 
     row = (list, c) => {
@@ -981,12 +946,6 @@ class Busqueda {
         this.listSearch(xxx);
     }
 
-    createNew = () => {
-        this.reset();
-        this.state.mode = 'A'; //agregar
-        this.showModal();
-
-    }
 
     emptyEntity = () => {
         var entity = '';
@@ -994,7 +953,7 @@ class Busqueda {
     }
 
 
-    modalmarcarshow = (titulo,descripcion, enlace, fuente,infotext,fecha,imagen, descripciones) => {
+    modalmarcarshow = (titulo, descripcion, enlace, fuente, infotext, fecha, imagen, descripciones) => {
         this.entidad['id'] = '1';
         this.entidad['titulo'] = titulo;
         this.entidad['descripcion'] = descripcion;
@@ -1007,7 +966,7 @@ class Busqueda {
         this.entidad['imagen'] = imagen;
         const etiquetasDescripcion = [];
         descripciones.forEach(descripcion => {
-            etiquetasDescripcion.push({ descripcion });
+            etiquetasDescripcion.push({descripcion});
         });
         this.entidad['etiquetas'] = etiquetasDescripcion;
         let radioToSelect;
@@ -1036,10 +995,6 @@ class Busqueda {
         this.modalmarcar.hide();
     }
 
-    emptyEntity = () => {
-        var entity = '';
-        return entity;
-    }
 
     reset = () => {
         this.state.entity = this.emptyEntity();

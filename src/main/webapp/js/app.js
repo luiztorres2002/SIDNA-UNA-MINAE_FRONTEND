@@ -1,11 +1,11 @@
-
-class App {
+const backend="https://needed-eagle-curious.ngrok-free.app/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae";
+    class App {
     dom;
-    modal; // login modal
+    modal;
 
-    modal2;//actualizar modal
+    modal2;
 
-    state;  // state variables: if any
+    state;
 
     Etiqueta;
     Biblioteca;

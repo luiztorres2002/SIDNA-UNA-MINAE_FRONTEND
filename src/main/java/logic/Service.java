@@ -10,7 +10,7 @@ public class Service {
 
     private static Service uniqueInstance;
 
-    public static Service instance(){
+    public static Service instance() {
         if (uniqueInstance == null) {
             uniqueInstance = new Service();
         }
@@ -46,25 +46,17 @@ public class Service {
     }
 
 
-
-
     public void noticiaMarcadaAdd(NoticiaMarcada noticiaMarcada) throws Exception {
         noticiaMarcada.setUsuarioCedula("4-0258-0085");
         noticiaMarcada.setId(1);
         noticiaMarcadaDao.create(noticiaMarcada);
     }
+
     public void noticiaMarcadaAdd2(NoticiaMarcada noticiaMarcada) throws Exception {
         noticiaMarcada.setUsuarioCedula("4-0258-0085");
         noticiaMarcada.setId(1);
         noticiaMarcadaDao.createexterna(noticiaMarcada);
     }
-
-
-
-
-
-
-
 
 
 }

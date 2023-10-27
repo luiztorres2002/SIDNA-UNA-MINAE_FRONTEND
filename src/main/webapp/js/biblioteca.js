@@ -28,11 +28,11 @@ class Biblioteca {
         this.dom.querySelector("#biblioteca #modalcampo #dismisscampo").addEventListener('click', this.hideModalCampo);
         this.cargarBiblioteca();
         const enlaceInput = this.dom.querySelector("#biblioteca #modal #enlace");
-        enlaceInput.addEventListener('blur', function() {
+        enlaceInput.addEventListener('blur', function () {
             const url = enlaceInput.value;
 
-            const proxyUrl = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
-            fetch(proxyUrl+url)
+            const proxyUrl = `${backend}/proxy?url=`;
+            fetch(proxyUrl + url)
                 .then(response => response.text())
                 .then(html => {
                     const parser = new DOMParser();
@@ -418,7 +418,7 @@ class Biblioteca {
             dia.trim() === '' ||
             prioridad.trim() === '' ||
             fuente.trim() === '' ||
-            enlace.trim() === '' || !regexEnlace.test(enlace) || !regexAnio.test(anio) ||  parseInt(dia) < 1 || parseInt(dia) > 31
+            enlace.trim() === '' || !regexEnlace.test(enlace) || !regexAnio.test(anio) || parseInt(dia) < 1 || parseInt(dia) > 31
 
         ) {
             this.showModalCampo();
@@ -434,14 +434,13 @@ class Biblioteca {
         noticiasCoincidentes.innerHTML = '';
 
         for (const [index, noticia] of this.state.noticias.entries()) {
-            const { titulo, descripcion, prioridad, fuente, enlace, imagen, fechaGuardado, fecha  } = noticia;
+            const {titulo, descripcion, prioridad, fuente, enlace, imagen, fechaGuardado, fecha} = noticia;
             const etiquetas = noticia.etiquetas;
             const fechaDate = new Date(fechaGuardado);
             const fechaFormateada = fechaDate.toLocaleDateString();
             const colorBorde = bordeColores[index % bordeColores.length];
             const elementoNoticiaCoincidente = document.createElement('div');
             elementoNoticiaCoincidente.classList.add('noticiaBiblioteca');
-
 
             elementoNoticiaCoincidente.innerHTML = `
         <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${enlace}">
@@ -490,7 +489,7 @@ class Biblioteca {
 
     cargarBiblioteca = async () => {
         try {
-            const response = await fetch('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas/4-0258-0085');
+            const response = await fetch(`${backend}/NoticiasMarcadas/4-0258-0085`);
             const data = await response.json();
             this.state.noticias = data.reverse();
             this.renderizarNoticias();
@@ -533,7 +532,7 @@ class Biblioteca {
 
     }
 
-    hidemodal = () =>{
+    hidemodal = () => {
 
         this.modal.hide();
         this.modal.resetForm();
@@ -547,7 +546,7 @@ class Biblioteca {
         this.modalexito.show();
     }
 
-    obtenerNumeroDeMes = async(nombreMes) => {
+    obtenerNumeroDeMes = async (nombreMes) => {
         const meses = [
             "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
             "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
@@ -585,7 +584,6 @@ class Biblioteca {
     }
 
 
-
     resetForm = () => {
         var formulario = this.dom.querySelector("#biblioteca #modal #form");
         formulario.reset();
@@ -604,7 +602,7 @@ class Biblioteca {
         enlaceLegend.style.color = 'black';
     }
 
-    add = async() => {
+    add = async () => {
         await this.load();
         const dia = this.entity['dia'];
         const anio = this.entity['anio'];
@@ -639,44 +637,44 @@ class Biblioteca {
 
         let diaa = this.entity['dia'];
 
-        if(diaa == '1'){
+        if (diaa == '1') {
             diaa = '01';
         }
-        if(diaa == '2'){
+        if (diaa == '2') {
             diaa = '02';
         }
-        if(diaa == '3'){
+        if (diaa == '3') {
             diaa = '03';
         }
-        if(diaa == '4'){
+        if (diaa == '4') {
             diaa = '04';
         }
-        if(diaa == '5'){
+        if (diaa == '5') {
             diaa = '05';
         }
-        if(diaa == '6'){
+        if (diaa == '6') {
             diaa = '06';
         }
-        if(diaa == '7'){
+        if (diaa == '7') {
             diaa = '07';
         }
-        if(diaa == '8'){
+        if (diaa == '8') {
             diaa = '08';
         }
-        if(diaa == '9'){
+        if (diaa == '9') {
             diaa = '09';
         }
 
-        this.entity["fecha"] = anio+"-"+mes+"-"+diaa;
+        this.entity["fecha"] = anio + "-" + mes + "-" + diaa;
 
         delete this.entity['dia'];
         delete this.entity['mes'];
         delete this.entity['anio'];
         let imageUrl = "";
         const enlace = document.getElementById('enlace').value;
-        if(this.verificarCamposLlenados()){
+        if (this.verificarCamposLlenados()) {
             try {
-                const proxyUrl = 'http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/proxy?url=';
+                const proxyUrl = `${backend}/proxy?url=`;
                 const newsResponse = await fetch(proxyUrl + enlace);
                 const newsHtml = await newsResponse.text();
                 const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
@@ -700,10 +698,10 @@ class Biblioteca {
             this.entidad['imagen'] = imageUrl;
             const etiquetasDescripcion = [];
             descripciones.forEach(descripcion => {
-                etiquetasDescripcion.push({ descripcion });
+                etiquetasDescripcion.push({descripcion});
             });
             this.entidad['etiquetas'] = etiquetasDescripcion;
-            const request2 = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas', {
+            const request2 = new Request(`${backend}/NoticiasMarcadas`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -716,8 +714,7 @@ class Biblioteca {
                 if (!response.ok) {
                     this.showModalError()
                     return;
-                }
-                else{
+                } else {
                     this.cargarBiblioteca();
                     this.showModalExito();
                     return;
@@ -725,13 +722,10 @@ class Biblioteca {
             } catch (e) {
                 alert(e);
             }
-        }
-        else{
+        } else {
         }
 
     }
-
-
 
 
     emptyEntity = () => {

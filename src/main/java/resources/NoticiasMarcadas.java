@@ -15,7 +15,7 @@ import java.util.List;
 public class NoticiasMarcadas {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public void create(NoticiaMarcada noticiaMarcada){
+    public void create(NoticiaMarcada noticiaMarcada) {
         try {
             Service service = Service.instance();
             service.noticiaMarcadaAdd(noticiaMarcada);
