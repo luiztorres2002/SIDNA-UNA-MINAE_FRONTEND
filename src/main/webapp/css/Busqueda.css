@@ -85,6 +85,7 @@ select {
 .card.dark {
     color: #fff;
 }
+
 .card.card.bg-light-subtle .card-title {
     color: dimgrey;
 }
@@ -98,13 +99,16 @@ select {
     padding: 0.5em;
     border-radius: 0.7em;
 }
+
 .card-body {
     display: flex !important;
     justify-content: space-between !important;
 }
+
 .text-section {
     max-width: 75%;
 }
+
 .cta-section {
     max-width: 40% !important;
     display: flex !important;
@@ -112,10 +116,12 @@ select {
     align-items: flex-end !important;
     justify-content: space-between !important;
 }
+
 .cta-section .btn {
     padding: 0.3em 0.5em;
     /* color: #696969; */
 }
+
 .card.bg-light-subtle .cta-section .btn {
     background-color: #898989;
     border-color: #898989;
@@ -167,7 +173,6 @@ select {
     border: 1px solid #1c2858;
     transition: max-height 0.3s, max-width 0.3s;
 }
-
 
 
 #search-input {
@@ -227,12 +232,15 @@ select {
 .pill:nth-child(3) {
     background-color: #1c2858;
 }
+
 .pill:nth-child(4) {
     background-color: #cdab68;
 }
+
 .pill:nth-child(5) {
     background-color: #1c2858;
 }
+
 .pill:nth-child(6) {
     background-color: #cdab68;
 }
@@ -246,6 +254,7 @@ select {
     height: 25px;
     border-radius: 100px;
 }
+
 .traffic-light > input {
     appearance: none;
     user-select: none;
@@ -264,6 +273,7 @@ select {
     height: 25px;
     border-radius: 100px;
 }
+
 .semaforoModal > input {
     appearance: none;
     user-select: none;
@@ -273,38 +283,47 @@ select {
     margin-left: 9px !important;
     border-radius: 100%;
 }
+
 input.Alta {
     background-color: #b81d13;
     box-shadow: 0em 0px 0px 5px #b81d13;
 }
+
 input.Alta:hover {
     background-color: #fc625d;
     box-shadow: 0em 0px 0px 5px #fc625d;
 }
+
 input.Alta:checked {
     background-color: #b81d13;
     box-shadow: 0em 0px 0px 5px #b81d13;
 }
+
 input.Media {
     background-color: #efb700;
     box-shadow: 0em 0px 0px 5px #efb700;
 }
+
 input.Media:hover {
     background-color: #ffe200;
     box-shadow: 0em 0px 0px 5px #ffe200;
 }
+
 input.Media:checked {
     background-color: #efb700;
-    box-shadow: 0em 0px 0px 5px  #efb700;
+    box-shadow: 0em 0px 0px 5px #efb700;
 }
+
 input.Baja {
     background-color: #008450;
     box-shadow: 0em 0px 0px 5px #008450;
 }
+
 input.Baja:hover {
     background-color: #24d73e;
     box-shadow: 0em 0px 0px 5px #24d73e;
 }
+
 input.Baja:checked {
     background-color: #008450;
     box-shadow: 0em 0px 0px 5px #008450;
@@ -314,38 +333,47 @@ input.AltaModal {
     background-color: #c9c9c9;
     box-shadow: 0em 0px 0px 5px #c9c9c9;
 }
+
 input.AltaModal:hover {
     background-color: #fc625d;
     box-shadow: 0em 0px 0px 5px #fc625d;
 }
+
 input.AltaModal:checked {
     background-color: #fc625d;
     box-shadow: 0em 0px 0px 5px #fc625d;
 }
+
 input.MediaModal {
     background-color: #c9c9c9;
     box-shadow: 0em 0px 0px 5px #c9c9c9;
 }
+
 input.MediaModal:hover {
     background-color: #ffe200;
     box-shadow: 0em 0px 0px 5px #ffe200;
 }
+
 input.MediaModal:checked {
     background-color: #ffe200;
-    box-shadow: 0em 0px 0px 5px  #ffe200;
+    box-shadow: 0em 0px 0px 5px #ffe200;
 }
-input.BajaModal{
+
+input.BajaModal {
     background-color: #c9c9c9;
     box-shadow: 0em 0px 0px 5px #c9c9c9;
 }
+
 input.BajaModal:hover {
     background-color: #24d73e;
     box-shadow: 0em 0px 0px 5px #24d73e;
 }
+
 input.BajaModal:checked {
     background-color: #34cb4a;
     box-shadow: 0em 0px 0px 5px #34cb4a;
 }
+
 * {
     user-select: none;
     outline: none;
@@ -356,6 +384,7 @@ input.BajaModal:checked {
     margin-left: 4px;
     cursor: pointer;
 }
+
 @media (max-width: 1669px) {
     .search-container {
         max-height: 600px;
@@ -384,14 +413,16 @@ input.BajaModal:checked {
         display: block;
         display: flex;
     }
-    .pill{
+
+    .pill {
         font-size: 15px;
     }
 
-    #pills-container{
+    #pills-container {
         display: none;
     }
 }
+
 @media (max-width: 768px) {
     .card {
         max-width: 100% !important;
@@ -399,7 +430,8 @@ input.BajaModal:checked {
         flex-direction: column !important;
         margin: 1em auto !important;
     }
-    #tituloBusqueda{
+
+    #tituloBusqueda {
         font-size: 14px !important;
     }
 
@@ -416,15 +448,17 @@ input.BajaModal:checked {
         background-color: #ffffff;
 
     }
+
     #pillsMobile-container {
         display: block;
         display: flex;
     }
-    .pill{
+
+    .pill {
         font-size: 15px;
     }
 
-    #pills-container{
+    #pills-container {
         display: none;
     }
 
@@ -458,7 +492,6 @@ input.BajaModal:checked {
         width: 20%;
 
 
-
     }
 
     #buscar {
@@ -472,8 +505,7 @@ input.BajaModal:checked {
     }
 
 
-
-    #tiempoSeleccionado{
+    #tiempoSeleccionado {
         margin-left: 0px !important;
         margin-right: 10px !important;
     }

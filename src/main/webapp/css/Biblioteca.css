@@ -1,12 +1,11 @@
 
-
 .custom-input {
     width: 40px; /* Ajusta el ancho como desees */
     height: 20px;
 }
 
 
-.bibliotecatitulo{
+.bibliotecatitulo {
     color: black;
     font-size: 35px;
     font-family: Verdana;
@@ -27,6 +26,7 @@
     margin-right: 8px;
     border-radius: 100px;
 }
+
 .semaforoModal2 > input {
     appearance: none;
     user-select: none;
@@ -41,34 +41,42 @@ input.AltaModal2 {
     background-color: #c9c9c9;
     box-shadow: 0em 0px 0px 5px #c9c9c9;
 }
+
 input.AltaModal2:hover {
     background-color: #fc625d;
     box-shadow: 0em 0px 0px 5px #fc625d;
 }
+
 input.AltaModal2:checked {
     background-color: #fc625d;
     box-shadow: 0em 0px 0px 5px #fc625d;
 }
+
 input.MediaModal2 {
     background-color: #c9c9c9;
     box-shadow: 0em 0px 0px 5px #c9c9c9;
 }
+
 input.MediaModal2:hover {
     background-color: #ffe200;
     box-shadow: 0em 0px 0px 5px #ffe200;
 }
+
 input.MediaModal2:checked {
     background-color: #ffe200;
-    box-shadow: 0em 0px 0px 5px  #ffe200;
+    box-shadow: 0em 0px 0px 5px #ffe200;
 }
-input.BajaModal2{
+
+input.BajaModal2 {
     background-color: #c9c9c9;
     box-shadow: 0em 0px 0px 5px #c9c9c9;
 }
+
 input.BajaModal2:hover {
     background-color: #24d73e;
     box-shadow: 0em 0px 0px 5px #24d73e;
 }
+
 input.BajaModal2:checked {
     background-color: #34cb4a;
     box-shadow: 0em 0px 0px 5px #34cb4a;
@@ -84,6 +92,7 @@ input.BajaModal2:checked {
     background-color: #007bff; /* Cambia el color de fondo segÃºn tus preferencias */
     color: #fff; /* Cambia el color del texto segÃºn tus preferencias */
 }
+
 .custom-modal-width {
     max-width: 600px;
     width: 100%;
@@ -106,8 +115,7 @@ input.BajaModal2:checked {
     height: 190px;
 }
 
-select {
-; /* Ancho personalizado */
+select {; /* Ancho personalizado */
     padding: 10px; /* Espaciado interior */
     border: 1px solid #000000; /* Borde personalizado */
     border-radius: 4px; /* Esquinas redondeadas */
@@ -141,15 +149,16 @@ select {
     .text-section-Biblioteca {
         max-width: 100%;
     }
-    #tiempoSeleccionado2{
+
+    #tiempoSeleccionado2 {
         display: none;
     }
 
-    #prioridadSeleccionada{
+    #prioridadSeleccionada {
         display: none;
     }
 
-    #tiempoSeleccionadoMobile{
+    #tiempoSeleccionadoMobile {
         display: inline-block !important;
         margin-left: 40px !important;
     }
@@ -163,7 +172,7 @@ select {
         background-color: #ffffff;
     }
 
-    .pillBiblioteca{
+    .pillBiblioteca {
         font-size: 9px;
     }
 

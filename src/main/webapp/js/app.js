@@ -1,4 +1,4 @@
-const backend="https://needed-eagle-curious.ngrok-free.app/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae";
+const backend="http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae";
     class App {
     dom;
     modal;
