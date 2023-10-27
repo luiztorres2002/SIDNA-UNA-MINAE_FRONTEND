@@ -858,7 +858,6 @@ class Etiqueta {
         this.modaletiquetaError.hide();
         this.modal.show();
     }
-
     hideModalExito = async () => {
         this.modaletiquetaExito.hide();
         this.resetForm();
