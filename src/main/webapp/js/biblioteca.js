@@ -16,6 +16,7 @@ class Biblioteca {
         this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A', noticias: []};
         this.dom = this.render();
         this.entidad = {};
+        const self = this;
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
         this.modalerror = new bootstrap.Modal(this.dom.querySelector('#modalError'));
         this.modalexito = new bootstrap.Modal(this.dom.querySelector('#sucessmodal'));
@@ -28,48 +29,49 @@ class Biblioteca {
         this.dom.querySelector("#biblioteca #modalcampo #dismisscampo").addEventListener('click', this.hideModalCampo);
         this.cargarBiblioteca();
         const enlaceInput = this.dom.querySelector("#biblioteca #modal #enlace");
-        enlaceInput.addEventListener('input', function () {
+        enlaceInput.addEventListener('input', () => {
             const url = enlaceInput.value;
-
-            const proxyUrl = `${backend}/proxy?url=`;
-            fetch(proxyUrl + url)
-                .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-
-                    const ogTitle = doc.querySelector('meta[property="og:title"]');
-                    const title = ogTitle ? ogTitle.getAttribute('content') : '';
-
-                    const ogDescription = doc.querySelector('meta[property="og:description"]');
-                    const description = ogDescription ? ogDescription.getAttribute('content') : '';
-
-                    const ogSiteName = doc.querySelector('meta[property="og:site_name"]');
-                    const fuente = ogSiteName ? ogSiteName.getAttribute('content') : '';
-
-                    const titulo = document.getElementById('titulo');
-                    const descrip = document.getElementById('descripcion');
-                    const fuent =  document.getElementById('fuente');
-                    const dia =document.getElementById('dia');
-                    const mes =document.getElementById('mes');
-                    const anio =document.getElementById('anio');
-                    const prioridad =document.getElementById('prioridad');
-                    document.getElementById('titulo').value = title;
-                    document.getElementById('descripcion').value = description;
-                    document.getElementById('fuente').value = fuente;
-                    titulo.removeAttribute('disabled');
-                    descrip.removeAttribute('disabled');
-                    fuent.removeAttribute('disabled');
-                    dia.removeAttribute('disabled');
-                    mes.removeAttribute('disabled');
-                    anio.removeAttribute('disabled');
-                    prioridad.removeAttribute('disabled');
-                })
-                .catch(error => {
-                    console.error('Error al obtener los datos:', error);
-                });
+            this.solicitarDatos(url);
         });
 
+    }
+
+    async  procesarRespuesta(response) {
+        if (response.ok) {
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            const ogTitle = doc.querySelector('meta[property="og:title"]');
+            const title = ogTitle ? ogTitle.getAttribute('content') : '';
+
+            const ogDescription = doc.querySelector('meta[property="og:description"]');
+            const description = ogDescription ? ogDescription.getAttribute('content') : '';
+
+            const ogSiteName = doc.querySelector('meta[property="og:site_name"]');
+            const fuente = ogSiteName ? ogSiteName.getAttribute('content') : '';
+
+            const titulo = document.getElementById('titulo');
+            const descrip = document.getElementById('descripcion');
+            const fuent = document.getElementById('fuente');
+            const dia = document.getElementById('dia');
+            const mes = document.getElementById('mes');
+            const anio = document.getElementById('anio');
+            const prioridad = document.getElementById('prioridad');
+
+            document.getElementById('titulo').value = title;
+            document.getElementById('descripcion').value = description;
+            document.getElementById('fuente').value = fuente;
+            titulo.removeAttribute('disabled');
+            descrip.removeAttribute('disabled');
+            fuent.removeAttribute('disabled');
+            dia.removeAttribute('disabled');
+            mes.removeAttribute('disabled');
+            anio.removeAttribute('disabled');
+            prioridad.removeAttribute('disabled');
+        } else {
+            console.error('Error al obtener los datos');
+        }
     }
 
     render = () => {
@@ -85,6 +87,24 @@ class Biblioteca {
         rootContent.innerHTML = html;
         return rootContent;
     }
+  async solicitarDatos(url) {
+        const proxyUrl1 = `${backend}/proxy?url=`;
+        const proxyUrl2 = 'https://corsproxy.io/?';
+
+        try {
+            const response1 = await fetch(proxyUrl2 + url);
+            if (!response1.ok) {
+
+                const response2 = await fetch(proxyUrl1 + url);
+                this.procesarRespuesta(response2);
+            } else {
+                this.procesarRespuesta(response1);
+            }
+        } catch (error) {
+            console.error('Error al obtener los datos:', error);
+        }
+    }
+
     renderBody = () => {
         return `
          <div class="linea-azul"></div>
@@ -348,7 +368,6 @@ class Biblioteca {
         const fuenteLegend = document.getElementById('fuentelegend');
         const enlaceLegend = document.getElementById('enlacelegend');
 
-        // Restablecer estilos
         tituloLegend.style.color = 'black';
         tituloLegend.style.textDecoration = 'none';
         descripcionLegend.style.color = 'black';

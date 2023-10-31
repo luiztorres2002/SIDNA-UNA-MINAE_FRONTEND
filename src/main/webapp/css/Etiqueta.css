@@ -155,6 +155,16 @@ tr.disabled-row {
     color: #888;
 }
 
+@media (max-width: 1600px) {
+    header ul li a {
+        text-decoration: none;
+        padding: 12px 80px;
+        color: #000000;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+    }
+}
+
 @media (max-width: 1480px) {
     header ul li a {
         text-decoration: none;
