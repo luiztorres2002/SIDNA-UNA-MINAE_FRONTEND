@@ -4,7 +4,6 @@
     background-image: url('data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'-4 -4 8 8\'><circle r=\'3\' fill=\'%23ff1100\'/></svg>') !important;
 }
 
-
 .highlight {
     background-color: #a6d8ef;;
 
@@ -136,16 +135,13 @@
     width: 70px;
 }
 
-
 .btn.btn-custom-outline-success.btn-outline-success {
     border-color: #cdab68;
 }
 
-
 #flexSwitchCheckDefault:not(:checked) + label {
     background-color: #FF0000;
 }
-
 
 .number {
     width: 40px;
@@ -178,7 +174,6 @@ tr.disabled-row {
     #tituloEtiqueta {
         font-size: 14px !important;
     }
-
 
     .table td.empty {
         width: 100%;

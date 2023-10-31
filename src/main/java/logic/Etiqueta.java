@@ -7,7 +7,6 @@ public class Etiqueta {
     private int etiquetaId;
     private String descripcion;
     private String usuarioCedula;
-
     private int noticiasAsociadas;
     private Boolean estado;
 
@@ -71,6 +70,5 @@ public class Etiqueta {
     public void setUsuarioCedula(String usuarioCedula) {
         this.usuarioCedula = usuarioCedula;
     }
-
 
 }

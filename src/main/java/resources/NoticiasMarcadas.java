@@ -10,7 +10,6 @@ import logic.Service;
 import java.sql.SQLException;
 import java.util.List;
 
-
 @Path("/NoticiasMarcadas")
 public class NoticiasMarcadas {
     @POST

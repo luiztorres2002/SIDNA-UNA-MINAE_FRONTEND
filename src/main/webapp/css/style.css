@@ -50,7 +50,6 @@ img.flag {
     z-index: -1;
 }
 
-
 header .logo {
     color: #fff;
     font-weight: 700;
@@ -103,7 +102,6 @@ header ul li a {
 
 }
 
-
 #Etiquetas.active {
     background: #ceab69;
     font-weight: bold;
@@ -123,20 +121,17 @@ header ul li a {
     background-color: #F5F5F5;
 }
 
-
 ::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px #0000004d;
     border-radius: 10px;
     background-color: #F5F5F5;
 }
 
-
 ::-webkit-scrollbar-thumb {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 8px #1c2858;
     background-color: #1c2858;
 }
-
 
 ::-webkit-scrollbar-thumb:hover {
     background: #cdab68;
@@ -149,7 +144,6 @@ header ul li a {
     color: #ffffff;
 
 }
-
 
 #Biblioteca:hover {
     background: #1c2858;
@@ -193,7 +187,6 @@ footer {
     font-weight: bold;
     font-size: 16px;
 }
-
 
 .footer-dark ul {
     padding: 0;

@@ -19,7 +19,6 @@ public class EtiquetaDao {
 
     }
 
-
     public List<Etiqueta> getAllEtiquetasByUsuario(String usuarioCedula) throws SQLException {
         String sql = "SELECT * FROM ETIQUETA WHERE FK_Etiqueta_UsuarioCedula = ?";
         List<Etiqueta> etiquetas = new ArrayList<>();
@@ -37,7 +36,6 @@ public class EtiquetaDao {
             }
         }
     }
-
 
     public void actualizarEstadoEtiqueta(int etiquetaId, boolean nuevoEstado) throws SQLException {
         String sql = "UPDATE ETIQUETA SET Estado = ? WHERE PK_EtiquetaId = ?";
@@ -103,7 +101,6 @@ public class EtiquetaDao {
         }
     }
 
-
     private Etiqueta mapResultSetToEtiqueta(ResultSet resultSet) throws SQLException {
         int etiquetaId = resultSet.getInt("PK_EtiquetaId");
         String descripcion = resultSet.getString("Descripcion");
@@ -124,7 +121,6 @@ public class EtiquetaDao {
                 e.printStackTrace();
             }
         }
-
 
     public void updateEtiqueta(Etiqueta etiqueta) throws SQLException {
         String sql = "update Etiqueta set Descripcion=? where PK_EtiquetaId=?";
@@ -155,5 +151,4 @@ public class EtiquetaDao {
         return new NoticiasAsociadas(noticiaId, etiquetaId);
     }
 }
-
 

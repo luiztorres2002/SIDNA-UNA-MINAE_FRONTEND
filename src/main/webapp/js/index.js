@@ -9,7 +9,6 @@ function loaded() {
 
 document.addEventListener("DOMContentLoaded", loaded);
 
-
 function errorMessage(code) {
     alert(`Error. Status: ${code}`);
 }

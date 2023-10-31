@@ -93,7 +93,6 @@ public class Etiquetas {
         }
     }
 
-
     @PUT
     @Path("/editar/{etiquetaId}")
     @Produces(MediaType.APPLICATION_JSON)

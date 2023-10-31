@@ -76,7 +76,6 @@ describe('Test para la función add', () => {
             usuarioCedula: '4-0258-0085',
             imagen: 'pruebaimagen',
 
-
         };
         const request = new Request('http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae/NoticiasMarcadas/Externa', {
             method: 'POST',
@@ -107,9 +106,7 @@ describe('Test para la función add', () => {
     });
 });
 
-
 //
-
 
 //NOTA, DE AQUI EN ADELANTE SON PRUEBAS DE EXTRA.
 verificarCamposLlenados = () => {
@@ -193,7 +190,6 @@ verificarCamposLlenados = () => {
     return true;
 }
 
-
 //TEST PARA VERIFICAR QUE TODOS LOS CAMPOS HAN SIDO LLENADOS
 describe('verificarCamposLlenados', () => {
     it('debería devolver falso y aplicar estilo rojo y subrayado a los campos vacíos', () => {
@@ -248,8 +244,6 @@ describe('verificarCamposLlenados', () => {
         document.body.innerHTML = ''; // Limpia el entorno de prueba
     });
 });
-
-
 
 describe('Test para la función cargar', () => {
     async function cargarBiblioteca() {

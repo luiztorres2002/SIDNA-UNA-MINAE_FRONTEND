@@ -6,7 +6,6 @@ import tests.Redireccionaador.Redireccionador;
 
 import static org.junit.Assert.*;
 
-
 public class RedireccionadorTest {
 
     @Test

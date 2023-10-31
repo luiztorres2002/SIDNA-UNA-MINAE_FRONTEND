@@ -4,7 +4,6 @@
     height: 20px;
 }
 
-
 .bibliotecatitulo {
     color: black;
     font-size: 35px;
@@ -15,7 +14,6 @@
     padding-top: 50px;
 
 }
-
 
 .semaforoModal2 {
     display: block;
@@ -184,7 +182,6 @@ select {; /* Ancho personalizado */
     .card {
         max-height: 610px !important;
     }
-
 
     .cta-section .borrar-container {
         margin-right: 220px;

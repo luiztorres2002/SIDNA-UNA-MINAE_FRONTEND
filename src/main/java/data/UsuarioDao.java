@@ -16,7 +16,6 @@ public class UsuarioDao {
 
     RolDao rolDao;
 
-
     public UsuarioDao(Database db){
         this.db = db;
         departamentoDao = new DepartamentoDao(db);
@@ -123,7 +122,6 @@ public class UsuarioDao {
             System.out.println(etiquetaDao.getAllEtiquetasByUsuario("1"));
 
             System.out.println(usuario1.toString());
-
 
         } catch (SQLException e) {
             e.printStackTrace();

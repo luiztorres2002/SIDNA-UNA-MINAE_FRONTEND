@@ -39,15 +39,12 @@ public class RolDao {
         }
     }
 
-
     public Rol from(ResultSet rs) throws SQLException {
         Rol rol = new Rol();
         rol.setId(rs.getInt("PK_RolId"));
         rol.setDescripcion(rs.getString("Descripcion"));
         return rol;
     }
-
-
 
     public void createRol(Rol r) throws Exception {
         String sql = "insert into " +
@@ -71,7 +68,6 @@ public class RolDao {
             // Crea una instancia de RolDao
             RolDao rolDao = new RolDao(db);
             Rol rol = rolDao.read(1);
-
 
         } catch (SQLException e) {
             e.printStackTrace();

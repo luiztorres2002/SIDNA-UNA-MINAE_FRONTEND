@@ -23,11 +23,9 @@ public class Service {
 
     DepartamentoDao departamentoDao;
 
-
     NoticiaMarcadaDao noticiaMarcadaDao;
 
     UsuarioDao usuarioDao;
-
 
     private Service() {
         database = new Database();
@@ -42,9 +40,7 @@ public class Service {
 
         noticiaMarcadaDao = new NoticiaMarcadaDao(database);
 
-
     }
-
 
     public void noticiaMarcadaAdd(NoticiaMarcada noticiaMarcada) throws Exception {
         noticiaMarcada.setUsuarioCedula("4-0258-0085");
@@ -57,6 +53,5 @@ public class Service {
         noticiaMarcada.setId(1);
         noticiaMarcadaDao.createexterna(noticiaMarcada);
     }
-
 
 }

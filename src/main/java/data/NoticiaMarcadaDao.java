@@ -89,9 +89,6 @@ public class NoticiaMarcadaDao {
         }
     }
 
-
-
-
     private NoticiaMarcada mapResultSetToNoticiaMarcada(ResultSet resultSet) throws SQLException {
         int NoticiaMarcadaId = resultSet.getInt("PK_NoticiaMarcada_Id");
         String titulo = resultSet.getString("Titulo");
@@ -157,8 +154,5 @@ public class NoticiaMarcadaDao {
             }
         }
     }
-
-
-
 
 }

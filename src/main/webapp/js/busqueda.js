@@ -68,7 +68,6 @@ class Busqueda {
             radioButton.addEventListener('change', function () {
                 if (this.checked) {
                     self.entidad['prioridad'] = this.value;
-
                 }
             });
         });
@@ -302,6 +301,7 @@ class Busqueda {
                 )
             ]);
         };
+
         const response = await fetch(corsProxyUrl + apiUrl);
         const searchData = await response.json();
         const newsResults = searchData.news_results;
@@ -317,29 +317,38 @@ class Busqueda {
 
                 try {
                     const encodedLink = encodeURIComponent(result.link);
-                    const response1 = await fetchConTimeout(proxyUrl2 + encodedLink);
+                    let success = false;
+                    const response1 = await fetchConTimeout(proxyUrl1 + encodedLink);
                     if (response1.ok) {
                         const newsHtml = await response1.text();
                         const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
                         const ogImage = newsDocument.querySelector('meta[property="og:image"]');
-                        imageUrl = ogImage ? ogImage.getAttribute('content') : result.thumbnail;
-
-                    } else {
-                        const response2 = await fetchConTimeout(proxyUrl1 + encodedLink);
+                        if (ogImage) {
+                            imageUrl = ogImage.getAttribute('content');
+                            success = true;
+                        }
+                    }
+                    if (!success) {
+                        const response2 = await fetchConTimeout(proxyUrl2 + encodedLink);
                         if (response2.ok) {
                             const newsHtml2 = await response2.text();
                             const newsDocument2 = new DOMParser().parseFromString(newsHtml2, 'text/html');
                             const ogImage2 = newsDocument2.querySelector('meta[property="og:image"]');
-                            imageUrl = ogImage2 ? ogImage2.getAttribute('content') : result.thumbnail;
-
-                        } else {
-                            console.error(`Error al obtener datos de noticia con ambos proxies (${result.link})`);
+                            if (ogImage2) {
+                                imageUrl = ogImage2.getAttribute('content');
+                            }
                         }
                     }
+
+                    if (!imageUrl) {
+                        imageUrl = result.thumbnail;
+                    }
+
                     imageUrls.push(imageUrl);
                 } catch (error) {
                     console.error(`Error al obtener datos de noticia (${result.link}):`, error);
                 }
+
 
                 const colorBorde = bordeColores[index % bordeColores.length];
                 const colorBoton = botonColores[index % botonColores.length];
@@ -399,23 +408,32 @@ class Busqueda {
                     redirect: 'follow',
                     headers: myHeaders
                 };
+                let hoverTimer;
                 enlaceBtn.addEventListener('mouseenter', async function () {
-                    imagenHoverContainer.style.display = 'block';
-                    if (!imagenHover.src) {
-                        spinner.style.display = 'block';
-                    }
-                    try {
-                        const screenshotResponse = await fetch("https://api.apilayer.com/screenshot?url=" + result.link, requestOptions);
-                        const screenshotData = await screenshotResponse.json();
-                        const imagenPreview = screenshotData.screenshot_url;
-                        imagenHover.src = imagenPreview;
-                        imagenHover.style.display = 'block';
-                        spinner.style.display = 'none';
-                    } catch (error) {
-                        imagenHoverContainer.style.display = 'none';
-                    }
+                    hoverTimer = setTimeout(async () => {
+                        imagenHoverContainer.style.display = 'block';
+                        if (!imagenHover.src) {
+                            spinner.style.display = 'block';
+                        }
+                        try {
+                            const screenshotResponse = await fetch("https://api.apilayer.com/screenshot?url=" + result.link, requestOptions);
+                            const screenshotData = await screenshotResponse.json();
+                            const imagenPreview = screenshotData.screenshot_url;
+                            imagenHover.src = imagenPreview;
+                            imagenHover.style.display = 'block';
+                            spinner.style.display = 'none';
+                        } catch (error) {
+                            imagenHoverContainer.style.display = 'none';
+                        }
+                    }, 1000);
                 });
+
+                enlaceBtn.addEventListener('click', function (e) {
+                    clearTimeout(hoverTimer);
+                });
+
                 imagenHoverContainer.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverTimer);
                     imagenHoverContainer.style.display = 'none';
                 });
 
@@ -504,24 +522,32 @@ class Busqueda {
                         redirect: 'follow',
                         headers: myHeaders
                     };
+                    let hoverTimer;
                     enlaceBtn.addEventListener('mouseenter', async function () {
-                        imagenHoverContainer.style.display = 'block';
-                        if (!imagenHover.src) {
-                            spinner.style.display = 'block';
-                        }
-                        try {
-                            const screenshotResponse = await fetch("https://api.apilayer.com/screenshot?url=" + result.link, requestOptions);
-                            const screenshotData = await screenshotResponse.json();
-                            const imagenPreview = screenshotData.screenshot_url;
-                            imagenHover.src = imagenPreview;
-                            imagenHover.style.display = 'block';
-                            spinner.style.display = 'none';
-                        } catch (error) {
-                            imagenHoverContainer.style.display = 'none';
-                        }
+                        hoverTimer = setTimeout(async () => {
+                            imagenHoverContainer.style.display = 'block';
+                            if (!imagenHover.src) {
+                                spinner.style.display = 'block';
+                            }
+                            try {
+                                const screenshotResponse = await fetch("https://api.apilayer.com/screenshot?url=" + result.link, requestOptions);
+                                const screenshotData = await screenshotResponse.json();
+                                const imagenPreview = screenshotData.screenshot_url;
+                                imagenHover.src = imagenPreview;
+                                imagenHover.style.display = 'block';
+                                spinner.style.display = 'none';
+                            } catch (error) {
+                                imagenHoverContainer.style.display = 'none';
+                            }
+                        }, 1000);
+                    });
+
+                    enlaceBtn.addEventListener('click', function (e) {
+                        clearTimeout(hoverTimer);
                     });
 
                     imagenHoverContainer.addEventListener('mouseleave', () => {
+                        clearTimeout(hoverTimer);
                         imagenHoverContainer.style.display = 'none';
                     });
 
@@ -674,27 +700,32 @@ class Busqueda {
                         headers: myHeaders
                     };
 
+                    let hoverTimer;
                     enlaceBtn.addEventListener('mouseenter', async function () {
-                        imagenHoverContainer.style.display = 'block';
-                        if (!imagenHover.src) {
-                            spinner.style.display = 'block';
-                        }
+                        hoverTimer = setTimeout(async () => {
+                            imagenHoverContainer.style.display = 'block';
+                            if (!imagenHover.src) {
+                                spinner.style.display = 'block';
+                            }
+                            try {
+                                const screenshotResponse = await fetch("https://api.apilayer.com/screenshot?url=" + result.link, requestOptions);
+                                const screenshotData = await screenshotResponse.json();
+                                const imagenPreview = screenshotData.screenshot_url;
+                                imagenHover.src = imagenPreview;
+                                imagenHover.style.display = 'block';
+                                spinner.style.display = 'none';
+                            } catch (error) {
+                                imagenHoverContainer.style.display = 'none';
+                            }
+                        }, 1000);
+                    });
 
-                        try {
-                            const screenshotResponse = await fetch("https://api.apilayer.com/screenshot?url=" + result.link, requestOptions);
-                            const screenshotData = await screenshotResponse.json();
-                            const imagenPreview = screenshotData.screenshot_url;
-
-                            imagenHover.src = imagenPreview;
-                            imagenHover.style.display = 'block';
-                            spinner.style.display = 'none';
-
-                        } catch (error) {
-                            imagenHoverContainer.style.display = 'none';
-                        }
+                    enlaceBtn.addEventListener('click', function (e) {
+                        clearTimeout(hoverTimer);
                     });
 
                     imagenHoverContainer.addEventListener('mouseleave', () => {
+                        clearTimeout(hoverTimer);
                         imagenHoverContainer.style.display = 'none';
                     });
 

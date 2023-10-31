@@ -1,6 +1,5 @@
 package resources;
 
-
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -19,7 +18,6 @@ public class ProxyResource {
             HttpGet httpGet = new HttpGet(url);
 
             CloseableHttpResponse response = httpClient.execute(httpGet);
-
 
             String responseBody = EntityUtils.toString(response.getEntity());
 

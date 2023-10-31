@@ -29,7 +29,6 @@ public class Usuario {
         this.rol = rol;
     }
 
-
     public String getCedula() {
         return cedula;
     }
@@ -108,5 +107,4 @@ public class Usuario {
                 '}';
     }
 }
-
 

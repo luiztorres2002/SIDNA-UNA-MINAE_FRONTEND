@@ -37,11 +37,9 @@
     z-index: 1;
 }
 
-
 select#tiempoSeleccionado {
     width: 90px;
 }
-
 
 select#tiempoSeleccionado option[value="ultimaHora"]:checked {
     width: 100px !important;
@@ -76,7 +74,6 @@ select#tiempoSeleccionado option[value="ultimoAno"]:checked {
 .sugerencia:hover {
     background-color: #f0f0f0;
 }
-
 
 select {
     font-family: 'FontAwesome', 'Second Font name'
@@ -157,11 +154,9 @@ select {
     margin-bottom: 100px;
 }
 
-
 .popup-message {
 
 }
-
 
 .search-container {
     display: flex;
@@ -174,7 +169,6 @@ select {
     transition: max-height 0.3s, max-width 0.3s;
 }
 
-
 #search-input {
     border: none;
     padding: 6px;
@@ -185,13 +179,11 @@ select {
 
 }
 
-
 #search-input:empty::before {
     content: attr(data-placeholder);
     color: #aaa;
 }
 
-
 .pill-container {
     display: flex;
     flex-wrap: wrap;
@@ -207,7 +199,6 @@ select {
     margin-left: 4px;
 
 }
-
 
 .pill {
     color: #fff;
@@ -215,7 +206,6 @@ select {
     padding: 3px 10px;
     cursor: pointer;
 }
-
 
 .pill {
     background-color: #1c2858;

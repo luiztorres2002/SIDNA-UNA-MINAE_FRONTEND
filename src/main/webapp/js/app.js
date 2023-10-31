@@ -1,5 +1,6 @@
-const backend="http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae";
-    class App {
+const backend = "http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae";
+
+class App {
     dom;
     modal;
 
@@ -22,7 +23,6 @@ const backend="http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae
         this.renderBodyFiller();
         this.renderMenuItems();
         this.busquedaShow();
-
     }
 
     render = () => {
@@ -44,7 +44,6 @@ const backend="http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae
         <header id="menu">
             <a id="logonav" href="#" ><img src="images/Minae.png"  width="300" height="65" style="margin-right: 200px;"></a>
         <ul class="navbar" id='menuItems'>
-            
         </ul>
          </header>
          `;
@@ -54,8 +53,7 @@ const backend="http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae
         return `
         <div id="body">  
     <div class="mt-20" style="color: white; display: inline-block; padding-left: 180px" >
-    
-               
+
      </div>
 </div>
        
@@ -142,13 +140,11 @@ const backend="http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae
                    </div>
                   
                        <button id="apply" type="button" class="btn btn-primary" >Login</button>
-                   
 
                         </div>
                         
                     <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
-                       
-                       
+
                     <span class="input-group-text" for="id">ID:</span>
                     <input class="form-control" type="text" id="id" name="id" required>
                     <br/>
@@ -203,16 +199,14 @@ const backend="http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">Actualizar Informacion</button>
                             </li>
-                            
-                           
+
                        </ul>
                           
                        </div>
                        
                        <div class="modal-body">
            <div class="tab-content mt-2">
-                       
-                        
+
                              <div class="modal-body">
                        <div class="input-group mb-3">
                            <span class="input-group-text">Identificación</span>
@@ -241,9 +235,7 @@ const backend="http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae
                     </div>
                           
                    </div>
-                       
-                       
-                       
+
                         </form>
                </div>
       </div>
@@ -276,21 +268,16 @@ const backend="http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae
             <li><a href="#" id="Biblioteca">BIBLIOTECA</a></li>
     `;
 
-
-
         this.dom.querySelector('#app>#menu #menuItems').replaceChildren();
         this.dom.querySelector('#app>#menu #menuItems').innerHTML = html;
 
         // Add event listeners here
-
+        this.dom.querySelector("#logonav")?.addEventListener('click', e => this.busquedaShow());
         this.dom.querySelector("#app>#menu #menuItems #Biblioteca")?.addEventListener('click', e => this.bibliotecaShow());
         this.dom.querySelector("#app>#menu #menuItems #Etiquetas")?.addEventListener('click', e => this.etiquetaShow());
         this.dom.querySelector("#app>#menu #menuItems #Busqueda")?.addEventListener('click', e => this.busquedaShow());
 
-
     }
-
-
 
     bibliotecaShow = () => {
         this.Biblioteca = new Biblioteca();
@@ -327,7 +314,6 @@ const backend="http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae
         this.Etiqueta = new Etiqueta();
         const menuItems = this.dom.querySelectorAll("#app>#menu #menuItems a");
 
-
         menuItems.forEach((menuItem) => {
             if (menuItem.id === "Etiquetas") {
                 menuItem.classList.add("active");
@@ -339,7 +325,5 @@ const backend="http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae
         this.dom.querySelector('#app>#body').replaceChildren(this.Etiqueta.dom);
 
     }
-
-
 
 }

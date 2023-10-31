@@ -23,14 +23,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestNoticiaMarcadaDao {
 
-
     private Database database = new Database();
 
     private NoticiaMarcadaDao noticiaMarcadaDao = new NoticiaMarcadaDao(new Database());
 
     NoticiaMarcada noticiaMarcada = new NoticiaMarcada(2, "Prueba", "Prueba", "Hace 2 horas", "Alta", "Pruebas", "Prueba",
                 "Prueba", new Date(), "4-0258-0085");
-
 
     @Test
     public void create() throws Exception {

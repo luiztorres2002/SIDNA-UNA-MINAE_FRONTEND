@@ -26,7 +26,6 @@ public class NoticiaMarcada {
     private String UsuarioCedula;
     private List<Etiqueta> etiquetas;
 
-
     public NoticiaMarcada() {
     }
 

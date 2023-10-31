@@ -28,7 +28,7 @@ class Biblioteca {
         this.dom.querySelector("#biblioteca #modalcampo #dismisscampo").addEventListener('click', this.hideModalCampo);
         this.cargarBiblioteca();
         const enlaceInput = this.dom.querySelector("#biblioteca #modal #enlace");
-        enlaceInput.addEventListener('blur', function () {
+        enlaceInput.addEventListener('input', function () {
             const url = enlaceInput.value;
 
             const proxyUrl = `${backend}/proxy?url=`;
@@ -41,17 +41,29 @@ class Biblioteca {
                     const ogTitle = doc.querySelector('meta[property="og:title"]');
                     const title = ogTitle ? ogTitle.getAttribute('content') : '';
 
-
                     const ogDescription = doc.querySelector('meta[property="og:description"]');
                     const description = ogDescription ? ogDescription.getAttribute('content') : '';
 
                     const ogSiteName = doc.querySelector('meta[property="og:site_name"]');
                     const fuente = ogSiteName ? ogSiteName.getAttribute('content') : '';
 
-
+                    const titulo = document.getElementById('titulo');
+                    const descrip = document.getElementById('descripcion');
+                    const fuent =  document.getElementById('fuente');
+                    const dia =document.getElementById('dia');
+                    const mes =document.getElementById('mes');
+                    const anio =document.getElementById('anio');
+                    const prioridad =document.getElementById('prioridad');
                     document.getElementById('titulo').value = title;
                     document.getElementById('descripcion').value = description;
                     document.getElementById('fuente').value = fuente;
+                    titulo.removeAttribute('disabled');
+                    descrip.removeAttribute('disabled');
+                    fuent.removeAttribute('disabled');
+                    dia.removeAttribute('disabled');
+                    mes.removeAttribute('disabled');
+                    anio.removeAttribute('disabled');
+                    prioridad.removeAttribute('disabled');
                 })
                 .catch(error => {
                     console.error('Error al obtener los datos:', error);
@@ -73,70 +85,66 @@ class Biblioteca {
         rootContent.innerHTML = html;
         return rootContent;
     }
-
     renderBody = () => {
         return `
          <div class="linea-azul"></div>
         <div class="linea-amarilla"></div>
         <div class="linea-verde"></div>
-   <div class="container justify-content-center" style="text-align: center; font-family: Verdana; font-size: 32px;"> 
-           Biblioteca Personal
-        </div>
-    <div class="d-flex justify-content-center">
-            <form id="form" style="width: 85%;"">
-           <div class="input-group  mt-10" style="display: flex; align-items: center; justify-content: center;">
-    <div class="btn-group me-2">
-<button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 190px; line-height: 5px;"><span class="font-weight-bold">+</span> <span class="texto-agregar">Agregar Noticia</span></button>
-    </div>
-   <select id="tiempoSeleccionado2" style="border: none; width: 110px; margin-left: 115px";>
-    <option value="" selected disabled>Prioridad</option>
-    <option value="Alta">Alta</option>
-    <option value="Media">Media</option>
-    <option value="Baja">Baja</option>
-</select>
-<select id="tiempoSeleccionado2" style="border: none; width: 90px; margin-left: 20px";>
-    <option value="" selected disabled>Fecha</option>
-    <option value="ultimaHora">Última Hora</option>
-    <option value="ultimoDia">Último Día</option>
-    <option value="ultimaSemana">Última Semana</option>
-    <option value="ultimoMes">Último Mes</option>
-    <option value="ultimoAno">Último Año</option>
-</select>
-   <input class="form-control me-2 fontAwesome" id="buscadorEtiqueta" autocomplete="off" type="text" style="width: 100px; margin-left: 200px; height: 38px; border-radius: 5px; border: 1px solid #1c2858;" placeholder="&#xf002; Buscar..."> 
-    <div class="btn-group me-2">
-         <button type="button" class="btn btn-custom-outline-success" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
-            <i class="fas fa-search"></i>
-         </button>
-    </div>
-</div>
-<select id="tiempoSeleccionadoMobile" style="border: none; width: 110px; margin-left: 115px; display: none">
-    <option value="" selected disabled>Prioridad</option>
-    <option value="Alta">Alta</option>
-    <option value="Media">Media</option>
-    <option value="Baja">Baja</option>
-</select>
-<select id="tiempoSeleccionadoMobile" style="border: none; width: 90px; margin-left: 20px; display: none">
-    <option value="" selected disabled>Fecha</option>
-    <option value="ultimaHora">Última Hora</option>
-    <option value="ultimoDia">Último Día</option>
-    <option value="ultimaSemana">Última Semana</option>
-    <option value="ultimoMes">Último Mes</option>
-    <option value="ultimoAno">Último Año</option>
-</select>
-
-<div id="pillsMobile-container" class="pill-container"></div>
-<div class="search-results-container">
-    <div id="noticiasBiblioteca"></div> 
-    <div class="d-flex justify-content-center">
-   
-    </div>
-</div>
+                   <div class="container justify-content-center" style="text-align: center; font-family: Verdana; font-size: 32px;"> 
+                           Biblioteca Personal
+                        </div>
+                    <div class="d-flex justify-content-center">
+                            <form id="form" style="width: 85%;"">
+                           <div class="input-group  mt-10" style="display: flex; align-items: center; justify-content: center;">
+                    <div class="btn-group me-2">
+                <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 190px; line-height: 5px;"><span class="font-weight-bold">+</span> <span class="texto-agregar">Agregar Noticia</span></button>
+                    </div>
+                   <select id="tiempoSeleccionado2" style="border: none; width: 110px; margin-left: 115px";>
+                    <option value="" selected disabled>Prioridad</option>
+                    <option value="Alta">Alta</option>
+                    <option value="Media">Media</option>
+                    <option value="Baja">Baja</option>
+                </select>
+                <select id="tiempoSeleccionado2" style="border: none; width: 90px; margin-left: 20px";>
+                    <option value="" selected disabled>Fecha</option>
+                    <option value="ultimaHora">Última Hora</option>
+                    <option value="ultimoDia">Último Día</option>
+                    <option value="ultimaSemana">Última Semana</option>
+                    <option value="ultimoMes">Último Mes</option>
+                    <option value="ultimoAno">Último Año</option>
+                </select>
+                   <input class="form-control me-2 fontAwesome" id="buscadorEtiqueta" autocomplete="off" type="text" style="width: 100px; margin-left: 200px; height: 38px; border-radius: 5px; border: 1px solid #1c2858;" placeholder="&#xf002; Buscar..."> 
+                    <div class="btn-group me-2">
+                         <button type="button" class="btn btn-custom-outline-success" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
+                            <i class="fas fa-search"></i>
+                         </button>
+                    </div>
+                </div>
+                <select id="tiempoSeleccionadoMobile" style="border: none; width: 110px; margin-left: 115px; display: none">
+                    <option value="" selected disabled>Prioridad</option>
+                    <option value="Alta">Alta</option>
+                    <option value="Media">Media</option>
+                    <option value="Baja">Baja</option>
+                </select>
+                <select id="tiempoSeleccionadoMobile" style="border: none; width: 90px; margin-left: 20px; display: none">
+                    <option value="" selected disabled>Fecha</option>
+                    <option value="ultimaHora">Última Hora</option>
+                    <option value="ultimoDia">Último Día</option>
+                    <option value="ultimaSemana">Última Semana</option>
+                    <option value="ultimoMes">Último Mes</option>
+                    <option value="ultimoAno">Último Año</option>
+                </select>
+                
+                <div id="pillsMobile-container" class="pill-container"></div>
+                <div class="search-results-container">
+                    <div id="noticiasBiblioteca"></div> 
+                    <div class="d-flex justify-content-center">
+                   
+                    </div>
+                </div>
                 </div>
             </form>
         
-
-
-
         `;
     }
     renderModal = () => {
@@ -161,7 +169,7 @@ class Biblioteca {
                         <legend id="titulolegend" class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 22px; font-family: Verdana">
                             <i class="fas fa-newspaper mr-2"></i> Título:
                         </legend>
-                        <input type="text" class="form-control col-md-12  mborder border-dark" autocomplete="off" id="titulo" name="titulo" style="font-size: 20px;">
+                        <input type="text" class="form-control col-md-12  mborder border-dark" autocomplete="off" id="titulo" name="titulo" style="font-size: 20px;" disabled>
                     </div>
                     </div>
                     <div class="container">
@@ -169,7 +177,7 @@ class Biblioteca {
                         <legend id="descripcionlegend" class="col-form-label col-sm-4 pt-0 align-items-center d-flex" style="font-size: 25px; padding-left: 10px; font-family: Verdana">
                             <i class="fas fa-file-alt mr-2"></i> Descripción:
                         </legend>
-                        <textarea type="text" class="form-control col-md-12 border-dark" style="font-size: 20px ;" id="descripcion" name="descripcion" rows="3"></textarea>
+                        <textarea type="text" class="form-control col-md-12 border-dark" style="font-size: 20px ;" id="descripcion" name="descripcion" rows="3" disabled></textarea>
                     </div>
                    
                     </div>
@@ -182,10 +190,10 @@ class Biblioteca {
         </legend>
         <div class="row">
           <div class="col">
-            <input type="text" class="form-control border border-dark" autocomplete="off" id="dia" name="dia" style="font-size: 20px; padding: 10px;" placeholder="Día">
+            <input type="text" class="form-control border border-dark" autocomplete="off" id="dia" name="dia" style="font-size: 20px; padding: 10px;" placeholder="Día" disabled>
           </div>
           <div class="col">
-            <select class="form-select border border-dark dropup" id="mes" name="mes" style="font-size: 20px; padding: 10px;">
+            <select class="form-select border border-dark dropup" id="mes" name="mes" style="font-size: 20px; padding: 10px;" disabled>
               <option value="" disabled selected hidden>Mes</option>
               <option>Enero</option>
               <option>Febrero</option>
@@ -202,7 +210,7 @@ class Biblioteca {
             </select>
           </div>
           <div class="col">
-            <input type="text" class="form-control border border-dark" autocomplete="off" id="anio" name="anio" style="font-size: 20px; padding: 10px;" placeholder="Año">
+            <input type="text" class="form-control border border-dark" autocomplete="off" id="anio" name="anio" style="font-size: 20px; padding: 10px;" placeholder="Año" disabled>
           </div>
         </div>
       </div>
@@ -213,7 +221,7 @@ class Biblioteca {
         <legend id="prioridadlegend" class="col-form-label pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 10px; font-family: Verdana">
           <i class="fas fa-exclamation-triangle mr-2"></i> Prioridad
         </legend>
-        <select class="form-select border border-dark mt-2" id="prioridad" name="prioridad" style="font-size: 20px; padding: 10px;">
+        <select class="form-select border border-dark mt-2" id="prioridad" name="prioridad" style="font-size: 20px; padding: 10px;" disabled>
           <option>Alta</option>
           <option>Media</option>
           <option selected>Baja</option>
@@ -222,10 +230,6 @@ class Biblioteca {
     </div>
   </div>
 </div>
-
-
-
-
                     <div class="container">
   <div class="row">
     <div class="col-md-6">
@@ -233,7 +237,7 @@ class Biblioteca {
         <legend id="fuentelegend" class="col-form-label pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 10px; font-family: Verdana">
           <i class="fas fa-info-circle mr-2"></i> Fuente
         </legend>
-        <input type="text" class="form-control border border-dark"  autocomplete="off" id="fuente" name="fuente" style="font-size: 20px;">
+        <input type="text" class="form-control border border-dark"  autocomplete="off" id="fuente" name="fuente" style="font-size: 20px;" disabled>
       </div>
     </div>
     <div class="col-md-6">
@@ -246,9 +250,6 @@ class Biblioteca {
     </div>
   </div>
 </div>
-
-
-
                     <div class="container bg-light">
                             <div class="col-md-12 mt-4 text-center">
                                  <button type="button" style="font-size: 23px; margin-top: 40px; margin-bottom: 20px; background-color: #1c2858;" id="apply" class="btn btn-primary mt-3">Ingresar Noticia</button>
@@ -486,7 +487,6 @@ class Biblioteca {
         }
     };
 
-
     cargarBiblioteca = async () => {
         try {
             const response = await fetch(`${backend}/NoticiasMarcadas/4-0258-0085`);
@@ -500,6 +500,20 @@ class Biblioteca {
 
     showModal = async () => {
         this.resetForm();
+        const titulo = document.getElementById('titulo');
+        const descrip = document.getElementById('descripcion');
+        const fuent =  document.getElementById('fuente');
+        const dia =document.getElementById('dia');
+        const mes =document.getElementById('mes');
+        const anio =document.getElementById('anio');
+        const prioridad =document.getElementById('prioridad');
+        titulo.setAttribute('disabled', 'disabled');
+        descrip.setAttribute('disabled', 'disabled');
+        fuent.setAttribute('disabled', 'disabled');
+        dia.setAttribute('disabled', 'disabled');
+        mes.setAttribute('disabled', 'disabled');
+        anio.setAttribute('disabled', 'disabled');
+        prioridad.setAttribute('disabled', 'disabled');
         this.modal.show();
     }
 

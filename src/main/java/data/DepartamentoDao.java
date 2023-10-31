@@ -60,7 +60,6 @@ public class DepartamentoDao {
         }
     }
 
-
     public static void main(String[] args) throws Exception {
 
         try{
@@ -76,6 +75,5 @@ public class DepartamentoDao {
             e.printStackTrace();
         }
     }
-
 
 }
