@@ -1,6 +1,7 @@
 .card {
     max-width: 62em !important;
-    max-height: 13em !important;
+    max-height: 16em !important;
+    min-height: 13em !important;
     flex-direction: row !important;
     background-color: #ffffff !important;
     box-shadow: 4px 5px 13px 2px #7a7d74 !important;
@@ -93,6 +94,7 @@ select {
 
 .card img {
     max-width: 28%;
+    max-height: 13em !important;
     padding: 0.5em;
     border-radius: 0.7em;
 }

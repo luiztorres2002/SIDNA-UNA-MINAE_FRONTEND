@@ -468,7 +468,7 @@ class Biblioteca {
             <div class="card-body">
                 <div class="text-section-Biblioteca">
                     <h5 class="card-title fw-bold">${titulo}</h5>
-                    <p class="card-text">${descripcion}</p>
+                     <p class="card-text descripcion">${descripcion}</p>
                     <div class="pill-container"></div> 
                 </div>
                 <div class="cta-section">
@@ -707,17 +707,36 @@ class Biblioteca {
         const enlace = document.getElementById('enlace').value;
         if (this.verificarCamposLlenados()) {
             try {
-                const proxyUrl = `${backend}/proxy?url=`;
-                const newsResponse = await fetch(proxyUrl + enlace);
-                const newsHtml = await newsResponse.text();
-                const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
-                const ogImage = newsDocument.querySelector('meta[property="og:image"]');
-                imageUrl = ogImage.getAttribute('content');
+                const proxyUrl1 = `${backend}/proxy?url=`;
+                const proxyUrl2 = 'https://corsproxy.io/?';
+
+                const newsResponse1 = await fetch(proxyUrl1 + enlace);
+                const newsHtml1 = await newsResponse1.text();
+                const newsDocument1 = new DOMParser().parseFromString(newsHtml1, 'text/html');
+                const ogImage1 = newsDocument1.querySelector('meta[property="og:image"]');
+
+                if (ogImage1) {
+                    imageUrl = ogImage1.getAttribute('content');
+                } else {
+                    const newsResponse2 = await fetch(proxyUrl2 + enlace);
+                    const newsHtml2 = await newsResponse2.text();
+                    const newsDocument2 = new DOMParser().parseFromString(newsHtml2, 'text/html');
+                    const ogImage2 = newsDocument2.querySelector('meta[property="og:image"]');
+
+                    if (ogImage2) {
+
+                        imageUrl = ogImage2.getAttribute('content');
+                    } else {
+                        console.error('No se pudo encontrar una imagen en ninguno de los proxies.');
+                    }
+                }
+
                 this.entity['imagen'] = imageUrl;
 
             } catch (error) {
-                console.error(`Error al obtener datos de noticia`, error);
+                console.error('Error al obtener datos de noticia', error);
             }
+
             let descripciones = ["Noticia Externa"];
             this.entidad['id'] = '1';
             this.entidad['titulo'] = this.entity.titulo;
