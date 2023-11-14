@@ -276,7 +276,7 @@ class Busqueda {
         currentApiKeyIndex = (currentApiKeyIndex + 1) % apiKeys.length;
         console.log('API Key usada:', apiKey);
         const corsProxyUrl = 'https://corsproxy.io/?';
-        const apiUrl = `https://serpapi.com/search?api_key=${apiKey}&q=costa%20rica%20medio%20ambiente&location=Costa%20Rica&google_domain=google.co.cr&gl=cr&lr=lang_es&hl=es&tbm=nws&&tbs=sbd:1&num=35`;
+        const apiUrl = `https://serpapi.com/search?api_key=${apiKey}&q=costa%20rica%20medio%20ambiente&location=Costa%20Rica&google_domain=google.co.cr&gl=cr&lr=lang_es&hl=es&tbm=nws&&tbs=sbd:1,qdr:m&num=35`;
         const TIMEOUT_MS = 9000;
         const fetchConTimeout = async (url) => {
             return Promise.race([
