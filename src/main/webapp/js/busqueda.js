@@ -363,7 +363,7 @@ class Busqueda {
         noticiasCoincidentes.innerHTML = '';
         this.abortController = new AbortController();
         const { signal } = this.abortController;
-        const apiUrl = this.construirApiUrl('Costa Rica Medio Ambiente', 'qdr:m', apiKey,pagina);
+        const apiUrl = this.construirApiUrl('Costa Rica Medio Ambiente y Energia', 'qdr:m', apiKey,pagina);
         const TIMEOUT_MS = 9000;
         const fetchConTimeout = async (url) => {
             return Promise.race([
