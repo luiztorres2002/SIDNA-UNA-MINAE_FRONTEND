@@ -1,15 +1,9 @@
 class Biblioteca {
-
     dom;
-
     modal;
-
     state;
-
     modalerror;
-
     modalCampo;
-
     modalexito;
 
     constructor() {
@@ -21,36 +15,98 @@ class Biblioteca {
         this.modalerror = new bootstrap.Modal(this.dom.querySelector('#modalError'));
         this.modalexito = new bootstrap.Modal(this.dom.querySelector('#sucessmodal'));
         this.modalCampo = new bootstrap.Modal(this.dom.querySelector('#modalcampo'));
+        this.modalExportar = new bootstrap.Modal(this.dom.querySelector('#modalExportar'));
         this.dom.querySelector("#biblioteca #agregar").addEventListener('click', this.createNew);
         this.dom.querySelector("#biblioteca #modal #apply").addEventListener('click', this.add);
         this.dom.querySelector("#biblioteca #modal #cancelModal").addEventListener('click', this.hidemodal);
         this.dom.querySelector("#biblioteca #modalError #dismissButton").addEventListener('click', this.hideModalError);
         this.dom.querySelector("#biblioteca #sucessmodal #sucessbuton").addEventListener('click', this.hideModalExito);
         this.dom.querySelector("#biblioteca #modalcampo #dismisscampo").addEventListener('click', this.hideModalCampo);
+        this.dom.querySelector("#biblioteca #modalExportar #cancelModal").addEventListener('click', this.hideModalExportar);
         this.cargarBiblioteca();
         const enlaceInput = this.dom.querySelector("#biblioteca #modal #enlace");
         enlaceInput.addEventListener('input', () => {
             const url = enlaceInput.value;
             this.solicitarDatos(url);
         });
+        const generarBtn = this.dom.querySelector("#generarBtn1");
+        const cancelarBtn = this.dom.querySelector("#generarBtn3");
+        const marcarBtn = this.dom.querySelector("#marcarTodo");
+        marcarBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
+            const checkboxesMarcados = [];
+            checkboxes.forEach((checkbox, index) => {
+                checkbox.checked = true;
+                checkboxesMarcados.push(index);
+            });
+        });
+        generarBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            generarBtn.style.display = "none";
+            this.dom.querySelector("#marcarTodo").style.display = "block";
+            const checkboxes = document.querySelectorAll('.check-container input[type="checkbox"]');
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = false;
+            });
+            const checkContainers = document.querySelectorAll('.check-container');
+            checkContainers.forEach((checkContainer) => {
+                checkContainer.style.display = 'block';
+            });
+            generarBtn2.style.display = 'inline';
+            generarBtn3.style.display = 'inline';
+        });
+        cancelarBtn.addEventListener('click', (event) => {
+            this.cancelarExportar();
+        });
+        this.dom.querySelector("#generarBtn2").addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
+            const checkboxesMarcados = [];
+            checkboxes.forEach((checkbox, index) => {
+                if (checkbox.checked) {
+                    checkboxesMarcados.push(index);
+                }
+            });
+        });
+        this.dom.querySelector("#generarBtn2").addEventListener('click', () => {
+            this.modalExportar.show();
+        });
+        this.dom.querySelector("#exportarPDF").addEventListener('click', () => {
 
+            const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
+            const checkboxesMarcados = [];
+            checkboxes.forEach((checkbox, index) => {
+                if (checkbox.checked) {
+                    checkboxesMarcados.push(index);
+                }
+            });
+            this.exportarAPDF(checkboxesMarcados);
+        });
+        this.dom.querySelector("#exportarExcel").addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
+            const checkboxesMarcados = [];
+            checkboxes.forEach((checkbox, index) => {
+                if (checkbox.checked) {
+                    checkboxesMarcados.push(index);
+                }
+            });
+            this.exportarAXLSX(checkboxesMarcados);
+            this.cancelarExportar();
+            this.hideModalExportar();
+        });
     }
 
-    async  procesarRespuesta(response) {
+    async procesarRespuesta(response) {
         if (response.ok) {
             const html = await response.text();
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
-
             const ogTitle = doc.querySelector('meta[property="og:title"]');
             const title = ogTitle ? ogTitle.getAttribute('content') : '';
-
             const ogDescription = doc.querySelector('meta[property="og:description"]');
             const description = ogDescription ? ogDescription.getAttribute('content') : '';
-
             const ogSiteName = doc.querySelector('meta[property="og:site_name"]');
             const fuente = ogSiteName ? ogSiteName.getAttribute('content') : '';
-
             const titulo = document.getElementById('titulo');
             const descrip = document.getElementById('descripcion');
             const fuent = document.getElementById('fuente');
@@ -58,7 +114,6 @@ class Biblioteca {
             const mes = document.getElementById('mes');
             const anio = document.getElementById('anio');
             const prioridad = document.getElementById('prioridad');
-
             document.getElementById('titulo').value = title;
             document.getElementById('descripcion').value = description;
             document.getElementById('fuente').value = fuente;
@@ -79,6 +134,7 @@ class Biblioteca {
             ${this.renderBody()}
             ${this.renderModal()}
             ${this.renderModalError()}
+            ${this.renderModalExportar()}
             ${this.renderModalSuccess()}
             ${this.renderModalCampo()}
         `;
@@ -87,14 +143,13 @@ class Biblioteca {
         rootContent.innerHTML = html;
         return rootContent;
     }
-  async solicitarDatos(url) {
+
+    async solicitarDatos(url) {
         const proxyUrl1 = `${backend}/proxy?url=`;
         const proxyUrl2 = 'https://corsproxy.io/?';
-
         try {
             const response1 = await fetch(proxyUrl2 + url);
             if (!response1.ok) {
-
                 const response2 = await fetch(proxyUrl1 + url);
                 this.procesarRespuesta(response2);
             } else {
@@ -106,7 +161,7 @@ class Biblioteca {
     }
 
     renderBody = () => {
-        return `
+        const body = `
          <div class="linea-azul"></div>
         <div class="linea-amarilla"></div>
         <div class="linea-verde"></div>
@@ -116,16 +171,18 @@ class Biblioteca {
                     <div class="d-flex justify-content-center">
                             <form id="form" style="width: 85%;"">
                            <div class="input-group  mt-10" style="display: flex; align-items: center; justify-content: center;">
+                           <button class="btn btn-custom-outline-success2" id="generarBtn1" style="margin-right: 15px;margin-left: -30px;width: 104px;border-radius: 5px;"><span class="font-weight-bold"><i class="fa-regular fa-file-lines"></i></span> <span class="texto-agregar">Reportar</span></button>
+                           <button class="btn btn-custom-outline-success2" id="marcarTodo" style="margin-right: 15px;margin-left: -30px;width: 140px;border-radius: 5px;display: none;"><span class="font-weight-bold"><i class="fa-solid fa-check-double"></i></span> <span class="texto-agregar">Marcar todo</span></button>
                     <div class="btn-group me-2">
-                <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 190px; line-height: 5px;"><span class="font-weight-bold">+</span> <span class="texto-agregar">Agregar Noticia</span></button>
+                <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 160px; line-height: 5px;"><span class="font-weight-bold">+</span> <span class="texto-agregar">Agregar Noticia</span></button>
                     </div>
-                   <select id="tiempoSeleccionado2" style="border: none; width: 110px; margin-left: 115px";>
+                   <select id="tiempoSeleccionado2" style="border: none; width: 110px; margin-left: 15px";>
                     <option value="" selected disabled>Prioridad</option>
                     <option value="Alta">Alta</option>
                     <option value="Media">Media</option>
                     <option value="Baja">Baja</option>
                 </select>
-                <select id="tiempoSeleccionado2" style="border: none; width: 90px; margin-left: 20px";>
+                <select id="tiempoSeleccionado3" style="border: none; width: 90px; margin-left: 20px";>
                     <option value="" selected disabled>Fecha</option>
                     <option value="ultimaHora">Última Hora</option>
                     <option value="ultimoDia">Último Día</option>
@@ -140,13 +197,13 @@ class Biblioteca {
                          </button>
                     </div>
                 </div>
-                <select id="tiempoSeleccionadoMobile" style="border: none; width: 110px; margin-left: 115px; display: none">
+                <select id="tiempoSeleccionadoMobile1" style="border: none; width: 110px; margin-left: 115px; display: none">
                     <option value="" selected disabled>Prioridad</option>
                     <option value="Alta">Alta</option>
                     <option value="Media">Media</option>
                     <option value="Baja">Baja</option>
                 </select>
-                <select id="tiempoSeleccionadoMobile" style="border: none; width: 90px; margin-left: 20px; display: none">
+                <select id="tiempoSeleccionadoMobile2" style="border: none; width: 90px; margin-left: 20px; display: none">
                     <option value="" selected disabled>Fecha</option>
                     <option value="ultimaHora">Última Hora</option>
                     <option value="ultimoDia">Último Día</option>
@@ -154,18 +211,143 @@ class Biblioteca {
                     <option value="ultimoMes">Último Mes</option>
                     <option value="ultimoAno">Último Año</option>
                 </select>
-                
                 <div id="pillsMobile-container" class="pill-container"></div>
-                <div class="search-results-container">
+                <div class="spinner-border" role="status" style="color: #cdab68;margin-left: 50%;margin-top: 30%;display: none;">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="search-results-container1">
                     <div id="noticiasBiblioteca"></div> 
                     <div class="d-flex justify-content-center">
-                   
                     </div>
                 </div>
                 </div>
+                <button class="btn btn-custom-outline-success3" id="generarBtn2" style="display: none; margin-left: 1500px">ACEPTAR</button>
+                <button class="btn btn-custom-outline-success4" id="generarBtn3" style=" display: none;">CANCELAR</button>
             </form>
         
         `;
+        setTimeout(() => {
+            const tiempoSeleccionadoNormal = document.getElementById('tiempoSeleccionado2');
+            const tiempoSeleccionadoMobile = document.getElementById('tiempoSeleccionadoMobile1');
+            const tiempoSeleccionadoNormal1 = document.getElementById('tiempoSeleccionado3');
+            const tiempoSeleccionadoMobile1 = document.getElementById('tiempoSeleccionadoMobile2');
+            tiempoSeleccionadoNormal.addEventListener('change', () => {
+                const valorSeleccionado = tiempoSeleccionadoNormal.value;
+                tiempoSeleccionadoMobile.value = valorSeleccionado;
+                for (let option of tiempoSeleccionadoMobile.options) {
+                    if (option.value === valorSeleccionado) {
+                        option.selected = true;
+                    } else {
+                        option.selected = false;
+                    }
+                }
+            });
+            tiempoSeleccionadoMobile.addEventListener('change', () => {
+                const valorSeleccionado = tiempoSeleccionadoMobile.value;
+                tiempoSeleccionadoNormal.value = valorSeleccionado;
+                for (let option of tiempoSeleccionadoNormal.options) {
+                    if (option.value === valorSeleccionado) {
+                        option.selected = true;
+                    } else {
+                        option.selected = false;
+                    }
+                }
+            });
+            tiempoSeleccionadoNormal1.addEventListener('change', () => {
+                const valorSeleccionado = tiempoSeleccionadoNormal1.value;
+                tiempoSeleccionadoMobile1.value = valorSeleccionado;
+                for (let option of tiempoSeleccionadoMobile1.options) {
+                    if (option.value === valorSeleccionado) {
+                        option.selected = true;
+                    } else {
+                        option.selected = false;
+                    }
+                }
+            });
+            tiempoSeleccionadoMobile1.addEventListener('change', () => {
+                const valorSeleccionado = tiempoSeleccionadoMobile1.value;
+                tiempoSeleccionadoNormal1.value = valorSeleccionado;
+                for (let option of tiempoSeleccionadoNormal1.options) {
+                    if (option.value === valorSeleccionado) {
+                        option.selected = true;
+                    } else {
+                        option.selected = false;
+                    }
+                }
+            });
+        }, 0);
+        return body;
+    }
+    renderModalExportar = () => {
+        return `
+    <div id="modalExportar" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <div class="spinner-border" id="spinner-exportar" role="status" style="color: #cdab68;margin-left: 48%;margin-top: 3%;display: none;" bis_skin_checked="1"><span class="visually-hidden">Loading...</span></div>
+                    <button type="button" id="cancelModal" class="close" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="text-center mb-3">Exportar a:</h5>
+                    <div class="text-center">
+                        <button id="exportarPDF" class="btn export-button mr-3" style="background-color: #e11c00;">
+                            <i class="fas fa-file-pdf fa-2x" style="color: #ffffff"></i>
+                        </button>
+                        <button id="exportarExcel" class="btn export-button mr-3" style="background-color: #127c44;">
+                            <i class="fas fa-file-excel fa-2x" style="color: #ffffff"></i>
+                            <span class="button-label" style="color: #ffffff; font-weight: bold">Excel</span>
+                        </button>
+                        <button id="exportarWord" class="btn export-button" style="background-color: #005096;">
+                            <i class="fas fa-file-word fa-2x" style="color: #ffffff"></i>
+                            <span class="button-label" style="color: #ffffff; font-weight: bold; font-size: small">Word</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="prioridadCheckbox" style="margin-top: 5px;">
+                        <label class="form-check-label" for="prioridadCheckbox" style="vertical-align: middle;"> Ordenar por prioridad</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="fechaCheckbox" style="margin-top: 5px;margin-left: 10px;">
+                        <label class="form-check-label" for="fechaCheckbox" style="vertical-align: middle;"> Ordenar por fecha</label>
+                    </div>
+                    <div class="form-check form-check-inline" style="display: none">
+                        <input class="form-check-input" type="radio" name="ordenRadio" id="ascendenteRadio" value="ascendente">
+                        <label class="form-check-label" for="ascendenteRadio">Ascendente</label>
+                    </div>
+                    <div class="form-check form-check-inline" style="display: none">
+                        <input class="form-check-input" type="radio" name="ordenRadio" id="descendenteRadio" value="descendente">
+                        <label class="form-check-label" for="descendenteRadio">Descendente</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+    }
+    cancelarExportar = () => {
+        const aceptarBtn = this.dom.querySelector("#generarBtn2");
+        const cancelarBtn = this.dom.querySelector("#generarBtn3");
+        const generarBtn = this.dom.querySelector("#generarBtn1");
+        generarBtn.style.display = "block";
+        this.dom.querySelector("#marcarTodo").style.display = "none";
+        const prioridadCheckbox = document.querySelector(`#prioridadCheckbox`);
+        const fechaCheckbox = document.querySelector(`#fechaCheckbox`);
+        const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = false;
+        });
+        const checkContainers = document.querySelectorAll('.check-container');
+        checkContainers.forEach((checkContainer) => {
+            checkContainer.style.display = 'none';
+        });
+        prioridadCheckbox.checked = false;
+        fechaCheckbox.checked = false;
+        aceptarBtn.style.display = 'none';
+        cancelarBtn.style.display = 'none';
     }
     renderModal = () => {
         return `
@@ -283,7 +465,6 @@ class Biblioteca {
 
         `;
     }
-
     renderModalError = () => {
         return `
 <div id="modalError" class="modal fade">
@@ -308,7 +489,6 @@ class Biblioteca {
     
         `;
     }
-
     renderModalCampo = () => {
         return `
     <div id="modalcampo" class="modal fade">
@@ -324,8 +504,6 @@ class Biblioteca {
 
     `;
     }
-
-
     renderModalSuccess = () => {
         return `
         <div id="sucessmodal" class="modal fade">
@@ -348,7 +526,6 @@ class Biblioteca {
         </div>   
         `;
     }
-
     verificarCamposLlenados = () => {
         const titulo = document.getElementById('titulo').value;
         const descripcion = document.getElementById('descripcion').value;
@@ -360,14 +537,12 @@ class Biblioteca {
         const anio = document.getElementById('anio').value;
         const regexAnio = /^\d{4}$/;
         const regexEnlace = /^(https?:\/\/).+/i;
-
         const tituloLegend = document.getElementById('titulolegend');
         const descripcionLegend = document.getElementById('descripcionlegend');
         const fechaLegend = document.getElementById('fechalegend');
         const prioridadLegend = document.getElementById('prioridadlegend');
         const fuenteLegend = document.getElementById('fuentelegend');
         const enlaceLegend = document.getElementById('enlacelegend');
-
         tituloLegend.style.color = 'black';
         tituloLegend.style.textDecoration = 'none';
         descripcionLegend.style.color = 'black';
@@ -380,55 +555,46 @@ class Biblioteca {
         fuenteLegend.style.textDecoration = 'none';
         enlaceLegend.style.color = 'black';
         enlaceLegend.style.textDecoration = 'none';
-
         if (titulo.trim() === '') {
             tituloLegend.style.color = 'red';
             tituloLegend.style.textDecoration = 'underline';
             tituloLegend.title = 'Debes ingresar un título';
         }
-
         if (descripcion.trim() === '') {
             descripcionLegend.style.color = 'red';
             descripcionLegend.style.textDecoration = 'underline';
             descripcionLegend.title = 'Debes ingresar una descripción de la noticia';
         }
-
         if (mes.trim() === '' || mes.trim() === 'Mes') {
             fechaLegend.style.color = 'red';
             fechaLegend.style.textDecoration = 'underline';
             fechaLegend.title = 'Elige un mes válido';
         }
-
         if (dia.trim() === '' || parseInt(dia) < 1 || parseInt(dia) > 31) {
             fechaLegend.style.color = 'red';
             fechaLegend.style.textDecoration = 'underline';
             fechaLegend.title = 'Ingresa un valor dentro del rango de los días (1-31)';
         }
-
         if (prioridad.trim() === '') {
             prioridadLegend.style.color = 'red';
             prioridadLegend.style.textDecoration = 'underline';
             prioridadLegend.title = 'Ingresa una prioridad válida';
         }
-
         if (fuente.trim() === '') {
             fuenteLegend.style.color = 'red';
             fuenteLegend.style.textDecoration = 'underline';
             fuenteLegend.title = 'Ingresa una fuente válida';
         }
-
         if (!regexEnlace.test(enlace)) {
             enlaceLegend.style.color = 'red';
             enlaceLegend.style.textDecoration = 'underline';
             enlaceLegend.title = 'Ingresa un enlace válido (debe comenzar con http:// o https://)';
         }
-
         if (!regexAnio.test(anio)) {
             fechaLegend.style.color = 'red';
             fechaLegend.style.textDecoration = 'underline';
             fechaLegend.title = 'Ingresa un año válido';
         }
-
         // Verificar si alguno de los campos está vacío
         if (
             titulo.trim() === '' ||
@@ -439,20 +605,16 @@ class Biblioteca {
             prioridad.trim() === '' ||
             fuente.trim() === '' ||
             enlace.trim() === '' || !regexEnlace.test(enlace) || !regexAnio.test(anio) || parseInt(dia) < 1 || parseInt(dia) > 31
-
         ) {
             this.showModalCampo();
             return false;
         }
-
         return true;
     }
     renderizarNoticias = () => {
         const bordeColores = ['#1c2858', '#cdab68'];
-
         const noticiasCoincidentes = document.getElementById('noticiasBiblioteca');
         noticiasCoincidentes.innerHTML = '';
-
         for (const [index, noticia] of this.state.noticias.entries()) {
             const {titulo, descripcion, prioridad, fuente, enlace, imagen, fechaGuardado, fecha} = noticia;
             const etiquetas = noticia.etiquetas;
@@ -461,38 +623,52 @@ class Biblioteca {
             const colorBorde = bordeColores[index % bordeColores.length];
             const elementoNoticiaCoincidente = document.createElement('div');
             elementoNoticiaCoincidente.classList.add('noticiaBiblioteca');
-
             elementoNoticiaCoincidente.innerHTML = `
-        <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${enlace}">
-            <img src="${imagen}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${imagen}'; this.classList.add('card-img-top', 'card-img-custom');">
-            <div class="card-body">
-                <div class="text-section-Biblioteca">
-                    <h5 class="card-title fw-bold">${titulo}</h5>
-                     <p class="card-text descripcion">${descripcion}</p>
-                    <div class="pill-container"></div> 
-                </div>
-                <div class="cta-section">
-                    <p class="card-text" >${fechaFormateada}</p>
-                    <div class="semaforoModal2">
-                        <input type="radio" name="prioridad-${index}" class="AltaModal2" value="Alta" ${prioridad === 'Alta' ? 'checked' : ''}>
-                        <input type="radio" name="prioridad-${index}" class="MediaModal2" value="Media" ${prioridad === 'Media' ? 'checked' : ''}>
-                        <input type="radio" name="prioridad-${index}" class="BajaModal2" value="Baja" ${prioridad === 'Baja' ? 'checked' : ''}>
+            <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${enlace}">
+                <img src="${imagen}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${imagen}'; this.classList.add('card-img-top', 'card-img-custom');">
+                <div class="card-body">
+                    <div class="text-section-Biblioteca">
+                        <h5 class="card-title fw-bold">${titulo}</h5>
+                        <p class="card-text descripcion">${descripcion}</p>
+                        <div class="pill-container"></div> 
                     </div>
-                    <div class="c-btn-group">
-                        <a class="borrar-container">
-                            <i class="fas fa-trash-can" id="borrarBtn" style="font-size: 1.3em; margin-top: 9px; color: #f10;"></i>
-                        </a>
-                        <a href="${enlace}" id="enlaceBtn2" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${fuente}" style="margin-bottom: 6px;">
-                            <i class="fas fa-share" style="font-size: 1.5em; color: ${colorBorde};"></i>
-                        </a>
+                    <div class="check-container">
+                    <div class="checkbox-wrapper-18">
+                        <div class="round">
+                            <input type="checkbox" id="noticiaCheckbox-${index}" />
+                            <label for="noticiaCheckbox-${index}"></label>
+                        </div>
+                    </div>
+                </div>
+                    </div>  
+                    <div class="cta-section">
+                        <p class="card-text" >${fechaFormateada}</p>
+                        <div class="semaforoModal2">
+                            <input type="radio" name="prioridad-${index}" class="AltaModal2" value="Alta" ${prioridad === 'Alta' ? 'checked' : ''}>
+                            <input type="radio" name="prioridad-${index}" class="MediaModal2" value="Media" ${prioridad === 'Media' ? 'checked' : ''}>
+                            <input type="radio" name="prioridad-${index}" class="BajaModal2" value="Baja" ${prioridad === 'Baja' ? 'checked' : ''}>
+                        </div>
+                        <div class="c-btn-group">
+                            <a class="borrar-container">
+                                <i class="fas fa-trash-can" id="borrarBtn" style="font-size: 1.2em; margin-top: 9px; color: #f10;"></i>
+                            </a>
+                            <a href="${enlace}" id="enlaceBtn2" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${fuente}" style="margin-bottom: 6px;">
+                                <i class="fas fa-share" style="font-size: 1.5em; color: ${colorBorde};"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    `;
-
+        `;
+            elementoNoticiaCoincidente.addEventListener('dblclick', (event) => {
+                const checkbox = document.querySelector(`#noticiaCheckbox-${index}`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
             noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
-
+            const spinner = document.querySelector('.spinner-border');
+            spinner.style.display = 'none';
             const pillsContainer1 = elementoNoticiaCoincidente.querySelector(".pill-container");
             etiquetas.forEach((etiqueta) => {
                 const pill = document.createElement("div");
@@ -505,10 +681,11 @@ class Biblioteca {
             });
         }
     };
-
     cargarBiblioteca = async () => {
         try {
             const response = await fetch(`${backend}/NoticiasMarcadas/4-0258-0085`);
+            const spinner = document.querySelector('.spinner-border');
+            spinner.style.display = 'block';
             const data = await response.json();
             this.state.noticias = data.reverse();
             this.renderizarNoticias();
@@ -516,16 +693,15 @@ class Biblioteca {
             console.log('Error al cargar la lista de noticias:', error);
         }
     }
-
     showModal = async () => {
         this.resetForm();
         const titulo = document.getElementById('titulo');
         const descrip = document.getElementById('descripcion');
-        const fuent =  document.getElementById('fuente');
-        const dia =document.getElementById('dia');
-        const mes =document.getElementById('mes');
-        const anio =document.getElementById('anio');
-        const prioridad =document.getElementById('prioridad');
+        const fuent = document.getElementById('fuente');
+        const dia = document.getElementById('dia');
+        const mes = document.getElementById('mes');
+        const anio = document.getElementById('anio');
+        const prioridad = document.getElementById('prioridad');
         titulo.setAttribute('disabled', 'disabled');
         descrip.setAttribute('disabled', 'disabled');
         fuent.setAttribute('disabled', 'disabled');
@@ -535,59 +711,48 @@ class Biblioteca {
         prioridad.setAttribute('disabled', 'disabled');
         this.modal.show();
     }
-
     showModalError = async () => {
         this.modal.hide();
         this.modalerror.show();
     }
-
     showModalCampo = async () => {
         this.modalCampo.show();
     }
-
     showModalFaltaCampo = async () => {
         this.modalerror.show();
     }
-
     hideModalError = async () => {
         this.modalerror.hide();
         this.modal.show();
     }
-
+    hideModalExportar = async () => {
+        this.modalExportar.hide();
+    }
     hideModalExito = async () => {
         this.modalexito.hide();
         this.resetForm();
         this.reset();
     }
-
     hideModalCampo = async () => {
         this.modalCampo.hide();
-
     }
-
     hidemodal = () => {
-
         this.modal.hide();
         this.modal.resetForm();
         this.reset();
     }
-
-
     showModalExito = () => {
         // Cargar los datos de la entidad en el formulario del modal
         this.modal.hide();
         this.modalexito.show();
     }
-
     obtenerNumeroDeMes = async (nombreMes) => {
         const meses = [
             "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
             "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
         ];
-
         // Busca el índice del nombre del mes en el array de meses
         const indice = meses.indexOf(nombreMes);
-
         // Si se encuentra el nombre del mes, devuelve su número (1 al 12)
         // Si no se encuentra, devuelve -1 como valor predeterminado para indicar que no se encontró
         if (indice !== -1) {
@@ -596,7 +761,6 @@ class Biblioteca {
             return -1;
         }
     }
-
     load = async () => {
         const form = this.dom.querySelector("#biblioteca #modal #form");
         const formData = new FormData(form);
@@ -604,19 +768,13 @@ class Biblioteca {
         for (let [key, value] of formData.entries()) {
             this.entity[key] = value;
         }
-
         // Imprime los datos en la consola
         console.log(this.entity);
     }
-
-
     createNew = () => {
         this.state.mode = 'A'; //agregar
         this.showModal();
-
     }
-
-
     resetForm = () => {
         var formulario = this.dom.querySelector("#biblioteca #modal #form");
         formulario.reset();
@@ -626,7 +784,6 @@ class Biblioteca {
         const prioridadLegend = document.getElementById('prioridadlegend');
         const fuenteLegend = document.getElementById('fuentelegend');
         const enlaceLegend = document.getElementById('enlacelegend');
-
         tituloLegend.style.color = 'black';
         descripcionLegend.style.color = 'black';
         fechaLegend.style.color = 'black';
@@ -634,14 +791,12 @@ class Biblioteca {
         fuenteLegend.style.color = 'black';
         enlaceLegend.style.color = 'black';
     }
-
     add = async () => {
         await this.load();
         const dia = this.entity['dia'];
         const anio = this.entity['anio'];
         const m = this.entity['mes'];
         let mes = null;
-
         if (m === 'Enero') {
             mes = '01';
         } else if (m === 'Febrero') {
@@ -667,9 +822,7 @@ class Biblioteca {
         } else if (m === 'Diciembre') {
             mes = '12';
         }
-
         let diaa = this.entity['dia'];
-
         if (diaa == '1') {
             diaa = '01';
         }
@@ -697,9 +850,7 @@ class Biblioteca {
         if (diaa == '9') {
             diaa = '09';
         }
-
         this.entity["fecha"] = anio + "-" + mes + "-" + diaa;
-
         delete this.entity['dia'];
         delete this.entity['mes'];
         delete this.entity['anio'];
@@ -709,12 +860,10 @@ class Biblioteca {
             try {
                 const proxyUrl1 = `${backend}/proxy?url=`;
                 const proxyUrl2 = 'https://corsproxy.io/?';
-
                 const newsResponse1 = await fetch(proxyUrl1 + enlace);
                 const newsHtml1 = await newsResponse1.text();
                 const newsDocument1 = new DOMParser().parseFromString(newsHtml1, 'text/html');
                 const ogImage1 = newsDocument1.querySelector('meta[property="og:image"]');
-
                 if (ogImage1) {
                     imageUrl = ogImage1.getAttribute('content');
                 } else {
@@ -722,21 +871,16 @@ class Biblioteca {
                     const newsHtml2 = await newsResponse2.text();
                     const newsDocument2 = new DOMParser().parseFromString(newsHtml2, 'text/html');
                     const ogImage2 = newsDocument2.querySelector('meta[property="og:image"]');
-
                     if (ogImage2) {
-
                         imageUrl = ogImage2.getAttribute('content');
                     } else {
                         console.error('No se pudo encontrar una imagen en ninguno de los proxies.');
                     }
                 }
-
                 this.entity['imagen'] = imageUrl;
-
             } catch (error) {
                 console.error('Error al obtener datos de noticia', error);
             }
-
             let descripciones = ["Noticia Externa"];
             this.entidad['id'] = '1';
             this.entidad['titulo'] = this.entity.titulo;
@@ -776,17 +920,340 @@ class Biblioteca {
             }
         } else {
         }
-
+    }
+    exportarAPDF = async (indicesSeleccionados) => {
+        const spinner =this.dom.querySelector("#spinner-exportar");
+        spinner.style.display = 'block';
+        const prioridadCheckbox = document.querySelector(`#prioridadCheckbox`);
+        const fechaCheckbox = document.querySelector(`#fechaCheckbox`);
+        let noticiasOrdenadas;
+        if (prioridadCheckbox.checked) {
+            noticiasOrdenadas = indicesSeleccionados.map(index => this.state.noticias[index])
+                .sort((a, b) => {
+                    if (a.prioridad === 'Alta') return -1;
+                    if (a.prioridad === 'Baja') return 1;
+                    if (a.prioridad === 'Media' && b.prioridad === 'Alta') return 1;
+                    if (a.prioridad === 'Media' && b.prioridad === 'Baja') return -1;
+                    return 0;
+                });
+            if (fechaCheckbox.checked) {
+                noticiasOrdenadas = noticiasOrdenadas.sort((a, b) => {
+                    if (a.prioridad === b.prioridad) {
+                        const fechaA = new Date(b.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
+                        const fechaB = new Date(a.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
+                        return fechaA - fechaB;
+                    }
+                    return 0;
+                });
+            }
+        } else {
+            if (fechaCheckbox.checked) {
+                noticiasOrdenadas = indicesSeleccionados
+                    .map(index => this.state.noticias[index])
+                    .sort((a, b) => {
+                        const fechaA = new Date(b.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
+                        const fechaB = new Date(a.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
+                        return fechaA - fechaB;
+                    });
+            } else {
+                noticiasOrdenadas = indicesSeleccionados.map(index => this.state.noticias[index]);
+            }
+        }
+        const doc = new jsPDF('p', 'in', 'letter');
+        const margenIzquierda = 0.5;
+        const margenDerecha = 8.25 - 0.25;
+        const margenArriba = 0.5;
+        const margenAbajo = 11.75 - 0.5;
+        doc.setFont("Verdana");
+        doc.setFontSize(18);
+        doc.setFontStyle('bold');
+        doc.text('Noticias Seleccionadas', margenIzquierda, margenArriba + 0.5);
+        doc.setLineWidth(0.01);
+        doc.line(margenIzquierda, margenArriba + 0.7, margenDerecha, margenArriba + 0.7);
+        let currentY = margenArriba + 1;
+        for (const noticia of noticiasOrdenadas) {
+            const formatoImagen = this.obtenerFormatoImagen(noticia.imagen);
+            let imagenBase64;
+            if (formatoImagen === 'WEBP') {
+                const urlImagen = 'https://corsproxy.io/?' + noticia.imagen;
+                imagenBase64 = await this.convertirWebpAFormato(urlImagen, 'jpeg');
+            } else {
+                imagenBase64 = await this.obtenerImagenBase64(noticia.imagen);
+            }
+            const imagenAncho = 160 / 72;
+            const imagenAltura = 100 / 72;
+            if (currentY + imagenAltura > margenAbajo - 0.5) {
+                doc.addPage();
+                currentY = margenArriba + 0.5;
+            }
+            try {
+                doc.addImage(imagenBase64, formatoImagen, margenIzquierda, currentY, imagenAncho, imagenAltura);
+            } catch (error) {
+                const urlImagen = 'https://corsproxy.io/?' + noticia.imagen;
+                imagenBase64 = await this.convertirWebpAFormato(urlImagen, 'jpeg');
+                try {
+                    doc.addImage(imagenBase64, 'JPEG', margenIzquierda, currentY, imagenAncho, imagenAltura);
+                } catch (error) {
+                }
+            }
+            const espacioDisponible = margenDerecha - (margenIzquierda + imagenAncho);
+            const titulo = noticia.titulo.replace(/(\r\n|\n|\r)/gm, ' ');
+            doc.setFontSize(12);
+            doc.setFontStyle('bold');
+            const lineasTitulo = doc.splitTextToSize(titulo, espacioDisponible);
+            const numLineasTitulo = lineasTitulo.length;
+            doc.text(lineasTitulo, margenIzquierda + imagenAncho + 0.2, currentY + 0.1);
+            const descripcion = noticia.descripcion.replace(/(\r\n|\n|\r)/gm, ' ');
+            doc.setFontSize(10);
+            doc.setFontStyle('normal');
+            const descripcionLineas = doc.splitTextToSize(descripcion, espacioDisponible);
+            doc.text(descripcionLineas, margenIzquierda + imagenAncho + 0.2, currentY + numLineasTitulo * 0.2 + 0.1);
+            const infoAdicional = `Fecha: ${noticia.fecha}  Fuente: ${noticia.fuente}  Prioridad: ${noticia.prioridad}`;
+            doc.setFontSize(10);
+            doc.setFontStyle('normal');
+            let fontSizeInfoAdicional = 8;
+            let infoAdicionalCabe = false;
+            while (!infoAdicionalCabe && fontSizeInfoAdicional > 6) {
+                doc.setFontSize(fontSizeInfoAdicional);
+                const alturaInfoAdicional = (doc.getTextDimensions(infoAdicional).h / 72);
+                if (currentY + numLineasTitulo * 0.2 + (descripcionLineas.length * 0.2) + alturaInfoAdicional + 0.3 <= currentY + imagenAltura) {
+                    infoAdicionalCabe = true;
+                } else {
+                    fontSizeInfoAdicional--;
+                }
+            }
+            doc.text(infoAdicional, margenIzquierda + imagenAncho + 0.2, currentY + numLineasTitulo * 0.2 + (descripcionLineas.length * 0.2) + 0.1);
+            const enlace = `Enlace: ${noticia.enlace}`;
+            doc.setFontSize(6);
+            doc.setTextColor(0, 0, 255);
+            doc.setFontStyle('normal');
+            let fontSizeEnlace = 6;
+            let enlaceCabe = false;
+            while (!enlaceCabe && fontSizeEnlace > 4) {
+                doc.setFontSize(fontSizeEnlace);
+                const alturaEnlace = (doc.getTextDimensions(enlace).h / 72);
+                if (currentY + numLineasTitulo * 0.2 + (descripcionLineas.length * 0.2) + alturaEnlace + 0.5 <= currentY + imagenAltura) {
+                    enlaceCabe = true;
+                } else {
+                    fontSizeEnlace--;
+                }
+            }
+            doc.text(enlace, margenIzquierda + imagenAncho + 0.2, currentY + numLineasTitulo * 0.2 + (descripcionLineas.length * 0.2) + 0.3);
+            doc.setTextColor(0, 0, 0);
+            const alturaTotalNoticia = Math.max(imagenAltura, (doc.getTextDimensions(lineasTitulo).h / 72)) + ((descripcionLineas.length + 1) * 0.2) + 0.1;
+            currentY += alturaTotalNoticia;
+        }
+        spinner.style.display = 'none';
+        this.cancelarExportar();
+        this.hideModalExportar();
+        doc.save('noticias_seleccionadas.pdf');
+    }
+    exportarAXLSX = async (indicesSeleccionados) => {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Noticias Seleccionadas');
+        worksheet.columns = [
+            {
+                header: 'Título',
+                key: 'titulo',
+                width: 40,
+                style: {alignment: {vertical: 'middle', horizontal: 'center'}}
+            },
+            {
+                header: 'Descripción',
+                key: 'descripcion',
+                width: 60,
+                style: {alignment: {vertical: 'middle', horizontal: 'left'}}
+            },
+            {header: 'Fecha', key: 'fecha', width: 20, style: {alignment: {vertical: 'middle', horizontal: 'center'}}},
+            {
+                header: 'Fuente',
+                key: 'fuente',
+                width: 30,
+                style: {alignment: {vertical: 'middle', horizontal: 'center'}}
+            },
+            {
+                header: 'Prioridad',
+                key: 'prioridad',
+                width: 15,
+                style: {alignment: {vertical: 'middle', horizontal: 'center'}}
+            },
+            {header: 'Enlace', key: 'enlace', width: 50, style: {alignment: {vertical: 'middle', horizontal: 'center'}}}
+        ];
+        const prioridadCheckbox = document.querySelector(`#prioridadCheckbox`);
+        const fechaCheckbox = document.querySelector(`#fechaCheckbox`);
+        let noticiasOrdenadas;
+        if (prioridadCheckbox.checked) {
+            noticiasOrdenadas = indicesSeleccionados.map(index => this.state.noticias[index])
+                .sort((a, b) => {
+                    if (a.prioridad === 'Alta') return -1;
+                    if (a.prioridad === 'Baja') return 1;
+                    if (a.prioridad === 'Media' && b.prioridad === 'Alta') return 1;
+                    if (a.prioridad === 'Media' && b.prioridad === 'Baja') return -1;
+                    return 0;
+                });
+            if (fechaCheckbox.checked) {
+                noticiasOrdenadas = noticiasOrdenadas.sort((a, b) => {
+                    if (a.prioridad === b.prioridad) {
+                        const fechaA = new Date(b.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
+                        const fechaB = new Date(a.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
+                        return fechaA - fechaB;
+                    }
+                    return 0;
+                });
+            }
+        } else {
+            if (fechaCheckbox.checked) {
+                noticiasOrdenadas = indicesSeleccionados
+                    .map(index => this.state.noticias[index])
+                    .sort((a, b) => {
+                        const fechaA = new Date(b.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
+                        const fechaB = new Date(a.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
+                        return fechaA - fechaB;
+                    });
+            } else {
+                noticiasOrdenadas = indicesSeleccionados.map(index => this.state.noticias[index]);
+            }
+        }
+        noticiasOrdenadas.forEach(noticia => {
+            const tituloSinSaltos = noticia.titulo.replace(/(\r\n|\n|\r)/gm, ' ');
+            const descripcionSinSaltos = noticia.descripcion.replace(/(\r\n|\n|\r)/gm, ' ');
+            worksheet.addRow({
+                titulo: tituloSinSaltos,
+                descripcion: descripcionSinSaltos,
+                fecha: noticia.fecha,
+                fuente: noticia.fuente,
+                prioridad: noticia.prioridad,
+                enlace: {text: 'Ver enlace', hyperlink: noticia.enlace}
+            });
+        });
+        worksheet.getRow(1).eachCell(cell => {
+            cell.font = {bold: true};
+            cell.border = {
+                top: {style: 'thin'},
+                left: {style: 'thin'},
+                bottom: {style: 'thin'},
+                right: {style: 'thin'}
+            };
+            cell.alignment = {vertical: 'middle', horizontal: 'center', wrapText: true};
+        });
+        worksheet.columns.forEach((column, index) => {
+            if (index >= 2 && index <= 5) {
+                column.eachCell({includeEmpty: true}, (cell) => {
+                    cell.alignment = {vertical: 'middle', horizontal: 'center', wrapText: true};
+                    cell.border = {
+                        top: {style: 'thin'},
+                        left: {style: 'thin'},
+                        bottom: {style: 'thin'},
+                        right: {style: 'thin'}
+                    };
+                    cell.textWrap = true;
+                });
+            } else {
+                column.eachCell({includeEmpty: true}, (cell) => {
+                    cell.alignment = {wrapText: true};
+                    cell.border = {
+                        top: {style: 'thin'},
+                        left: {style: 'thin'},
+                        bottom: {style: 'thin'},
+                        right: {style: 'thin'}
+                    };
+                    cell.textWrap = true;
+                });
+            }
+        });
+        const prioridadStyles = {
+            Alta: {fill: {type: 'pattern', pattern: 'solid', fgColor: {argb: 'da9595'}}},
+            Media: {fill: {type: 'pattern', pattern: 'solid', fgColor: {argb: 'ffe699'}}},
+            Baja: {fill: {type: 'pattern', pattern: 'solid', fgColor: {argb: 'c2d699'}}}
+        };
+        worksheet.getColumn('prioridad').eachCell({includeEmpty: true}, (cell) => {
+            const prioridad = cell.value;
+            if (prioridad && prioridadStyles[prioridad]) {
+                cell.fill = prioridadStyles[prioridad].fill;
+            }
+        });
+        worksheet.columns.forEach(column => {
+            column.width = Math.max(column.width, 15);
+        });
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+        const fileName = 'noticias_seleccionadas.xlsx';
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = fileName;
+        link.click();
     }
 
+    obtenerFormatoImagen(url) {
+        var extension = url.split('.').pop().toLowerCase();
+        switch (extension) {
+            case 'jpg':
+            case 'jpeg':
+                return 'JPEG';
+            case 'png':
+                return 'PNG';
+            case 'gif':
+                return 'GIF';
+            case 'webp':
+                return 'WEBP';
+            default:
+                return 'JPEG';
+        }
+    }
+
+    convertirWebpAFormato(urlWebp, formato) {
+        return new Promise((resolve, reject) => {
+            var img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.onload = function () {
+                var canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                var imageDataURL = canvas.toDataURL('image/' + formato);
+                resolve(imageDataURL);
+            };
+            img.onerror = function () {
+                reject(new Error('Error al cargar la imagen'));
+            };
+            img.src = urlWebp;
+        });
+    }
+
+    async obtenerImagenBase64(url) {
+        const proxyUrls = [
+            'https://corsproxy.io/?',
+            `${backend}/proxy/img?url=`
+        ];
+        for (const proxyUrl of proxyUrls) {
+            try {
+                const response = await fetch(proxyUrl + url);
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                const blob = await response.blob();
+                const reader = new FileReader();
+                return new Promise((resolve, reject) => {
+                    reader.readAsDataURL(blob);
+                    reader.onloadend = () => {
+                        resolve(reader.result);
+                    };
+                    reader.onerror = reject;
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                continue;
+            }
+        }
+        throw new Error('No se pudo obtener la imagen');
+    }
 
     emptyEntity = () => {
         var entity = '';
         return entity;
     }
-
     reset = () => {
         this.state.entity = this.emptyEntity();
     }
-
 }

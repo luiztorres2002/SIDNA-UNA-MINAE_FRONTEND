@@ -300,7 +300,7 @@ class Etiqueta {
     editarEtiqueta = (etiquetaId, descripcion) => {
 
         this.showEditar(etiquetaId, descripcion);
-        console.log(etiquetaId);
+
     }
 
 
@@ -350,12 +350,12 @@ class Etiqueta {
                     fila.classList.remove("highlight");
                     toggleSwitch.classList.remove(...colors);
                     toggleSwitch.classList.add(colors[colorIndex]);
-                    console.log(`Se activó la etiqueta: ${etiquetaNom}`);
+
                     toggleSwitch.classList.remove("unchecked");
                 } else {
                     fila.classList.add("disabled-row");
                     fila.classList.remove("highlight");
-                    console.log(`Se desactivó la etiqueta: ${etiquetaNom}`);
+
                     toggleSwitch.classList.add("unchecked");
                 }
 
@@ -449,7 +449,7 @@ class Etiqueta {
         } catch (error) {
             console.log('Error al cargar la lista de etiquetas:', error);
         }
-        console.log(this.state.etiquetas);
+
     }
 
     cambiarEstadoEtiqueta = (etiquetaId, nuevoEstado) => {
@@ -497,7 +497,7 @@ class Etiqueta {
                     console.log('Error');
                     this.showModalErrorEtiqueta();
                 } else {
-                    console.log('Etiqueta agregada con éxito');
+
                     this.cargarEtiquetas();
                     this.renderizarPaginaConEtiquetas();
                     this.showModalExitoEtiqueta();
@@ -521,7 +521,7 @@ class Etiqueta {
                 this.showModalErrorEditar();
                 throw new Error('Error al editar la etiqueta');
             }
-            console.log('Etiqueta actualizada correctamente');
+
             this.cargarEtiquetas();
             this.renderizarPaginaConEtiquetas();
             this.showModalExitoEditar();
