@@ -667,6 +667,7 @@ class Biblioteca {
                 }
             });
 
+
             //LOGICA PARA CAMBIAR PRIORIDAD DE UNA NOTICA
             const radioButtons = elementoNoticiaCoincidente.querySelectorAll(`input[name="prioridad-${index}"]`);
             radioButtons.forEach(radioButton => {
@@ -675,6 +676,8 @@ class Biblioteca {
                     console.log("Nueva prioridad:", radioButton.value);
                 });
             });
+
+
 
             noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
             const spinner = document.querySelector('.spinner-border');
