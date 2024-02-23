@@ -616,7 +616,7 @@ class Biblioteca {
         const noticiasCoincidentes = document.getElementById('noticiasBiblioteca');
         noticiasCoincidentes.innerHTML = '';
         for (const [index, noticia] of this.state.noticias.entries()) {
-            const {titulo, descripcion, prioridad, fuente, enlace, imagen, fechaGuardado, fecha} = noticia;
+            const {id, titulo, descripcion, prioridad, fuente, enlace, imagen, fechaGuardado, fecha} = noticia;
             const etiquetas = noticia.etiquetas;
             const fechaDate = new Date(fechaGuardado);
             const fechaFormateada = fechaDate.toLocaleDateString();
@@ -666,6 +666,16 @@ class Biblioteca {
                     checkbox.checked = true;
                 }
             });
+
+            //LOGICA PARA CAMBIAR PRIORIDAD DE UNA NOTICA
+            const radioButtons = elementoNoticiaCoincidente.querySelectorAll(`input[name="prioridad-${index}"]`);
+            radioButtons.forEach(radioButton => {
+                radioButton.addEventListener('change', () => {
+                    console.log("ID de la noticia:", id);
+                    console.log("Nueva prioridad:", radioButton.value);
+                });
+            });
+
             noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
             const spinner = document.querySelector('.spinner-border');
             spinner.style.display = 'none';
