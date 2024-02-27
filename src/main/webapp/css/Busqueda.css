@@ -1,11 +1,11 @@
 .card {
     max-width: 62em !important;
     max-height: 16em !important;
-    min-height: 12em !important;
+    min-height: 13em !important;
     flex-direction: row !important;
     background-color: #ffffff !important;
     box-shadow: 4px 5px 13px 2px #7a7d74 !important;
-    margin: 2.3em auto !important;
+    margin: 3em auto !important;
 }
 
 .custom-select {
@@ -33,7 +33,7 @@
     border: 1px solid #ccc;
     max-height: 200px;
     overflow-y: auto;
-    margin-left: 258px;
+    margin-left: 285px;
     width: 63%;
     z-index: 1;
 }
@@ -65,58 +65,7 @@ select#tiempoSeleccionado option[value="ultimoAno"]:checked {
 .sugerencia {
     padding: 8px;
     cursor: pointer;
-}
 
-.pagination {
-    margin-top: 20px;
-}
-
-.page-item {
-    margin-right: 15px;
-}
-
-.page-link {
-    padding: 8px 16px;
-    border-radius: 20px;
-    color: #000000 !important;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    font-weight: bold;
-}
-
-.page-item:first-child .page-link:hover {
-    background-color: #cfae6d !important;
-    color: #000000 !important;
-}
-
-.page-item:last-child .page-link:hover {
-    background-color: #cfae6d !important;
-    color: #000000 !important;
-}
-
-.page-item:first-child .page-link {
-    background-color: #242f5e !important;
-    color:#fff !important;
-}
-
-.page-item:last-child .page-link {
-    background-color: #242f5e !important;
-    color:#fff !important;
-}
-
-.page-link:focus {
-    outline: none;
-}
-
-.page-item.active .page-link {
-    background-color: #cfae6d;
-    border-color: #dac291;
-    color: #fff;
-}
-
-.page-link:hover {
-    background-color: #242f5e !important;
-    color:#fff !important;
 }
 
 .sugerencia:last-child {
@@ -165,8 +114,6 @@ select {
     flex-direction: column !important;
     align-items: flex-end !important;
     justify-content: space-between !important;
-    margin-top: 10px;
-    margin-right: 10px;
 }
 
 .cta-section .btn {
@@ -183,9 +130,10 @@ select {
     max-height: 700px;
     max-width: 3000px;
     overflow-y: auto;
-    margin-top: 5px;
     overflow-x: hidden;
+
 }
+
 .image-overlay {
     position: relative;
     display: inline-block;
@@ -555,7 +503,7 @@ input.BajaModal:checked {
     }
 
     .search-results-container {
-        max-height: 580px;
+        max-height: 630px;
         max-width: 3000px;
     }
 
@@ -565,44 +513,10 @@ input.BajaModal:checked {
         overflow-y: hidden;
     }
 
-    select#tiempoSeleccionado {
-        max-width: 83px;
-    }
-    .select-container {
-        width: 84px !important;
-        margin-right: 0px !important;
-    }
-}
-
-@media (max-width: 385px) {
-    #buscar {
-        margin-left: 10px !important;
-    }
-    .search-results-container {
-        max-height: 520px !important;
-        max-width: 3000px !important;
-    }
-}
-
-@media (max-width: 375px) {
-
-    .search-results-container {
-        max-height: 400px !important;
-        max-width: 3000px !important;
-        margin-top: -10px;
-    }
-}
-
-
-@media (max-width: 395px) {
-    .normal-select {
-        width: 90px !important;
-        margin-right: 10px !important;
-    }
-
-    .search-results-container {
-        max-height: 580px ;
-        max-width: 3000px ;
+    @media (max-width: 375px) {
+        #buscar {
+            margin-left: 10px !important;
+        }
     }
 
 }

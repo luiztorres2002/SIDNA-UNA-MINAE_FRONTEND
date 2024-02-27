@@ -13,6 +13,7 @@ let currentApiKeyIndex = 0;
 let busqueda = "";
 let etiquetas = [];
 sugerencias = [];
+
 class Busqueda {
     dom;
     modal;
@@ -43,14 +44,14 @@ class Busqueda {
         const searchInput = this.dom.querySelector("#search-input");
         searchInput.addEventListener("input", (event) => this.inputCambio(event));
         setTimeout(() => {
-            const ultimaHora = localStorage.getItem('ultimaHora');
-            if (ultimaHora && (Date.now() - parseInt(ultimaHora)) < 3600000) {;
+            const lastUpdatedTime = localStorage.getItem('lastUpdatedTime');
+            if (lastUpdatedTime && (Date.now() - parseInt(lastUpdatedTime)) < 3600000) {
                 this.mostrarNoticiasAlmacenadas()
                     .catch((error) => {
                         console.error('Error mostrando noticias almacenadas:', error);
                     });
             } else {
-                this.obtenerNoticias(1)
+                this.obtenerNoticias()
                     .catch((error) => {
                         console.error('Error obteniendo noticias:', error);
                     });
@@ -83,77 +84,52 @@ class Busqueda {
     }
     renderBody = () => {
         const body = `
-        <div class="linea-azul"></div>
-        <div class="linea-amarilla"></div>
-        <div class="linea-verde"></div>
-        </div>
-        <div class="container justify-content-center" id="tituloBusqueda" style="text-align: center; font-family: Verdana; font-size: 32px;"> 
-                Últimas Noticias Ambientales
-        </div>
-        <div class="d-flex justify-content-center">
-                <form id="form" style="width: 85%;margin-bottom: -15px">
-               <div class="input-group mt-10" style="display: flex; align-items: center; justify-content: center;">
-        <div class="btn-group me-2">
-    <div class="select-container" style="width: 200px;margin-right: 50px;" bis_skin_checked="1"> 
-        <select id="tiempoSeleccionado" style="border: none; width: 149px; margin-right: 0px; margin-left: 100px;">
-            <option value="" selected="" disabled="">Fecha</option>
+            <div class="linea-azul"></div>
+            <div class="linea-amarilla"></div>
+            <div class="linea-verde"></div>
+            </div>
+            <div class="container justify-content-center" id="tituloBusqueda" style="text-align: center; font-family: Verdana; font-size: 32px;"> 
+                    Últimas Noticias Ambientales
+            </div>
+           <div class="d-flex justify-content-center">
+                    <form id="form" style="width: 85%;"">
+                   <div class="input-group mt-10" style="display: flex; align-items: center; justify-content: center;">
+            <div class="btn-group me-2">
+        
+        <select id="tiempoSeleccionado" style="border: none; width: 90px; margin-right:90px; margin-left: 100px";>
+            <option value="" selected disabled>Fecha</option>
             <option value="ultimaHora">Última Hora</option>
             <option value="ultimoDia">Último Día</option>
             <option value="ultimaSemana">Última Semana</option>
             <option value="ultimoMes">Último Mes</option>
             <option value="ultimoAno">Último Año</option>
         </select>
-    </div>
-        </div>
-        <div class="search-container">
-                <div id="search-input" class="editable-input fontAwesome" contenteditable="true" data-placeholder="&#xf002; Buscar..."></div>
-                <div id="pills-container" class="pill-container"></div>
             </div>
-        <div class="btn-group me-2">
-             <button type="button" class="btn btn-custom-outline-success" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
-                <i class="fas fa-search"></i>
-             </button>
-        </div>
-    </div>
-    <div id="caja-sugerencia" class="caja-sugerencia" style="display: none"></div>
-    <div id="pillsMobile-container" class="pill-container"></div>
-    <div class="spinner-border" role="status" style="color: #cdab68;margin-left: 50%;margin-top: 30%;display: none;">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-    <div class="search-results-container">
-        <div id="noticiasCoincidentes"></div> 
-        <div class="d-flex justify-content-center">
-         </div>
-         </div>
+            <div class="search-container">
+                    <div id="search-input" class="editable-input fontAwesome" contenteditable="true" data-placeholder="&#xf002; Buscar..."></div>
+                    <div id="pills-container" class="pill-container"></div>
+                </div>
+            <div class="btn-group me-2">
+                 <button type="button" class="btn btn-custom-outline-success" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
+                    <i class="fas fa-search"></i>
+                 </button>
             </div>
-    </form>
-    </div>
-    <nav aria-label="Page navigation example" id="paginationNav" style="display: none;">
-      <ul class="pagination justify-content-center">
-        <li class="page-item disabled">
-          <a class="page-link" href="#" tabindex="-1" id="pagePrevious"><i class="fas fa-chevron-left"></i></a>
-        </li>
-        <li class="page-item active"><a class="page-link" href="#" id="page1">1</a></li>
-        <li class="page-item"><a class="page-link" href="#" id="page2">2</a></li>
-        <li class="page-item"><a class="page-link" href="#" id="page3">3</a></li>
-        <li class="page-item">
-          <a class="page-link" href="#" id="pageNext"><i class="fas fa-chevron-right"></i></a>
-        </li>
-      </ul>
-    </nav>
-   `;
-
-        $(document).ready(function () {
-            $('select#tiempoSeleccionado').change(function () {
-                var text = $(this).find('option:selected').text();
-                var $aux = $('<select/>').append($('<option/>').text(text));
-                $(this).after($aux);
-                $(this).width($aux.width());
-                $(this).css('margin-right', $aux.css('margin-right'));
-                $aux.remove();
-            }).change();
-        });
-
+        </div>
+        <div id="caja-sugerencia" class="caja-sugerencia" style="display: none"></div>
+        <div id="pillsMobile-container" class="pill-container"></div>
+        <div class="spinner-border" role="status" style="color: #cdab68;margin-left: 50%;margin-top: 30%;display: none;">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="search-results-container">
+            <div id="noticiasCoincidentes"></div> 
+            <div class="d-flex justify-content-center">
+           
+             </div>
+             </div>
+                </div>
+        </form>
+        </div>
+       `;
         setTimeout(() => {
             const pillsContainer1 = document.getElementById("pills-container");
             const pillsContainer2 = document.getElementById("pillsMobile-container");
@@ -210,63 +186,9 @@ class Busqueda {
                     this.actualizarTexto();
                 }
             });
-            var navegacionPaginacion = document.getElementById('paginationNav');
-            var paginaActual = 1;
-            const cambiarPagina = (numeroPagina) => {
-                this.obtenerNoticias(numeroPagina);
-            };
-
-            document.getElementById('pagePrevious').addEventListener('click', function(event) {
-                event.preventDefault();
-                var paginaActiva = navegacionPaginacion.querySelector('.active');
-                var paginaAnterior = paginaActiva.previousElementSibling.querySelector('.page-link').textContent;
-                if (parseInt(paginaAnterior) >= 1) {
-                    cambiarPagina(parseInt(paginaAnterior));
-                    navegacionPaginacion.querySelector('.active').classList.remove('active');
-                    paginaActiva.previousElementSibling.classList.add('active');
-                    paginaActual = parseInt(paginaAnterior);
-                }
-                actualizarPaginacion();
-            });
-
-            document.getElementById('pageNext').addEventListener('click', function(event) {
-                event.preventDefault();
-                var paginaActiva = navegacionPaginacion.querySelector('.active');
-                var paginaSiguiente = paginaActiva.nextElementSibling.querySelector('.page-link').textContent;
-                if (parseInt(paginaSiguiente) <= 3) {
-                    cambiarPagina(parseInt(paginaSiguiente));
-                    navegacionPaginacion.querySelector('.active').classList.remove('active');
-                    paginaActiva.nextElementSibling.classList.add('active');
-                    paginaActual = parseInt(paginaSiguiente);
-                }
-                actualizarPaginacion();
-            });
-
-            for (var i = 1; i <= 3; i++) {
-                var enlacePagina = document.getElementById('page' + i);
-                enlacePagina.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    var numeroPagina = parseInt(this.textContent);
-                    cambiarPagina(numeroPagina);
-                    navegacionPaginacion.querySelector('.active').classList.remove('active');
-                    this.parentNode.classList.add('active');
-                    paginaActual = numeroPagina;
-                    actualizarPaginacion();
-                });
-            }
-            function actualizarPaginacion() {
-                if (paginaActual === 1) {
-                    document.getElementById('pagePrevious').parentNode.classList.add('disabled');
-                } else {
-                    document.getElementById('pagePrevious').parentNode.classList.remove('disabled');
-                }
-            }
         }, 0);
-
         return body;
     }
-
-
     renderModalError = () => {
         return `
         <div id="modalError" class="modal fade">
@@ -346,23 +268,15 @@ class Busqueda {
         etiquetas.push(text);
         console.log(etiquetas);
     }
-    async obtenerNoticias(pagina) {
-        const noticiasCoincidentes = document.getElementById('noticiasCoincidentes');
-        noticiasCoincidentes.innerHTML = '';
-        const spinner = document.querySelector('.spinner-border');
-        spinner.style.display = 'block';
-        var paginationNav = document.getElementById('paginationNav');
-        paginationNav.style.display = 'none';
+
+    async obtenerNoticias() {
         const bordeColores = ['#1c2858', '#cdab68'];
         const botonColores = ['#cdab68', '#1c2858'];
-        const apiKey = await this.obtenerSiguienteApiKey();
-        if (this.abortController) {
-            this.abortController.abort();
-        }
-        let noticiasCoincidentesCargadas = 0;
-        this.abortController = new AbortController();
-        const { signal } = this.abortController;
-        const apiUrl = this.construirApiUrl('Costa Rica Medio Ambiente y Energia', 'qdr:m', apiKey,pagina);
+        const apiKey = apiKeys[currentApiKeyIndex];
+        currentApiKeyIndex = (currentApiKeyIndex + 1) % apiKeys.length;
+        console.log('API Key usada:', apiKey);
+        const corsProxyUrl = 'https://corsproxy.io/?';
+        const apiUrl = `https://serpapi.com/search?api_key=${apiKey}&q=costa%20rica%20medio%20ambiente&location=Costa%20Rica&google_domain=google.co.cr&gl=cr&lr=lang_es&hl=es&tbm=nws&&tbs=sbd:1,qdr:m&num=35`;
         const TIMEOUT_MS = 9000;
         const fetchConTimeout = async (url) => {
             return Promise.race([
@@ -372,7 +286,6 @@ class Busqueda {
                 )
             ]);
         };
-        const corsProxyUrl = 'https://corsproxy.io/?';
         const response = await fetch(corsProxyUrl + apiUrl);
         const searchData = await response.json();
         const newsResults = searchData.news_results;
@@ -381,13 +294,6 @@ class Busqueda {
         } else {
             const imageUrls = [];
             for (const [index, result] of newsResults.entries()) {
-                if (signal.aborted) {
-                    console.log('Operación cancelada.');
-                    break;
-                }
-                if (result.source.includes('News ES Euro')) {
-                    continue;
-                }
                 let imageUrl = '';
                 const proxyUrl1 = `${backend}/proxy?url=`;
                 const proxyUrl2 = 'https://corsproxy.io/?';
@@ -412,7 +318,6 @@ class Busqueda {
                             const ogImage2 = newsDocument2.querySelector('meta[property="og:image"]');
                             if (ogImage2) {
                                 imageUrl = ogImage2.getAttribute('content');
-
                             }
                         }
                     }
@@ -420,358 +325,373 @@ class Busqueda {
                         imageUrl = result.thumbnail;
                     }
                     imageUrls.push(imageUrl);
-                    noticiasCoincidentesCargadas++;
-                    if (noticiasCoincidentesCargadas === 3) {
-                        paginationNav.style.display = 'block';
-                    }
                 } catch (error) {
                     console.error(`Error al obtener datos de noticia (${result.link}):`, error);
                 }
                 const colorBorde = bordeColores[index % bordeColores.length];
                 const colorBoton = botonColores[index % botonColores.length];
-                const tipo = "1";
-                spinner.style.display = 'none';
-                const elementoNoticiaCoincidente = this.crearElementoNoticiaCoincidente(result, imageUrl, colorBorde, colorBoton,tipo,result.thumbnail);
+                const elementoNoticiaCoincidente = document.createElement('div');
+                elementoNoticiaCoincidente.classList.add('noticia-coincidente');
+                elementoNoticiaCoincidente.innerHTML = `
+            <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${result.link}">
+                <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.thumbnail}'; this.classList.add('card-img-top', 'card-img-custom');">
+                <div class="card-body">
+                    <div class="text-section">
+                        <h5 class="card-title fw-bold">${result.title}</h5>
+                        <p class="card-text">${result.snippet}</p>
+                    </div>
+                    <div class="cta-section">
+                        <p class="card-text">${result.date}</p>
+                        <div class="traffic-light">
+                          <input type="radio" name="rag1" class="Alta" value="Alta" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Alta">
+                          <input type="radio" name="rag1" class="Media" value="Media" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Media">
+                          <input type="radio" name="rag1" class="Baja" value="Baja" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Baja">
+                        </div>
+            <div class="image-overlay">
+                <a class="vista_previa" href="${result.link}" id="enlaceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
+                    <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i>
+                </a>
+                <div class="imagen-hover-container">
+                    <div class="spinner-border" role="status" style="color: #cdab68; margin-left: 20px; margin-bottom: 40px"></div>
+                    <img src="" alt=""  class="imagen-hover">
+                </div>
+            </div>
+            </div>
+            </div>
+            </div>
+        `;
+                const semaforoButtons = elementoNoticiaCoincidente.querySelectorAll('input[type="radio"]');
+                const newsSource = `${result.link}`;
+                const titulo = `${result.title}`;
+                const descripcion = `${result.snippet}`;
+                const fuente = `${result.source}`;
+                const fecha = `${result.date}`;
+                let descripciones = ["Costa Rica", "Medio Ambiente"];
+                semaforoButtons.forEach((button, colorIndex) => {
+                    const selectedColor = button.value;
+                    const infoText = `${selectedColor}`;
+                    button.addEventListener('click', this.modalmarcarshow.bind(this, titulo, descripcion, newsSource, fuente, infoText, fecha, imageUrl, descripciones));
+                });
+                const enlaceBtn = elementoNoticiaCoincidente.querySelector('#enlaceBtn');
+                const imagenHoverContainer = elementoNoticiaCoincidente.querySelector('.imagen-hover-container');
+                const imagenHover = elementoNoticiaCoincidente.querySelector('.imagen-hover');
+                const spinner = imagenHoverContainer.querySelector('.spinner-border');
+                var myHeaders = new Headers();
+                myHeaders.append("apikey", "mjTW5uT9m5BiB1V47ByXTNd6kdDG5gBv");
+                var requestOptions = {
+                    method: 'GET',
+                    redirect: 'follow',
+                    headers: myHeaders
+                };
+                let hoverTimer;
+                enlaceBtn.addEventListener('mouseenter', async function () {
+                    hoverTimer = setTimeout(async () => {
+                        imagenHoverContainer.style.display = 'block';
+                        if (!imagenHover.src) {
+                            spinner.style.display = 'block';
+                        }
+                        try {
+                            const screenshotResponse = await fetch("https://api.apilayer.com/screenshot?url=" + result.link, requestOptions);
+                            const screenshotData = await screenshotResponse.json();
+                            const imagenPreview = screenshotData.screenshot_url;
+                            imagenHover.src = imagenPreview;
+                            imagenHover.style.display = 'block';
+                            spinner.style.display = 'none';
+                        } catch (error) {
+                            imagenHoverContainer.style.display = 'none';
+                        }
+                    }, 1000);
+                });
+                enlaceBtn.addEventListener('click', function (e) {
+                    clearTimeout(hoverTimer);
+                });
+                imagenHoverContainer.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverTimer);
+                    imagenHoverContainer.style.display = 'none';
+                });
                 newsResults[index].backup = result.thumbnail;
                 newsResults[index].thumbnail = imageUrl;
-                if (signal.aborted) {
-                    console.log('Operación cancelada.');
-                    break;
-                }
                 noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
             }
-            if (pagina === 1 && !signal.aborted) {
-                const noticias = newsResults.filter(result => !result.source.includes('News ES Euro'));
-                localStorage.setItem('noticias', JSON.stringify(noticias));
-                localStorage.setItem('ultimaHora', Date.now());
-            }
+            localStorage.setItem('storedNews', JSON.stringify(newsResults));
+            localStorage.setItem('lastUpdatedTime', Date.now());
         }
     }
+
     async mostrarNoticiasAlmacenadas() {
         const bordeColores = ['#1c2858', '#cdab68'];
         const botonColores = ['#cdab68', '#1c2858'];
-        const noticiasJSON = localStorage.getItem('noticias');
+        const storedNewsJSON = localStorage.getItem('storedNews');
         const noticiasCoincidentes = document.querySelector('#noticiasCoincidentes');
         noticiasCoincidentes.innerHTML = '';
-        const lastUpdatedTime = localStorage.getItem('ultimaHora');
+        const lastUpdatedTime = localStorage.getItem('lastUpdatedTime');
         if (lastUpdatedTime && (Date.now() - parseInt(lastUpdatedTime)) < 3600000) {
-            const noticias = JSON.parse(noticiasJSON);
-            if (noticias) {
-                for (const [index, result] of noticias.entries()) {
+            const storedNews = JSON.parse(storedNewsJSON);
+            if (storedNews) {
+                for (const [index, result] of storedNews.entries()) {
                     let imageUrl = result.thumbnail;
                     const colorBorde = bordeColores[index % bordeColores.length];
                     const colorBoton = botonColores[index % botonColores.length];
-                    const tipo = "1";
-                    const elementoNoticiaCoincidente = this.crearElementoNoticiaCoincidente(result, imageUrl, colorBorde, colorBoton,tipo);
+                    const elementoNoticiaCoincidente = document.createElement('div');
+                    elementoNoticiaCoincidente.classList.add('noticia-coincidente');
+                    elementoNoticiaCoincidente.innerHTML = `
+                    <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde}" data-link="${result.link}">
+                    <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.backup}'; this.classList.add('card-img-top', 'card-img-custom');">
+                    <div class="card-body">
+                        <div class="text-section">
+                            <h5 class="card-title fw-bold">${result.title}</h5>
+                            <p class="card-text">${result.snippet}</p>
+                        </div>
+                        <div class="cta-section">
+                            <p class="card-text">${result.date}</p>
+                            <div class="traffic-light">
+                              <input type="radio" name="rag1" class="Alta" value="Alta" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Alta">
+                              <input type="radio" name="rag1" class="Media" value="Media" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Media">
+                              <input type="radio" name="rag1" class="Baja" value="Baja" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Baja">
+                            </div>
+                            <div class="image-overlay">
+                                <a class="vista_previa" href="${result.link}" id="enlaceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
+                                    <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i>
+                                </a>
+                                <div class="imagen-hover-container">
+                                    <div class="spinner-border" role="status" style="color: #cdab68; margin-left: 20px; margin-bottom: 40px"></div>
+                                    <img src="" alt=""  class="imagen-hover">
+                                </div>
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                `;
+                    const semaforoButtons = elementoNoticiaCoincidente.querySelectorAll('input[type="radio"]');
+                    const newsSource = `${result.link}`;
+                    const titulo = `${result.title}`;
+                    const descripcion = `${result.snippet}`;
+                    const fuente = `${result.source}`;
+                    const fecha = `${result.date}`;
+                    let descripciones = ["Costa Rica", "Medio Ambiente"];
+                    semaforoButtons.forEach((button, colorIndex) => {
+                        const selectedColor = button.value;
+                        const infoText = `${selectedColor}`;
+                        button.addEventListener('click', this.modalmarcarshow.bind(this, titulo, descripcion, newsSource, fuente, infoText, fecha, imageUrl, descripciones));
+                    });
+                    const enlaceBtn = elementoNoticiaCoincidente.querySelector('#enlaceBtn');
+                    const imagenHoverContainer = elementoNoticiaCoincidente.querySelector('.imagen-hover-container');
+                    const imagenHover = elementoNoticiaCoincidente.querySelector('.imagen-hover');
+                    const spinner = imagenHoverContainer.querySelector('.spinner-border');
+                    var myHeaders = new Headers();
+                    myHeaders.append("apikey", "mjTW5uT9m5BiB1V47ByXTNd6kdDG5gBv");
+                    var requestOptions = {
+                        method: 'GET',
+                        redirect: 'follow',
+                        headers: myHeaders
+                    };
+                    let hoverTimer;
+                    enlaceBtn.addEventListener('mouseenter', async function () {
+                        hoverTimer = setTimeout(async () => {
+                            imagenHoverContainer.style.display = 'block';
+                            if (!imagenHover.src) {
+                                spinner.style.display = 'block';
+                            }
+                            try {
+                                const screenshotResponse = await fetch("https://api.apilayer.com/screenshot?url=" + result.link, requestOptions);
+                                const screenshotData = await screenshotResponse.json();
+                                const imagenPreview = screenshotData.screenshot_url;
+                                imagenHover.src = imagenPreview;
+                                imagenHover.style.display = 'block';
+                                spinner.style.display = 'none';
+                            } catch (error) {
+                                imagenHoverContainer.style.display = 'none';
+                            }
+                        }, 1000);
+                    });
+                    enlaceBtn.addEventListener('click', function (e) {
+                        clearTimeout(hoverTimer);
+                    });
+                    imagenHoverContainer.addEventListener('mouseleave', () => {
+                        clearTimeout(hoverTimer);
+                        imagenHoverContainer.style.display = 'none';
+                    });
                     noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
                 }
             }
         }
-        var paginationNav = document.getElementById('paginationNav');
-        paginationNav.style.display = 'block';
     }
+
     async corresponderPalabraClaveEnNoticias() {
-        var paginationNav = document.getElementById('paginationNav');
-        paginationNav.style.display = 'none';
-        this.limpiarNoticiasCoincidentes();
+        const noticiasCoincidentes = document.querySelector('#noticiasCoincidentes');
+        noticiasCoincidentes.innerHTML = '';
+
         if (this.abortController) {
             this.abortController.abort();
         }
+
+        this.abortController = new AbortController();
+        const { signal } = this.abortController;
         const spinner = document.querySelector('.spinner-border');
         spinner.style.display = 'block';
-        this.inicializarAbortController.call(this);
-        const tiempoSeleccionado = this.obtenerTiempoSeleccionado();
-        const apiKey = await this.obtenerSiguienteApiKey();
-        try {
-            const tiempoQuery = this.obtenerTiempoQuery(tiempoSeleccionado);
-            const apiUrl = this.construirApiUrl(busqueda, tiempoQuery, apiKey,1);
-            const searchData = await this.obtenerDatosApi(apiUrl);
-
-            if (!searchData.news_results) {
-                this.mostrarMensajeNoNoticias();
-            } else {
-                this.mostrarNoticiasCoincidentes(searchData.news_results);
-            }
-        } catch (error) {
-            this.manejarErrorApi(error);
-        }
-    }
-    limpiarNoticiasCoincidentes() {
-        const noticiasCoincidentes = document.querySelector('#noticiasCoincidentes');
-        noticiasCoincidentes.innerHTML = '';
-    }
-    inicializarAbortController() {
-        this.abortController = new AbortController();
-    }
-    obtenerTiempoSeleccionado() {
-        return document.querySelector('#tiempoSeleccionado').value;
-    }
-    async  obtenerSiguienteApiKey() {
-        const corsProxyUrl = 'https://corsproxy.io/?';
-        const apiKey = apiKeys[currentApiKeyIndex];
-        const url = `https://serpapi.com/account?api_key=${apiKey}`;
-
-        try {
-            const response = await fetch(corsProxyUrl + url);
-            const data = await response.json();
-
-            const totalSearchesLeft = data.total_searches_left;
-
-            if (totalSearchesLeft === 1) {
-                currentApiKeyIndex = (currentApiKeyIndex + 1) % apiKeys.length;
-                console.log('API Key usada:', apiKey, ' - Total de búsquedas restantes:', totalSearchesLeft);
-                return obtenerSiguienteApiKey();
-            } else {
-                console.log('API Key usada:', apiKey, ' - Total de búsquedas restantes:', totalSearchesLeft);
-                return apiKey;
-            }
-        } catch (error) {
-            console.error('Error al obtener información de la API Key:', error);
-            return null;
-        }
-    }
-    obtenerTiempoQuery(tiempoSeleccionado) {
-        const tiempoQueries = {
-            'ultimaHora': 'qdr:h',
-            'ultimoDia': 'qdr:d',
-            'ultimaSemana': 'qdr:w',
-            'ultimoMes': 'qdr:m',
-            'ultimoAno': 'qdr:y'
-        };
-        return tiempoQueries[tiempoSeleccionado] || '';
-    }
-
-    construirApiUrl(keyword, tiempoQuery, apiKey, numeroPag) {
-        const encodedKeyword = encodeURI(keyword);
-        const resultsPerPage = 25;
-        let inicio;
-
-        if (numeroPag > 1) {
-            inicio = (numeroPag - 1) * resultsPerPage + 1;
-        } else {
-            inicio = 0;
-        }
-
-        const apiUrl = `https://serpapi.com/search?api_key=${apiKey}&q=${encodedKeyword}&location=Costa%20Rica&google_domain=google.co.cr&gl=cr&lr=lang_es&hl=es&tbm=nws&tbs=sbd:1${tiempoQuery ? `,${tiempoQuery}` : ''}&num=${resultsPerPage}&start=${inicio}`;
-
-        return encodeURI(apiUrl);
-    }
-    async  obtenerDatosApi(apiUrl) {
-        const corsProxyUrl = 'https://corsproxy.io/?';
-        const response = await fetch(corsProxyUrl + apiUrl);
-        return await response.json();
-    }
-
-     mostrarMensajeNoNoticias() {
-        const noticiasCoincidentes = document.querySelector('#noticiasCoincidentes');
-        noticiasCoincidentes.innerHTML = '<p style="margin-top: 25%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 24px;">No se encontraron noticias.</p>';
-         this.ocultarSpinner();
-    }
-
-     async mostrarNoticiasCoincidentes(newsResults) {
-         var paginationNav = document.getElementById('paginationNav');
-         paginationNav.style.display = 'none';
-         let noticiasCoincidentesCargadas = 0;
-        const noticiasCoincidentes = document.querySelector('#noticiasCoincidentes');
-        const spinner = document.querySelector('.spinner-border');
-        spinner.style.display = 'none';
+        let contadorNoticias = 0;
         const bordeColores = ['#1c2858', '#cdab68'];
         const botonColores = ['#cdab68', '#1c2858'];
-        for (const [index, result] of newsResults.entries()) {
-            if (this.abortController.signal.aborted) {
-                console.log('Operación cancelada.');
-                break;
-            }
-            const imageUrl = await this.obtenerImageUrl(result);
-            const colorBorde = bordeColores[index % bordeColores.length];
-            const colorBoton = botonColores[index % botonColores.length];
-            const tipo = "2";
-            const elementoNoticiaCoincidente2 = this.crearElementoNoticiaCoincidente(result, imageUrl, colorBorde, colorBoton,tipo);
-            noticiasCoincidentes.appendChild(elementoNoticiaCoincidente2);
-            noticiasCoincidentesCargadas++;
-            if (noticiasCoincidentesCargadas === 3) {
-                paginationNav.style.display = 'block';
-            }
-        }
-    }
-
-    async obtenerImageUrl(result) {
-        let imageUrl = '';
+        const keyword = encodeURI(busqueda);
+        const tiempoSeleccionado = document.querySelector('#tiempoSeleccionado').value;
+        const apiKey = apiKeys[currentApiKeyIndex];
+        currentApiKeyIndex = (currentApiKeyIndex + 1) % apiKeys.length;
+        console.log('API Key usada:', apiKey);
         try {
-            const proxyUrl1 = `${backend}/proxy?url=`;
-            const proxyUrl2 = 'https://corsproxy.io/?';
-            try {
-                const newsResponse = await fetch(proxyUrl2 + result.link);
-                const newsHtml = await newsResponse.text();
-                const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
-                const ogImage = newsDocument.querySelector('meta[property="og:image"]');
-                imageUrl = ogImage ? ogImage.getAttribute('content') : result.thumbnail;
-            } catch (error1) {
-                console.error(`Error al obtener datos de noticia con el primer proxy (${result.link}):`, error1);
-                try {
-                    const newsResponse2 = await fetch(proxyUrl1 + result.link);
-                    const newsHtml2 = await newsResponse2.text();
-                    const newsDocument2 = new DOMParser().parseFromString(newsHtml2, 'text/html');
-                    const ogImage2 = newsDocument2.querySelector('meta[property="og:image"]');
-                    imageUrl = ogImage2 ? ogImage2.getAttribute('content') : result.thumbnail;
-                } catch (error2) {
-                    console.error(`Error al obtener datos de noticia con el segundo proxy (${result.link}):`, error2);
-                }
+            let tiempoQuery = '';
+            if (tiempoSeleccionado === 'ultimaHora') {
+                tiempoQuery = 'qdr:h';
+            } else if (tiempoSeleccionado === 'ultimoDia') {
+                tiempoQuery = 'qdr:d';
+            } else if (tiempoSeleccionado === 'ultimaSemana') {
+                tiempoQuery = 'qdr:w';
+            } else if (tiempoSeleccionado === 'ultimoMes') {
+                tiempoQuery = 'qdr:m';
+            } else if (tiempoSeleccionado === 'ultimoAno') {
+                tiempoQuery = 'qdr:y';
             }
-        } catch (error) {
-            console.error(`Error al obtener datos de noticia (${result.link}):`, error);
-        }
-        return imageUrl;
-    }
-
-    crearElementoNoticiaCoincidente(result, imageUrl, colorBorde, colorBoton, tipo, backup) {
-        const elementoNoticiaCoincidente2 = document.createElement('div');
-        if (backup !== undefined) {
-            result.backup = backup;
-        }
-        elementoNoticiaCoincidente2.classList.add('noticia-coincidente');
-        elementoNoticiaCoincidente2.innerHTML = `
-        <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${result.link}">
-            <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.backup}'; this.classList.add('card-img-top', 'card-img-custom');">
-            <div class="card-body">
-                <div class="text-section">
-                    <h5 class="card-title fw-bold">${result.title}</h5>
-                    <p class="card-text">${result.snippet}</p>
-                </div>
-                <div class="cta-section">
-                    <p class="card-text">${result.date}</p>
-                    <div class="traffic-light">
-                        <input type="radio" name="rag1" class="Alta" value="Alta" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Alta">
-                        <input type="radio" name="rag1" class="Media" value="Media" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Media">
-                        <input type="radio" name="rag1" class="Baja" value="Baja" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Baja">
+            const apiUrl = encodeURI(`https://serpapi.com/search?api_key=${apiKey}&q=${keyword}&location=Costa%20Rica&google_domain=google.co.cr&gl=cr&lr=lang_es&hl=es&tbm=nws&tbs=sbd:1${tiempoQuery ? `,${tiempoQuery}` : ''}&num=35`);
+            const corsProxyUrl = 'https://corsproxy.io/?';
+            const response = await fetch(corsProxyUrl + apiUrl);
+            const searchData = await response.json();
+            const newsResults = searchData.news_results;
+            const tiempoSeleccionadoSelect = document.querySelector('#tiempoSeleccionado');
+            tiempoSeleccionadoSelect.value = '';
+            if (newsResults === undefined) {
+                noticiasCoincidentes.innerHTML = '<p style="margin-top: 25%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 24px;">No se encontraron noticias.</p>';
+                const spinner = document.querySelector('.spinner-border');
+                spinner.style.display = 'none';
+            } else {
+                const spinner = document.querySelector('.spinner-border');
+                spinner.style.display = 'none';
+                const imageUrls = [];
+                for (const [index, result] of newsResults.entries()) {
+                    if (signal.aborted) {
+                        console.log('Operación cancelada.');
+                        break;
+                    }
+                    contadorNoticias++;
+                    let imageUrl = '';
+                    try {
+                        const proxyUrl1 = `${backend}/proxy?url=`;
+                        const proxyUrl2 = 'https://corsproxy.io/?';
+                        try {
+                            const newsResponse = await fetch(proxyUrl2 + result.link);
+                            const newsHtml = await newsResponse.text();
+                            const newsDocument = new DOMParser().parseFromString(newsHtml, 'text/html');
+                            const ogImage = newsDocument.querySelector('meta[property="og:image"]');
+                            imageUrl = ogImage ? ogImage.getAttribute('content') : result.thumbnail;
+                        } catch (error1) {
+                            console.error(`Error al obtener datos de noticia con el primer proxy (${result.link}):`, error1);
+                            try {
+                                const newsResponse2 = await fetch(proxyUrl1 + result.link);
+                                const newsHtml2 = await newsResponse2.text();
+                                const newsDocument2 = new DOMParser().parseFromString(newsHtml2, 'text/html');
+                                const ogImage2 = newsDocument2.querySelector('meta[property="og:image"]');
+                                imageUrl = ogImage2 ? ogImage2.getAttribute('content') : result.thumbnail;
+                            } catch (error2) {
+                                console.error(`Error al obtener datos de noticia con el segundo proxy (${result.link}):`, error2);
+                            }
+                        }
+                        imageUrls.push(imageUrl);
+                    } catch (error) {
+                        console.error(`Error al obtener datos de noticia (${result.link}):`, error);
+                    }
+                    const colorBorde = bordeColores[index % bordeColores.length];
+                    const colorBoton = botonColores[index % botonColores.length];
+                    const elementoNoticiaCoincidente2 = document.createElement('div');
+                    elementoNoticiaCoincidente2.classList.add('noticia-coincidente');
+                    elementoNoticiaCoincidente2.innerHTML = `
+            <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${result.link}">
+                <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.thumbnail}'; this.classList.add('card-img-top', 'card-img-custom');">
+                <div class="card-body">
+                    <div class="text-section">
+                        <h5 class="card-title fw-bold">${result.title}</h5>
+                        <p class="card-text">${result.snippet}</p>
                     </div>
-                    <div class="image-overlay">
-                        <a class="vista_previa" href="${result.link}" id="enlaceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
-                            <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i>
-                        </a>
-                        <div class="imagen-hover-container">
-                            <div class="spinner-border" role="status" style="color: #cdab68; margin-left: 20px; margin-bottom: 40px"></div>
-                            <img src="" alt=""  class="imagen-hover">
+                    <div class="cta-section">
+                        <p class="card-text">${result.date}</p>
+                        <div class="traffic-light">
+                          <input type="radio" name="rag1" class="Alta" value="Alta" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Alta">
+                          <input type="radio" name="rag1" class="Media" value="Media" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Media">
+                          <input type="radio" name="rag1" class="Baja" value="Baja" data-bs-toggle="tooltip" data-bs-placement="top" title="Prioridad Baja">
                         </div>
-                    </div>
+            <div class="image-overlay">
+                <a class="vista_previa" href="${result.link}" id="enlaceBtn" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${result.source}">
+                    <i class="fas fa-share" style="font-size: 1.5em; width: 50px; color: ${colorBoton};"></i>
+                </a>
+                <div class="imagen-hover-container">
+                    <div class="spinner-border" role="status" style="color: #cdab68; margin-left: 20px; margin-bottom: 40px"></div>
+                    <img src="" alt=""  class="imagen-hover">
                 </div>
             </div>
-        </div>
-    `;
-        this.agregarEventListeners(elementoNoticiaCoincidente2, result, imageUrl, tipo);
-
-        return elementoNoticiaCoincidente2;
-    }
-
-    convertirFechaEstandar(fechaRelativa) {
-        const ahora = new Date();
-        const fecha = new Date();
-
-        const partes = fechaRelativa.split(' ');
-        const cantidad = parseInt(partes[1]);
-        const unidad = partes[2];
-
-        if (unidad.includes('minuto')) {
-            fecha.setMinutes(ahora.getMinutes() - cantidad);
-        } else if (unidad.includes('hora')) {
-            fecha.setHours(ahora.getHours() - cantidad);
-        } else if (unidad.includes('día')) {
-            fecha.setDate(ahora.getDate() - cantidad);
-        } else if (unidad.includes('semana')) {
-            fecha.setDate(ahora.getDate() - (cantidad * 7));
-        }
-
-        const dia = fecha.getDate().toString().padStart(2, '0');
-        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
-        const año = fecha.getFullYear();
-
-        return `${dia}/${mes}/${año}`;
-    }
-
-    agregarEventListeners(elementoNoticiaCoincidente2, result, imageUrl, tipo) {
-        const semaforoButtons2 = elementoNoticiaCoincidente2.querySelectorAll('input[type="radio"]');
-        const newsSource = `${result.link}`;
-        const titulo = `${result.title}`;
-        const descripcion = `${result.snippet}`;
-        const fuente = `${result.source}`;
-        const fecha = `${result.date}`;
-        const imagen = `${imageUrl}`;
-        const fechaFormateada = this.convertirFechaEstandar(fecha);
-        let descripciones;
-
-        if (tipo === '1') {
-            descripciones = ["Costa Rica", "Medio Ambiente"];
-        } else if (tipo === '2') {
-            descripciones = etiquetas;
-        } else {
-
-            descripciones = [];
-        }
-
-
-        semaforoButtons2.forEach((button, colorIndex) => {
-            const selectedColor = button.value;
-            const infoText = `${selectedColor}`;
-            button.addEventListener('click', () => {
-                this.modalmarcarshow(titulo, descripcion, newsSource, fuente, infoText, fechaFormateada, imagen, descripciones);
-            });
-        });
-
-        const enlaceBtn = elementoNoticiaCoincidente2.querySelector('#enlaceBtn');
-        const imagenHoverContainer = elementoNoticiaCoincidente2.querySelector('.imagen-hover-container');
-        const imagenHover = elementoNoticiaCoincidente2.querySelector('.imagen-hover');
-        const spinner = imagenHoverContainer.querySelector('.spinner-border');
-
-
-        var requestOptions = {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                Authorization: 'Bearer gbgjLHFc6SNCIEz5tX5uMcPE3lQID4AaXetx6eoN'
-            }
-        };
-
-        let hoverTimer;
-        enlaceBtn.addEventListener('mouseenter', async () => {
-            hoverTimer = setTimeout(async () => {
-                imagenHoverContainer.style.display = 'block';
-                if (!imagenHover.src) {
-                    spinner.style.display = 'block';
-                }
-
-                try {
-                    const screenshotResponse = await fetch("https://screendot.io/api/standard?url=" + result.link, requestOptions);
-                    if (!screenshotResponse.ok) {
-                        throw new Error('La solicitud no fue exitosa. Código de estado: ' + screenshotResponse.status);
+            </div>
+            </div>
+            </div>
+        `;
+                    const semaforoButtons2 = elementoNoticiaCoincidente2.querySelectorAll('input[type="radio"]');
+                    const newsSource = `${result.link}`;
+                    const titulo = `${result.title}`;
+                    const descripcion = `${result.snippet}`;
+                    const fuente = `${result.source}`;
+                    const fecha = `${result.date}`;
+                    const imagen = `${imageUrl}`;
+                    const descripciones = etiquetas;
+                    semaforoButtons2.forEach((button, colorIndex) => {
+                        const selectedColor = button.value;
+                        const infoText = `${selectedColor}`;
+                        button.addEventListener('click', () => {
+                            this.modalmarcarshow(titulo, descripcion, newsSource, fuente, infoText, fecha, imagen, descripciones);
+                        });
+                    });
+                    const enlaceBtn = elementoNoticiaCoincidente2.querySelector('#enlaceBtn');
+                    const imagenHoverContainer = elementoNoticiaCoincidente2.querySelector('.imagen-hover-container');
+                    const imagenHover = elementoNoticiaCoincidente2.querySelector('.imagen-hover');
+                    const spinner = imagenHoverContainer.querySelector('.spinner-border');
+                    var myHeaders = new Headers();
+                    myHeaders.append("apikey", "mjTW5uT9m5BiB1V47ByXTNd6kdDG5gBv");
+                    var requestOptions = {
+                        method: 'GET',
+                        redirect: 'follow',
+                        headers: myHeaders
+                    };
+                    let hoverTimer;
+                    enlaceBtn.addEventListener('mouseenter', async function () {
+                        hoverTimer = setTimeout(async () => {
+                            imagenHoverContainer.style.display = 'block';
+                            if (!imagenHover.src) {
+                                spinner.style.display = 'block';
+                            }
+                            try {
+                                const screenshotResponse = await fetch("https://api.apilayer.com/screenshot?url=" + result.link, requestOptions);
+                                const screenshotData = await screenshotResponse.json();
+                                const imagenPreview = screenshotData.screenshot_url;
+                                imagenHover.src = imagenPreview;
+                                imagenHover.style.display = 'block';
+                                spinner.style.display = 'none';
+                            } catch (error) {
+                                imagenHoverContainer.style.display = 'none';
+                            }
+                        }, 1000);
+                    });
+                    enlaceBtn.addEventListener('click', function (e) {
+                        clearTimeout(hoverTimer);
+                    });
+                    imagenHoverContainer.addEventListener('mouseleave', () => {
+                        clearTimeout(hoverTimer);
+                        imagenHoverContainer.style.display = 'none';
+                    });
+                    if (signal.aborted) {
+                        console.log('Operación cancelada.');
+                        break;
                     }
-                    const imagenBlob = await screenshotResponse.blob();
-                    const imagenUrl = URL.createObjectURL(imagenBlob);
-                    imagenHover.src = imagenUrl;
-                    imagenHover.style.display = 'block';
-                    spinner.style.display = 'none';
-                } catch (error) {
-                    console.error(error);
+                    noticiasCoincidentes.appendChild(elementoNoticiaCoincidente2);
                 }
-            }, 1000);
-        });
-
-        enlaceBtn.addEventListener('click', function (e) {
-            clearTimeout(hoverTimer);
-        });
-
-        imagenHoverContainer.addEventListener('mouseleave', () => {
-            clearTimeout(hoverTimer);
-            imagenHoverContainer.style.display = 'none';
-        });
-    }
-
-     ocultarSpinner() {
-        const spinner = document.querySelector('.spinner-border');
-        spinner.style.display = 'none';
-    }
-
-     manejarErrorApi(error) {
-        console.error('Error al obtener datos de la API:', error);
+            }
+            console.log(`Total de Noticias Identificadas: ${contadorNoticias}`);
+        } catch (error) {
+            console.error('Error al obtener datos de la API:', error);
+        }
     }
 
     renderModalMarcar = () => {
@@ -959,8 +879,28 @@ class Busqueda {
     reset = () => {
         this.entidad = {};
     }
-
-
+    listSearch = (placa) => {
+        var usuario = globalstate.user.cedula;
+        const request = new Request(`${"http://localhost:8080/Proyecto2-Backend/api"}/categorias/search?name=${placa}`,
+            {method: 'GET', headers: {}});
+        (async () => {
+            const response = await fetch(request);
+            if (!response.ok) {
+                errorMessage(response.status);
+                return;
+            }
+            var coberturas = await response.json();
+            var col = coberturas;
+            var listing = this.dom.querySelector("#lista #tablaCategorias");
+            listing.innerHTML = "";
+            col.forEach(p => this.row(listing, p));
+            await col.forEach(p => this.addListener(p));
+        })();
+    }
+    search = async () => {
+        var xxx = document.getElementById("name").value;
+        this.listSearch(xxx);
+    }
     emptyEntity = () => {
         var entity = '';
         return entity;
