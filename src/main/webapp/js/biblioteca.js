@@ -6,6 +6,8 @@ class Biblioteca {
 
     state;
 
+    deleteEntity;
+
     modalerror;
 
     modalCampo;
@@ -16,17 +18,25 @@ class Biblioteca {
         this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A', noticias: []};
         this.dom = this.render();
         this.entidad = {};
+        this.deleteEntity = " ";
         const self = this;
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
         this.modalerror = new bootstrap.Modal(this.dom.querySelector('#modalError'));
         this.modalexito = new bootstrap.Modal(this.dom.querySelector('#sucessmodal'));
         this.modalCampo = new bootstrap.Modal(this.dom.querySelector('#modalcampo'));
+        this.modalBorrar = new bootstrap.Modal(this.dom.querySelector('#modalborrar'));
+        this.modalErrorBorrar = new bootstrap.Modal(this.dom.querySelector('#modalErrorBorrar'))
+        this.modalSuccessBorrar = new bootstrap.Modal(this.dom.querySelector('#sucessBorrar'))
         this.dom.querySelector("#biblioteca #agregar").addEventListener('click', this.createNew);
         this.dom.querySelector("#biblioteca #modal #apply").addEventListener('click', this.add);
         this.dom.querySelector("#biblioteca #modal #cancelModal").addEventListener('click', this.hidemodal);
         this.dom.querySelector("#biblioteca #modalError #dismissButton").addEventListener('click', this.hideModalError);
         this.dom.querySelector("#biblioteca #sucessmodal #sucessbuton").addEventListener('click', this.hideModalExito);
         this.dom.querySelector("#biblioteca #modalcampo #dismisscampo").addEventListener('click', this.hideModalCampo);
+        this.dom.querySelector("#biblioteca #modalborrar #cancelarb").addEventListener('click', this.hideModalBorrar);
+        this.dom.querySelector("#biblioteca #modalborrar #confirmarb").addEventListener('click', this.deleteNoticia);
+        this.dom.querySelector("#biblioteca #sucessBorrar #sucessbuton").addEventListener('click', this.hideModalBorrarSuccess)
+        this.dom.querySelector("#biblioteca #modalborrar #cancelModal").addEventListener('click', this.hideModalBorrar)
         this.cargarBiblioteca();
         const enlaceInput = this.dom.querySelector("#biblioteca #modal #enlace");
         enlaceInput.addEventListener('input', () => {
@@ -81,6 +91,9 @@ class Biblioteca {
             ${this.renderModalError()}
             ${this.renderModalSuccess()}
             ${this.renderModalCampo()}
+            ${this.renderModalBorrar()}
+            ${this.renderModalErrorBorrar()}
+            ${this.renderModalSuccessBorrar()}
         `;
         const rootContent = document.createElement('div');
         rootContent.id = 'biblioteca';
@@ -286,7 +299,7 @@ class Biblioteca {
 
     renderModalError = () => {
         return `
-<div id="modalError" class="modal fade">
+    <div id="modalError" class="modal fade">
           <div class="modal-dialog modal-error">
             <div class="modal-content">
                 <div class="modal-header">
@@ -299,6 +312,29 @@ class Biblioteca {
                     <p style="font-size: 25px;" class="text-center">Verifica si la noticia está duplicada o los datos son incorrectos.</p>
                 </div>
                 <div class="modal-footer">
+            <button class="btn btn-success btn-block" id="dismissButton" data-dismiss="modal">Salir del form</button>
+                </div>
+            </div>
+            </div>
+        </div>  
+        `;
+    }
+
+    renderModalErrorBorrar = () => {
+        return `
+<div id="modalErrorBorrar" class="modal fade">
+          <div class="modal-dialog modal-error">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="icon-box">
+                        <i class="material-icons">warning</i>
+                    </div>
+                    <h4 class="modal-title w-100">¡Ooops!</h4>\t
+                </div>
+                <div class="modal-body">
+                    <p style="font-size: 25px;" class="text-center">La eliminación de la noticia no se ha realizado con éxito.</p>
+                </div>
+                <div class="modal-footer">
             <button class="btn btn-success btn-block" id="dismissButton" data-dismiss="modal">Regresar al form</button>
                 </div>
             </div>
@@ -309,19 +345,78 @@ class Biblioteca {
         `;
     }
 
+    renderModalSuccessBorrar = () => {
+        return `
+    <div id="sucessBorrar" class="modal fade">
+      <div class="modal-dialog modal-confirm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-box">
+                    <i class="material-icons">&#xE876;</i>
+                </div>
+                <h4 class="modal-title w-100">¡Confirmado!</h4>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 25px;" class="text-center">La noticia ha sido eliminada de tu biblioteca con éxito.</p>
+            </div>
+            <div class="modal-footer mt-3 text-center"> <!-- Ajusta el margen superior y alinea el botón al centro -->
+                <button class="btn btn-success btn-block" id="sucessbuton" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+      </div>
+    </div>
+    `;
+    }
+
     renderModalCampo = () => {
         return `
     <div id="modalcampo" class="modal fade">
-    <div class="modal-dialog modal-confirm2">
-        <div class="modal-content">
-            <div class="modal-body text-center">
-                <p style="font-size: 20px;">Por favor, complete todos los campos para publicar la noticia.</p>
-                <button id="dismisscampo" style="font-size: 20px;" class="btn2 btn-success" data-dismiss="modal">Regresar</button>
+        <div class="modal-dialog modal-confirm2">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <p style="font-size: 20px;">Por favor, complete todos los campos para publicar la noticia.</p>
+                    <button id="dismisscampo" style="font-size: 20px;" class="btn2 btn-success" data-dismiss="modal">Regresar</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
+    `;
+    }
+
+    renderModalBorrar = () => {
+        return `
+        <div id="modalborrar" class="modal fade" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" id="cancelModal" class="close d-flex align-items-center justify-content-center" aria-label="Close" style="font-size: 36px; width: 50px; height: 50px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); border: 2px solid #ccc; border-radius: 50%;">
+                            <span aria-hidden="true" class="ion-ios-close"></span>
+                        </button>
+                    </div>
+                    <div class="modal-body p-4 py-5 p-md-5">
+                        <div class="text-center">
+                            <img src="images/Minae.png" class="w-50 mx-auto d-block mb-4" alt="...">
+
+                        </div>
+                        <h4 class="text-center mb-2 mt-2">¿Estás seguro de que deseas eliminar esta noticia de tu biblioteca? </h4>
+                       
+                       
+                        <ul class="ftco-footer-social p-0 text-center">
+                        </ul>
+                         
+                        <form action="#" id="formmarcar" class="signup-form">
+                            <div class="btn-group mt-4 d-flex justify-content-center">
+                                <button type="submit" id="confirmarb" class="btn btn-outline-primary rounded submit ml-4 mr-3">Confirmar</button>
+                                <button type="button" id="cancelarb" class="btn btn-outline-secondary rounded submit">Cancelar</button>
+                            </div>
+                            <div class="form-group d-md-flex">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     `;
     }
 
@@ -454,7 +549,8 @@ class Biblioteca {
         noticiasCoincidentes.innerHTML = '';
 
         for (const [index, noticia] of this.state.noticias.entries()) {
-            const {titulo, descripcion, prioridad, fuente, enlace, imagen, fechaGuardado, fecha} = noticia;
+            const {id, titulo, descripcion, prioridad, fuente, enlace, imagen, fechaGuardado, fecha} = noticia;
+            const idNoticia = noticia.id;
             const etiquetas = noticia.etiquetas;
             const fechaDate = new Date(fechaGuardado);
             const fechaFormateada = fechaDate.toLocaleDateString();
@@ -467,7 +563,7 @@ class Biblioteca {
             <img src="${imagen}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${imagen}'; this.classList.add('card-img-top', 'card-img-custom');">
             <div class="card-body">
                 <div class="text-section-Biblioteca">
-                    <h5 class="card-title fw-bold">${titulo}</h5>
+                    <h5 class="card-title fw-bold">${id} ${titulo}</h5>
                      <p class="card-text descripcion">${descripcion}</p>
                     <div class="pill-container"></div> 
                 </div>
@@ -479,9 +575,9 @@ class Biblioteca {
                         <input type="radio" name="prioridad-${index}" class="BajaModal2" value="Baja" ${prioridad === 'Baja' ? 'checked' : ''}>
                     </div>
                     <div class="c-btn-group">
-                        <a class="borrar-container">
-                            <i class="fas fa-trash-can" id="borrarBtn" style="font-size: 1.3em; margin-top: 9px; color: #f10;"></i>
-                        </a>
+                        <button class="borrar-container">
+                             <i class="fas fa-trash-can" id="borrarBtn" style="font-size: 1.3em; margin-top: 9px; border: none; color: red;"></i>
+                        </button>
                         <a href="${enlace}" id="enlaceBtn2" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${fuente}" style="margin-bottom: 6px;">
                             <i class="fas fa-share" style="font-size: 1.5em; color: ${colorBorde};"></i>
                         </a>
@@ -492,6 +588,14 @@ class Biblioteca {
     `;
 
             noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
+            const botoneseliminar = noticiasCoincidentes.querySelectorAll("button.borrar-container");
+
+            botoneseliminar.forEach((button, colorIndex) => {
+                button.addEventListener('click', () => {
+                    const idd = this.state.noticias[colorIndex].id;
+                    this.showModalBorrar(idd);
+                });
+            });
 
             const pillsContainer1 = elementoNoticiaCoincidente.querySelector(".pill-container");
             etiquetas.forEach((etiqueta) => {
@@ -549,9 +653,34 @@ class Biblioteca {
         this.modalerror.show();
     }
 
+    showModalBorrar  = (idd) => {
+        event.preventDefault();
+        this.deleteEntity = " ";
+        this.deleteEntity = idd;
+        this.modalBorrar.show();
+    }
+
+    showModalErrorBorrar = async () => {
+        this.modalErrorBorrar.show();
+    }
+
+    showModalSuccessBorrar = async () => {
+        this.modalSuccessBorrar.show();
+    }
+
+    hideModalBorrarSuccess = async () => {
+        this.modalSuccessBorrar.hide();
+        this.cargarBiblioteca();
+    }
+
     hideModalError = async () => {
         this.modalerror.hide();
         this.modal.show();
+    }
+
+    hideModalBorrar = async () => {
+        this.modalBorrar.hide();
+
     }
 
     hideModalExito = async () => {
@@ -787,6 +916,53 @@ class Biblioteca {
 
     reset = () => {
         this.state.entity = this.emptyEntity();
+    }
+
+
+
+    deleteNoticia = async() => {
+        event.preventDefault();
+        const entityId = this.deleteEntity;
+        const request = new Request(`${backend}/NoticiasMarcadas/EtiquetasExternaDelete/${entityId}`, { // Cambiar a enviar el parámetro como parte de la ruta
+            method: 'POST', // Cambiar el método a POST
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        try {
+            const response = await fetch(request);
+
+            if (response.ok) {
+
+                const cedula = "4-0258-0085";
+                const request2 = new Request(`${backend}/NoticiasMarcadas/ExternaDelete/${entityId}/${cedula}`, { // Cambiar a enviar el parámetro como parte de la ruta
+                    method: 'POST', // Cambiar el método a POST
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                try{
+
+                    const response2 = await fetch(request2);
+                        if (response2.ok) {
+                            this.hideModalBorrar();
+                            this.showModalSuccessBorrar();
+                        }
+                        else{
+                            this.hideModalBorrar();
+                            this.showModalErrorBorrar();
+                        }
+                }catch (error){
+                    console.error("Error al eliminar la entidad:", error);
+                }
+            } else {
+                this.showModalErrorBorrar();
+            }
+        } catch (error) {
+            console.error("Error al eliminar la entidad:", error);
+        }
     }
 
 }

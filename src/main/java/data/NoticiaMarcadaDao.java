@@ -69,6 +69,58 @@ public class NoticiaMarcadaDao {
         }
     }
 
+
+    public void deleteNoticiaMarcada(String noticiaMarcadaId, String Cedula) throws Exception {
+
+        int id = Integer.parseInt(noticiaMarcadaId);
+
+        String sql = "DELETE FROM NOTICIA_MARCADA\n" +
+                "WHERE Fk_NoticiaMarcada_UsuarioCedula = ? \n" +
+                "AND PK_NoticiaMarcada_Id = ?;\n";
+
+        PreparedStatement stm = db.prepareStatement(sql);
+        stm.setString(1,Cedula);
+        stm.setInt(2,id);
+
+        int count = db.executeUpdate(stm);
+        if (count == 0) {
+            throw new Exception("No se creo");
+        }
+    }
+
+    public void deleteEtiquetasNoticia(String noticiaMarcadaId) throws Exception {
+        int id = Integer.parseInt(noticiaMarcadaId); // Convertir a int
+
+        String sql = "DELETE FROM NOTICIAMARCADA_ETIQUETA\n" +
+                "WHERE FK_NOTICIAMARCADAETIQUETA_NOTICIAMARCADAID = ?;\n";
+
+        PreparedStatement stm = db.prepareStatement(sql);
+        stm.setInt(1, id); // Establecer el parámetro como un int
+
+        int count = db.executeUpdate(stm);
+        if (count == 0) {
+            throw new Exception("No se creo");
+        }
+    }
+
+    //public static void main(String[] args) {
+      //  Database db = new Database();
+       // NoticiaMarcadaDao dao = new NoticiaMarcadaDao(db);
+
+       // try {
+
+        //    dao.deleteNoticiaMarcada(1002,"4-0258-0085");
+        //    System.out.println("La noticia marcada fue eliminada correctamente.");
+       // } catch (Exception e) {
+       //     System.err.println("Error al eliminar la noticia marcada: " + e.getMessage());
+       //     e.printStackTrace();
+       // }
+  // }
+
+
+
+
+
     public List<NoticiaMarcada> getAllNoticiasMarcadas(String usuarioCedula) throws SQLException {
         String sql = "SELECT * FROM NOTICIA_MARCADA WHERE Fk_NoticiaMarcada_UsuarioCedula = ?";
         List<NoticiaMarcada> noticiasMarcadas = new ArrayList<>();

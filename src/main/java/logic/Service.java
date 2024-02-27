@@ -48,6 +48,12 @@ public class Service {
         noticiaMarcadaDao.create(noticiaMarcada);
     }
 
+    public void noticiaMarcadaEtiquetasDelete(String id)  throws Exception {
+
+        noticiaMarcadaDao.deleteEtiquetasNoticia(id);
+    }
+
+
     public void noticiaMarcadaAdd2(NoticiaMarcada noticiaMarcada) throws Exception {
         noticiaMarcada.setUsuarioCedula("4-0258-0085");
         noticiaMarcada.setId(1);

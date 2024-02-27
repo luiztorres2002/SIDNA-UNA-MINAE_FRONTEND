@@ -35,6 +35,37 @@ public class NoticiasMarcadas {
         }
     }
 
+    @POST
+    @Path("/ExternaDelete/{id}/{cedula}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void eliminarExterna(@PathParam("id") String id, @PathParam("cedula") String cedula) {
+        try {
+            Database db = new Database();
+            NoticiaMarcadaDao noticiaMarcadaDao = new NoticiaMarcadaDao(db);
+            noticiaMarcadaDao.deleteNoticiaMarcada(id,cedula);
+        } catch (SQLException e) {
+            throw new InternalServerErrorException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @POST
+    @Path("/EtiquetasExternaDelete/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void eliminarExternaEtiquetas(@PathParam("id") String id) {
+        try {
+            Database db = new Database();
+            NoticiaMarcadaDao noticiaMarcadaDao = new NoticiaMarcadaDao(db);
+            noticiaMarcadaDao.deleteEtiquetasNoticia(id);
+        } catch (SQLException e) {
+            throw new InternalServerErrorException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @GET
     @Path("/{usuarioCedula}")
     @Produces(MediaType.APPLICATION_JSON)

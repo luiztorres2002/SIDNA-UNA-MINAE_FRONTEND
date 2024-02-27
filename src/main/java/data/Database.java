@@ -68,4 +68,16 @@ public class Database {
         }
     }
 
+    public static void main(String[] args) {
+        // Crear una instancia de la clase Database
+        Database db = new Database();
+
+        // Probar la conexión
+        if (db.getConnection() != null) {
+            System.out.println("Conexión exitosa!");
+        } else {
+            System.err.println("No se pudo establecer la conexión.");
+        }
+    }
+
 }
