@@ -46,7 +46,7 @@ class Biblioteca {
 
     }
 
-    async  procesarRespuesta(response) {
+    async procesarRespuesta(response) {
         if (response.ok) {
             const html = await response.text();
             const parser = new DOMParser();
@@ -100,7 +100,8 @@ class Biblioteca {
         rootContent.innerHTML = html;
         return rootContent;
     }
-  async solicitarDatos(url) {
+
+    async solicitarDatos(url) {
         const proxyUrl1 = `${backend}/proxy?url=`;
         const proxyUrl2 = 'https://corsproxy.io/?';
 
@@ -601,8 +602,7 @@ class Biblioteca {
             const radioButtons = elementoNoticiaCoincidente.querySelectorAll(`input[name="prioridad-${index}"]`);
             radioButtons.forEach(radioButton => {
                 radioButton.addEventListener('change', () => {
-                    console.log("ID de la noticia:", id);
-                    console.log("Nueva prioridad:", radioButton.value);
+                    this.actualizarPrioridad(id, radioButton.value);
                 });
             });
 
@@ -630,15 +630,33 @@ class Biblioteca {
         }
     }
 
+    actualizarPrioridad = (noticiaID, nuevaPrioridad) => {
+        const url = `${backend}/NoticiasMarcadas/4-0258-0085/${noticiaID}?input=${nuevaPrioridad}`;
+        fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then((response) => {
+            if (!response.ok) {
+                console.error(`Error al actualizar la prioridad de la noticia: ${response.status}`);
+                throw new Error('Error al actualizar prioridad');
+            }
+        }).catch((error) => {
+            console.log('Error: ', error);
+        });
+        event.preventDefault();
+    }
+
     showModal = async () => {
         this.resetForm();
         const titulo = document.getElementById('titulo');
         const descrip = document.getElementById('descripcion');
-        const fuent =  document.getElementById('fuente');
-        const dia =document.getElementById('dia');
-        const mes =document.getElementById('mes');
-        const anio =document.getElementById('anio');
-        const prioridad =document.getElementById('prioridad');
+        const fuent = document.getElementById('fuente');
+        const dia = document.getElementById('dia');
+        const mes = document.getElementById('mes');
+        const anio = document.getElementById('anio');
+        const prioridad = document.getElementById('prioridad');
         titulo.setAttribute('disabled', 'disabled');
         descrip.setAttribute('disabled', 'disabled');
         fuent.setAttribute('disabled', 'disabled');
@@ -662,7 +680,7 @@ class Biblioteca {
         this.modalerror.show();
     }
 
-    showModalBorrar  = (idd) => {
+    showModalBorrar = (idd) => {
         event.preventDefault();
         this.deleteEntity = " ";
         this.deleteEntity = idd;
@@ -928,8 +946,7 @@ class Biblioteca {
     }
 
 
-
-    deleteNoticia = async() => {
+    deleteNoticia = async () => {
         event.preventDefault();
         const entityId = this.deleteEntity;
         const request = new Request(`${backend}/NoticiasMarcadas/EtiquetasExternaDelete/${entityId}`, { // Cambiar a enviar el parámetro como parte de la ruta
@@ -952,18 +969,17 @@ class Biblioteca {
                     }
                 });
 
-                try{
+                try {
 
                     const response2 = await fetch(request2);
-                        if (response2.ok) {
-                            this.hideModalBorrar();
-                            this.showModalSuccessBorrar();
-                        }
-                        else{
-                            this.hideModalBorrar();
-                            this.showModalErrorBorrar();
-                        }
-                }catch (error){
+                    if (response2.ok) {
+                        this.hideModalBorrar();
+                        this.showModalSuccessBorrar();
+                    } else {
+                        this.hideModalBorrar();
+                        this.showModalErrorBorrar();
+                    }
+                } catch (error) {
                     console.error("Error al eliminar la entidad:", error);
                 }
             } else {

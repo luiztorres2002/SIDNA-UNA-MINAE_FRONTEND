@@ -22,23 +22,23 @@ public class NoticiaMarcadaDao {
         etiquetaDao = new EtiquetaDao(db);
     }
 
-    public void create(NoticiaMarcada noticiaMarcada) throws Exception{
+    public void create(NoticiaMarcada noticiaMarcada) throws Exception {
         String sql = "insert into NOTICIA_MARCADA(Titulo,Descripcion,Fecha,Prioridad,Fuente,Enlace,Imagen,Fechaguardado,FK_NoticiaMarcada_UsuarioCedula) values (?,?,?,?,?,?,?,SYSDATETIME(),?)";
         PreparedStatement stm = db.prepareStatement(sql);
-        stm.setString(1,noticiaMarcada.getTitulo());
-        stm.setString(2,noticiaMarcada.getDescripcion());
+        stm.setString(1, noticiaMarcada.getTitulo());
+        stm.setString(2, noticiaMarcada.getDescripcion());
         java.util.Date fechaUtil = noticiaMarcada.getFechaGuardado();
         java.sql.Date fechaSql = new java.sql.Date(fechaUtil.getTime());
         stm.setString(3, noticiaMarcada.getFecha());
-        stm.setString(4,noticiaMarcada.getPrioridad());
-        stm.setString(5,noticiaMarcada.getFuente());
-        stm.setString(6,noticiaMarcada.getEnlace());
-        stm.setString(7,noticiaMarcada.getImagen());
-        stm.setString(8,noticiaMarcada.getUsuarioCedula());
+        stm.setString(4, noticiaMarcada.getPrioridad());
+        stm.setString(5, noticiaMarcada.getFuente());
+        stm.setString(6, noticiaMarcada.getEnlace());
+        stm.setString(7, noticiaMarcada.getImagen());
+        stm.setString(8, noticiaMarcada.getUsuarioCedula());
         int count = db.executeUpdate(stm);
         if (count == 0) {
             throw new Exception("No se creo");
-        }else{
+        } else {
             List<Etiqueta> etiquetas = noticiaMarcada.getEtiquetas();
 
             for (Etiqueta etiqueta : etiquetas) {
@@ -48,24 +48,24 @@ public class NoticiaMarcadaDao {
         }
     }
 
-    public void createexterna(NoticiaMarcada noticiaMarcada) throws Exception{
+    public void createexterna(NoticiaMarcada noticiaMarcada) throws Exception {
         String sql = "insert into NOTICIA_MARCADA(Titulo,Descripcion,Fecha,Prioridad,Fuente,Enlace,Imagen,Fechaguardado,FK_NoticiaMarcada_UsuarioCedula) values (?,?,?,?,?,?,?,SYSDATETIME(),?)";
         PreparedStatement stm = db.prepareStatement(sql);
-        stm.setString(1,noticiaMarcada.getTitulo());
-        stm.setString(2,noticiaMarcada.getDescripcion());
+        stm.setString(1, noticiaMarcada.getTitulo());
+        stm.setString(2, noticiaMarcada.getDescripcion());
         java.util.Date fechaUtil = noticiaMarcada.getFechaGuardado();
         java.sql.Date fechaSql = new java.sql.Date(fechaUtil.getTime());
         stm.setString(3, noticiaMarcada.getFecha());
-        stm.setString(4,noticiaMarcada.getPrioridad());
-        stm.setString(5,noticiaMarcada.getFuente());
-        stm.setString(6,noticiaMarcada.getEnlace());
-        stm.setString(7,noticiaMarcada.getImagen());
-        stm.setString(8,noticiaMarcada.getUsuarioCedula());
+        stm.setString(4, noticiaMarcada.getPrioridad());
+        stm.setString(5, noticiaMarcada.getFuente());
+        stm.setString(6, noticiaMarcada.getEnlace());
+        stm.setString(7, noticiaMarcada.getImagen());
+        stm.setString(8, noticiaMarcada.getUsuarioCedula());
         int count = db.executeUpdate(stm);
         if (count == 0) {
             throw new Exception("No se creo");
-        }else{
-            this.registrarNoticiaEtiqueta(noticiaMarcada.getTitulo(),"Noticia Externa",noticiaMarcada.getUsuarioCedula());
+        } else {
+            this.registrarNoticiaEtiqueta(noticiaMarcada.getTitulo(), "Noticia Externa", noticiaMarcada.getUsuarioCedula());
         }
     }
 
@@ -79,8 +79,8 @@ public class NoticiaMarcadaDao {
                 "AND PK_NoticiaMarcada_Id = ?;\n";
 
         PreparedStatement stm = db.prepareStatement(sql);
-        stm.setString(1,Cedula);
-        stm.setInt(2,id);
+        stm.setString(1, Cedula);
+        stm.setInt(2, id);
 
         int count = db.executeUpdate(stm);
         if (count == 0) {
@@ -104,21 +104,18 @@ public class NoticiaMarcadaDao {
     }
 
     //public static void main(String[] args) {
-      //  Database db = new Database();
-       // NoticiaMarcadaDao dao = new NoticiaMarcadaDao(db);
+    //  Database db = new Database();
+    // NoticiaMarcadaDao dao = new NoticiaMarcadaDao(db);
 
-       // try {
+    // try {
 
-        //    dao.deleteNoticiaMarcada(1002,"4-0258-0085");
-        //    System.out.println("La noticia marcada fue eliminada correctamente.");
-       // } catch (Exception e) {
-       //     System.err.println("Error al eliminar la noticia marcada: " + e.getMessage());
-       //     e.printStackTrace();
-       // }
-  // }
-
-
-
+    //    dao.deleteNoticiaMarcada(1002,"4-0258-0085");
+    //    System.out.println("La noticia marcada fue eliminada correctamente.");
+    // } catch (Exception e) {
+    //     System.err.println("Error al eliminar la noticia marcada: " + e.getMessage());
+    //     e.printStackTrace();
+    // }
+    // }
 
 
     public List<NoticiaMarcada> getAllNoticiasMarcadas(String usuarioCedula) throws SQLException {
@@ -152,7 +149,7 @@ public class NoticiaMarcadaDao {
         String imagen = resultSet.getString("Imagen");
         Date fechaGuardado = resultSet.getDate("Fechaguardado");
         String usuarioCedula = resultSet.getString("Fk_NoticiaMarcada_UsuarioCedula");
-        return new NoticiaMarcada(NoticiaMarcadaId, titulo, descripcion, fecha, prioridad, fuente,enlace,imagen,fechaGuardado,usuarioCedula);
+        return new NoticiaMarcada(NoticiaMarcadaId, titulo, descripcion, fecha, prioridad, fuente, enlace, imagen, fechaGuardado, usuarioCedula);
         //coment
     }
 
@@ -161,7 +158,7 @@ public class NoticiaMarcadaDao {
             throw new IllegalArgumentException("La descripción de la etiqueta no puede ser nula o vacía.");
         }
 
-        int noticiaId  = 0;
+        int noticiaId = 0;
         int etiquetaId = 0;
         String sql = "SELECT PK_NoticiaMarcada_Id FROM NOTICIA_MARCADA WHERE Titulo = ? AND FK_NoticiaMarcada_UsuarioCedula = ?";
         try (PreparedStatement statement = db.prepareStatement(sql)) {
@@ -195,11 +192,11 @@ public class NoticiaMarcadaDao {
 
         }
 
-        if(noticiaId != 0 && etiquetaId !=0){
+        if (noticiaId != 0 && etiquetaId != 0) {
             String sql3 = "INSERT INTO NOTICIAMARCADA_ETIQUETA(FK_NOTICIAMARCADAETIQUETA_NOTICIAMARCADAID,FKETIQUETA) values(?,?)";
             PreparedStatement stm3 = db.prepareStatement(sql3);
-            stm3.setInt(1,noticiaId);
-            stm3.setInt(2,etiquetaId);
+            stm3.setInt(1, noticiaId);
+            stm3.setInt(2, etiquetaId);
             int count = db.executeUpdate(stm3);
             if (count == 0) {
                 throw new Exception("No se creo");
@@ -207,4 +204,22 @@ public class NoticiaMarcadaDao {
         }
     }
 
+    public NoticiaMarcada noticiaPorIDyUsuario(String usuarioCedula, int noticiaId) throws Exception {
+        List<NoticiaMarcada> noticias = getAllNoticiasMarcadas(usuarioCedula);
+        NoticiaMarcada noticiaCoincidiente = new NoticiaMarcada();
+        for (int i = 0; i < noticias.size(); i++) {
+            if (noticias.get(i).getId() == noticiaId) {
+                noticiaCoincidiente = noticias.get(i);
+            }
+        }
+        return noticiaCoincidiente;
+    }
+
+    public void actualizarPrioridad(NoticiaMarcada noticiaMarcada) throws SQLException {
+        String sql = "update NOTICIA_MARCADA set Prioridad = ? where PK_NoticiaMarcada_Id=?";
+        PreparedStatement stm = db.prepareStatement(sql);
+        stm.setString(1, noticiaMarcada.getPrioridad());
+        stm.setInt(2, noticiaMarcada.getId());
+        db.executeUpdate(stm);
+    }
 }

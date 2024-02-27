@@ -4,6 +4,7 @@ import data.Database;
 import data.NoticiaMarcadaDao;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import logic.NoticiaMarcada;
 import logic.Service;
 
@@ -42,7 +43,7 @@ public class NoticiasMarcadas {
         try {
             Database db = new Database();
             NoticiaMarcadaDao noticiaMarcadaDao = new NoticiaMarcadaDao(db);
-            noticiaMarcadaDao.deleteNoticiaMarcada(id,cedula);
+            noticiaMarcadaDao.deleteNoticiaMarcada(id, cedula);
         } catch (SQLException e) {
             throw new InternalServerErrorException(e);
         } catch (Exception e) {
@@ -79,4 +80,20 @@ public class NoticiasMarcadas {
         }
     }
 
+    @PUT
+    @Path("/{usuarioCedula}/{noticiaId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response actualizarPrioridad(@PathParam("usuarioCedula") String usuarioCedula, @PathParam("noticiaId") int noticiaId, @QueryParam("input") String nuevaPrioridad) {
+        try {
+            Database database = new Database();
+            NoticiaMarcadaDao noticiaMarcadaDao = new NoticiaMarcadaDao(database);
+            NoticiaMarcada noticiaCoincidiente = noticiaMarcadaDao.noticiaPorIDyUsuario(usuarioCedula, noticiaId);
+
+            noticiaCoincidiente.setPrioridad(nuevaPrioridad);
+            noticiaMarcadaDao.actualizarPrioridad(noticiaCoincidiente);
+            return Response.ok().build();
+        } catch (Exception ex) {
+            throw new InternalServerErrorException(ex);
+        }
+    }
 }
