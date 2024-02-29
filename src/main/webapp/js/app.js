@@ -1,13 +1,10 @@
-const backend = "http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae";
+const backend = "http://localhost:8080/MINAE/minae";
 
 class App {
     dom;
     modal;
-
     modal2;
-
     state;
-
     Etiqueta;
     Biblioteca;
     Busqueda;
@@ -15,14 +12,46 @@ class App {
     constructor() {
         this.state = {};
         this.dom = this.render();
-        this.modal = new bootstrap.Modal(this.dom.querySelector('#app>#modal'));
-        this.modal2 = new bootstrap.Modal(this.dom.querySelector('#app>#modal2'));
-        this.dom.querySelector('#app>#modal #apply').addEventListener('click', e => this.login());
-        this.dom.querySelector('#app>#modal #registrar').addEventListener('click', e => this.registrar());
-        this.dom.querySelector('#app>#modal2 #formModal2 #change').addEventListener('click', e => this.ClienteUpdate());
         this.renderBodyFiller();
-        this.renderMenuItems();
-        this.busquedaShow();
+        this.dom.querySelector('#dropdwonUsuario').style.display = 'none';
+        const loginButton = this.dom.querySelector('#loginButton');
+        loginButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            const usuario = this.dom.querySelector('#loginTxt').value;
+            const spanUsuario = this.dom.querySelector('#usuarioTxt');
+            this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
+            spanUsuario.textContent = usuario;
+            localStorage.setItem('usuario', usuario);
+            this.renderMenuItems();
+            this.dom.querySelector('#menuItems').style.display = "flex";
+            login.style.display = 'none';
+            this.dom.querySelector('#loginTxt').value = "";
+            this.dom.querySelector('#passwordTxt').value = "";
+            this.busquedaShow();
+        });
+        const usuario = localStorage.getItem('usuario');
+        if (usuario) {
+            const spanUsuario = this.dom.querySelector('#usuarioTxt');
+            this.renderMenuItems();
+            this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
+            spanUsuario.textContent = usuario;
+            this.busquedaShow();
+        } else {
+            const login = this.dom.querySelector('#login');
+            login.style.display = 'flex';
+        }
+        //this.renderMenuItems();
+        //this.busquedaShow();
+        this.dom.querySelector('#cerrarSesion').addEventListener('click', () => {
+            const login = this.dom.querySelector('#login');
+            this.renderBodyFiller();
+            this.Busqueda.dom.style.display = "none";
+            this.dom.querySelector('#menuItems').style.display = "none";
+            this.dom.querySelector('#dropdwonUsuario').style.display = 'none';
+            localStorage.removeItem('usuario');
+            login.style.display = 'flex';
+            console.log("Se cerró la sesión");
+        });
     }
 
     render = () => {
@@ -45,6 +74,12 @@ class App {
             <a id="logonav" href="#" ><img src="images/Minae.png"  width="300" height="65" style="margin-right: 200px;"></a>
         <ul class="navbar" id='menuItems'>
         </ul>
+        <div id="dropdwonUsuario"  class="dropdown">
+            <button id="userIcon" class="dropbtn"><i class="fa-solid fa-user" style="color: #ffffff;"></i><span id="usuarioTxt" class="texto-agregar" style="margin-left: 10px;font-weight: bold;">Usuario</span></button>
+            <div class="dropdown-content">
+                <a href="#" id="cerrarSesion">Cerrar sesión</a>
+            </div>
+        </div>
          </header>
          `;
     }
@@ -94,87 +129,37 @@ class App {
             </div>
         </footer>
     `;
+
     }
 
     renderModal = () => {
         return `
-         <div id="modal" class="modal fade" tabindex="-1">
-           <div class="modal-dialog">
-               <div class="modal-content">
-                   <div class="modal-header" >
-                       <img class="img-circle" id="img_logo" src="" style="max-width: 50px; max-height: 50px" alt="logo">
-                       <span id = "titleee"style='margin-left:4em;font-weight: bold;'>Login</span> 
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                   </div>
-        
-                   <form id="form" >
-                       
-                       <div class="modal-body">
-                      
-                       <ul class = "nav nav-tabs" id ="tabs" role ="tablist">
-                           
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">Login</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">Registro</button>
-                            </li>
-                           
-                       </ul>
-                          
-                       </div>
-                       
-                       <div class="modal-body">
-           <div class="tab-content mt-2">
-                        <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
-                        
-                             <div class="modal-body">
-                       <div class="input-group mb-3">
-                           <span class="input-group-text">Identificación</span>
-                           <input type="text" class="form-control" id="identificacion" name="identificacion">
-                       </div>  
-                       <div class="input-group mb-3">
-                           <span class="input-group-text">Contraseña</span>
-                           <input type="password" class="form-control" id="clave" name="clave">
-                       </div>      
-                   </div>
-                  
-                       <button id="apply" type="button" class="btn btn-primary" >Login</button>
-
-                        </div>
-                        
-                    <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
-
-                    <span class="input-group-text" for="id">ID:</span>
-                    <input class="form-control" type="text" id="id" name="id" required>
-                    <br/>
-                    <span class="input-group-text" for="clave">Clave:</span>
-                    <input class="form-control" type="password" id="claveR" name="claveR" required>
-                    <br/>
-                    <span class="input-group-text" for="nombre">Nombre:</span>
-                    <input class="form-control" type="text" id="nombre" name="nombre" required>
-                    <br/>
-                    <span class="input-group-text" for="telefono">Teléfono:</span>
-                    <input class="form-control" type="text" id="telefono" name="telefono" required>
-                    <br/>
-                    <span class="input-group-text" for="correo">Correo:</span>
-                    <input class="form-control" type="email" id="correo" name="correo" required>
-                    <br/>
-                    <span class="input-group-text" for="tarjeta">Número de Tarjeta:</span>
-                    <input class="form-control" type="text" id="tarjeta" name="tarjeta" required>
-                    <br/>
-
-                    <button id="registrar"  type="button" class="btn btn-primary">Registrarse</button>
-                    </div>
-                    
-                    </div>
-                          
-                   </div>
-                       
-                        </form>
-               </div>
-      </div>
-                  </div>
+    <div id="login" class="containerLogin" style="display: none">
+    <div class="screen">
+        <div class="screen__content">
+            <form class="login">
+                <div class="login__field">
+                    <i class="login__icon fas fa-user"></i>
+                    <input id="loginTxt" type="text" class="login__input" placeholder="ID / Email">
+                </div>
+                <div class="login__field">
+                    <i class="login__icon fas fa-lock"></i>
+                    <input id="passwordTxt" type="password" class="login__input" placeholder="Contraseña">
+                </div>
+                <button id="loginButton" class="button login__submit">
+                    <span class="button__text">Iniciar Sesión</span>
+                    <i class="button__icon fas fa-chevron-right"></i> 
+                </button>                
+            </form>
+        </div>
+        <div class="screen__background">
+            <span class="screen__background__shape screen__background__shape4"></span>
+            <span class="screen__background__shape screen__background__shape3"></span>        
+            <span class="screen__background__shape screen__background__shape2"></span>
+            <span class="screen__background__shape screen__background__shape1"></span>
+        </div>      
+    </div>
+</div>
         
     `;
     }
@@ -271,7 +256,6 @@ class App {
         this.dom.querySelector('#app>#menu #menuItems').replaceChildren();
         this.dom.querySelector('#app>#menu #menuItems').innerHTML = html;
 
-        // Add event listeners here
         this.dom.querySelector("#logonav")?.addEventListener('click', e => this.busquedaShow());
         this.dom.querySelector("#app>#menu #menuItems #Biblioteca")?.addEventListener('click', e => this.bibliotecaShow());
         this.dom.querySelector("#app>#menu #menuItems #Etiquetas")?.addEventListener('click', e => this.etiquetaShow());

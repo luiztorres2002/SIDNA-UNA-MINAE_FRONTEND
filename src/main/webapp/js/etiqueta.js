@@ -68,28 +68,35 @@ class Etiqueta {
 
     renderModalConfirmar = () => {
         return `
-    <div id="confirmationModal" class="modal fade" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered" id="confirmacion" role="document" style="width: auto;max-width: 80%; margin-left: 37%;">
-        <div class="modal-content" style="width: auto;">
-          <div class="modal-header">
-          </div>
-          <div class="modal-body">
-            <div class="d-flex justify-content- align-items-center mb-3">
-              <h3 class="text-left mb-0">Confirmar</h3>
-              <button class="btn btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fa fa-edit fa-lg"></i></button>
+        <div id="confirmationModal" class="modal fade" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered" id="confirmacion" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    </div>
+                    <div class="modal-body p-4 py-5 p-md-5">
+                        <div class="text-center">
+                            <img src="images/Minae.png" class="w-50 mx-auto d-block mb-4" alt="...">
+
+                        </div>
+                        <h4 id="etiqueta-description" class="text-center mb-2 mt-2">... </h4>
+                     
+                        <ul class="ftco-footer-social p-0 text-center">
+                        </ul>
+                         
+                        <form action="#" id="formmarcar" class="signup-form">
+                            <div class="btn-group mt-4 d-flex justify-content-center">
+                                <button type="submit" id="confirm-si" class="btn btn-outline-primary rounded submit ml-4 mr-3">Aceptar</button>
+                                <button type="button" id="confirm-no" class="btn btn-outline-secondary rounded submit">Cancelar</button>
+                            </div>
+                            <div class="form-group d-md-flex">
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <ul class="ftco-footer-social p-0 text-center">
-            </ul>
-            <p id="etiqueta-description" style="font-size: 1.0em; font-weight: bold;">Your dynamic content here...</p>
-          </div>
-          <div class="modal-footer justify-content-lg-start" style="border-top: none;">
-            <button id="confirm-si" type="submit" style="background-color: #cdab68" class="rounded text-light">Aceptar</button>
-            <button id="confirm-no" type="submit" style="background-color: white" class="rounded" data-dismiss="modal">Cancelar</button>
-          </div>
         </div>
-      </div>
-    </div>
-  `;
+    `;
+
     }
     hidemodal = () => {
 
@@ -300,7 +307,7 @@ class Etiqueta {
     editarEtiqueta = (etiquetaId, descripcion) => {
 
         this.showEditar(etiquetaId, descripcion);
-        console.log(etiquetaId);
+
     }
 
 
@@ -323,19 +330,22 @@ class Etiqueta {
         const modalPromise = new Promise((resolve, reject) => {
             $('#confirmationModal').modal('show');
 
-            document.getElementById('confirm-si').addEventListener('click', () => {
+            document.getElementById('confirm-si').addEventListener('click', (event) => {
+                event.preventDefault();
                 $('#confirmationModal').modal('hide');
                 resolve(true);
             });
 
-            document.getElementById('confirm-no').addEventListener('click', () => {
+            document.getElementById('confirm-no').addEventListener('click', (event) => {
+                event.preventDefault();
                 $('#confirmationModal').modal('hide');
                 resolve(false);
             });
 
+
             $('#confirmationModal').on('click', (e) => {
                 if (e.target === document.getElementById('confirmationModal')) {
-                    // Modal closed by clicking outside
+                    e.preventDefault();
                     clickFueraModal = true;
                     $('#confirmationModal').modal('hide');
                     resolve(false);
@@ -350,12 +360,12 @@ class Etiqueta {
                     fila.classList.remove("highlight");
                     toggleSwitch.classList.remove(...colors);
                     toggleSwitch.classList.add(colors[colorIndex]);
-                    console.log(`Se activó la etiqueta: ${etiquetaNom}`);
+
                     toggleSwitch.classList.remove("unchecked");
                 } else {
                     fila.classList.add("disabled-row");
                     fila.classList.remove("highlight");
-                    console.log(`Se desactivó la etiqueta: ${etiquetaNom}`);
+
                     toggleSwitch.classList.add("unchecked");
                 }
 
@@ -449,7 +459,7 @@ class Etiqueta {
         } catch (error) {
             console.log('Error al cargar la lista de etiquetas:', error);
         }
-        console.log(this.state.etiquetas);
+
     }
 
     cambiarEstadoEtiqueta = (etiquetaId, nuevoEstado) => {
@@ -645,7 +655,7 @@ class Etiqueta {
                     <p style="font-size: 25px;" class="text-center" id="mensaje">Verifica si la noticia está duplicada o los datos son incorrectos.</p>
                 </div>
                 <div class="modal-footer">
-            <button class="btn btn-success btn-block" id="dismissButton" data-dismiss="modal">Regresar al form</button>
+            <button class="btn btn-success btn-block" id="dismissButton" data-dismiss="modal">Regresar</button>
                 </div>
             </div>
             </div>
@@ -740,7 +750,7 @@ class Etiqueta {
                     <p style="font-size: 25px;" class="text-center">Verifica si la etiqueta está duplicada o los datos son incorrectos.</p>
                 </div>
                 <div class="modal-footer">
-            <button class="btn btn-success btn-block" id="dismissButtonEditar" data-dismiss="modal">Regresar a lista de Etiquetas</button>
+            <button class="btn btn-success btn-block" id="dismissButtonEditar" data-dismiss="modal">Regresar</button>
                 </div>
             </div>
             </div>
@@ -808,7 +818,7 @@ class Etiqueta {
                     <p style="font-size: 25px;" class="text-center">Verifica si la etiqueta está duplicada o los datos son incorrectos.</p>
                 </div>
                 <div class="modal-footer">
-            <button class="btn btn-success btn-block" id="errorb" data-dismiss="modal">Regresar al form</button>
+            <button class="btn btn-success btn-block" id="errorb" data-dismiss="modal">Regresar</button>
                 </div>
             </div>
             </div>

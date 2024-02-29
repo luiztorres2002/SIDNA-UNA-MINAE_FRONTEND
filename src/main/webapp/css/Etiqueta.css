@@ -155,7 +155,7 @@ tr.disabled-row {
     color: #888;
 }
 
-@media (max-width: 1600px) {
+@media (max-width: 1670px) {
     header ul li a {
         text-decoration: none;
         padding: 12px 80px;

@@ -22,14 +22,17 @@ class Biblioteca {
         const self = this;
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
         this.modalerror = new bootstrap.Modal(this.dom.querySelector('#modalError'));
+        this.modalErrorMensaje = new bootstrap.Modal(this.dom.querySelector('#modalErrorMensaje'));
         this.modalexito = new bootstrap.Modal(this.dom.querySelector('#sucessmodal'));
         this.modalCampo = new bootstrap.Modal(this.dom.querySelector('#modalcampo'));
+        this.modalExportar = new bootstrap.Modal(this.dom.querySelector('#modalExportar'));
         this.modalBorrar = new bootstrap.Modal(this.dom.querySelector('#modalborrar'));
         this.modalErrorBorrar = new bootstrap.Modal(this.dom.querySelector('#modalErrorBorrar'))
         this.modalSuccessBorrar = new bootstrap.Modal(this.dom.querySelector('#sucessBorrar'))
         this.dom.querySelector("#biblioteca #agregar").addEventListener('click', this.createNew);
         this.dom.querySelector("#biblioteca #modal #apply").addEventListener('click', this.add);
         this.dom.querySelector("#biblioteca #modal #cancelModal").addEventListener('click', this.hidemodal);
+        this.dom.querySelector("#biblioteca #modalErrorMensaje #dismissButton").addEventListener('click', this.hideModalMensaje);
         this.dom.querySelector("#biblioteca #modalError #dismissButton").addEventListener('click', this.hideModalError);
         this.dom.querySelector("#biblioteca #sucessmodal #sucessbuton").addEventListener('click', this.hideModalExito);
         this.dom.querySelector("#biblioteca #modalcampo #dismisscampo").addEventListener('click', this.hideModalCampo);
@@ -37,13 +40,102 @@ class Biblioteca {
         this.dom.querySelector("#biblioteca #modalborrar #confirmarb").addEventListener('click', this.deleteNoticia);
         this.dom.querySelector("#biblioteca #sucessBorrar #sucessbuton").addEventListener('click', this.hideModalBorrarSuccess)
         this.dom.querySelector("#biblioteca #modalborrar #cancelModal").addEventListener('click', this.hideModalBorrar)
+        this.dom.querySelector("#biblioteca #modalExportar #cancelModal").addEventListener('click', this.hideModalExportar)
         this.cargarBiblioteca();
         const enlaceInput = this.dom.querySelector("#biblioteca #modal #enlace");
         enlaceInput.addEventListener('input', () => {
             const url = enlaceInput.value;
             this.solicitarDatos(url);
         });
+        const generarBtn = this.dom.querySelector("#generarBtn1");
+        const cancelarBtn = this.dom.querySelector("#generarBtn3");
+        const marcarBtn = this.dom.querySelector("#marcarTodo");
+        const desmarcarBtn = this.dom.querySelector("#desmarcarTodo");
+        marcarBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            marcarBtn.style.display = "none";
+            desmarcarBtn.style.display = "block";
+            const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
+            const checkboxesMarcados = [];
+            checkboxes.forEach((checkbox, index) => {
+                checkbox.checked = true;
+                checkboxesMarcados.push(index);
+            });
+        });
+        desmarcarBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            marcarBtn.style.display = "block";
+            desmarcarBtn.style.display = "none";
+            const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
+            checkboxes.forEach((checkbox, index) => {
+                checkbox.checked = false;
+            });
+        });
+        generarBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            generarBtn.style.display = "none";
+            this.dom.querySelector("#marcarTodo").style.display = "block";
+            const checkboxes = document.querySelectorAll('.check-container input[type="checkbox"]');
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = false;
+            });
+            const checkContainers = document.querySelectorAll('.check-container');
+            checkContainers.forEach((checkContainer) => {
+                checkContainer.style.display = 'block';
+            });
+            generarBtn2.style.display = 'inline';
+            generarBtn3.style.display = 'inline';
+        });
+        cancelarBtn.addEventListener('click', (event) => {
+            this.cancelarExportar();
+        });
+        this.dom.querySelector("#generarBtn2").addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
+            const checkboxesMarcados = [];
+            checkboxes.forEach((checkbox, index) => {
+                if (checkbox.checked) {
+                    checkboxesMarcados.push(index);
+                }
+            });
+        });
+        this.dom.querySelector("#generarBtn2").addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
+            const checkboxesMarcados = [];
+            checkboxes.forEach((checkbox, index) => {
+                if (checkbox.checked) {
+                    checkboxesMarcados.push(index);
+                }
+            });
+            if (checkboxesMarcados.length === 0) {
+                this.dom.querySelector("#mensaje").textContent = "Por favor, selecciona al menos una noticia.";
+                this.modalErrorMensaje.show();
+            } else {
+                this.modalExportar.show();
+            }
+        });
+        this.dom.querySelector("#exportarPDF").addEventListener('click', () => {
 
+            const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
+            const checkboxesMarcados = [];
+            checkboxes.forEach((checkbox, index) => {
+                if (checkbox.checked) {
+                    checkboxesMarcados.push(index);
+                }
+            });
+            this.exportarAPDF(checkboxesMarcados);
+        });
+        this.dom.querySelector("#exportarExcel").addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
+            const checkboxesMarcados = [];
+            checkboxes.forEach((checkbox, index) => {
+                if (checkbox.checked) {
+                    checkboxesMarcados.push(index);
+                }
+            });
+            this.exportarAXLSX(checkboxesMarcados);
+            this.cancelarExportar();
+            this.hideModalExportar();
+        });
     }
 
     async procesarRespuesta(response) {
@@ -51,16 +143,12 @@ class Biblioteca {
             const html = await response.text();
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
-
             const ogTitle = doc.querySelector('meta[property="og:title"]');
             const title = ogTitle ? ogTitle.getAttribute('content') : '';
-
             const ogDescription = doc.querySelector('meta[property="og:description"]');
             const description = ogDescription ? ogDescription.getAttribute('content') : '';
-
             const ogSiteName = doc.querySelector('meta[property="og:site_name"]');
             const fuente = ogSiteName ? ogSiteName.getAttribute('content') : '';
-
             const titulo = document.getElementById('titulo');
             const descrip = document.getElementById('descripcion');
             const fuent = document.getElementById('fuente');
@@ -68,7 +156,6 @@ class Biblioteca {
             const mes = document.getElementById('mes');
             const anio = document.getElementById('anio');
             const prioridad = document.getElementById('prioridad');
-
             document.getElementById('titulo').value = title;
             document.getElementById('descripcion').value = description;
             document.getElementById('fuente').value = fuente;
@@ -89,6 +176,8 @@ class Biblioteca {
             ${this.renderBody()}
             ${this.renderModal()}
             ${this.renderModalError()}
+            ${this.renderModalExportar()}
+            ${this.renderModalErrorGenerico()}
             ${this.renderModalSuccess()}
             ${this.renderModalCampo()}
             ${this.renderModalBorrar()}
@@ -104,11 +193,9 @@ class Biblioteca {
     async solicitarDatos(url) {
         const proxyUrl1 = `${backend}/proxy?url=`;
         const proxyUrl2 = 'https://corsproxy.io/?';
-
         try {
             const response1 = await fetch(proxyUrl2 + url);
             if (!response1.ok) {
-
                 const response2 = await fetch(proxyUrl1 + url);
                 this.procesarRespuesta(response2);
             } else {
@@ -120,7 +207,7 @@ class Biblioteca {
     }
 
     renderBody = () => {
-        return `
+        const body = `
          <div class="linea-azul"></div>
         <div class="linea-amarilla"></div>
         <div class="linea-verde"></div>
@@ -130,16 +217,19 @@ class Biblioteca {
                     <div class="d-flex justify-content-center">
                             <form id="form" style="width: 85%;"">
                            <div class="input-group  mt-10" style="display: flex; align-items: center; justify-content: center;">
+                           <button class="btn btn-custom-outline-success2" id="generarBtn1" style="margin-right: 15px;margin-left: -30px;width: 104px;border-radius: 5px;"><span class="font-weight-bold"><i class="fa-regular fa-file-lines"></i></span> <span class="texto-agregar">Reportar</span></button>
+                           <button class="btn btn-custom-outline-success2" id="marcarTodo" style="margin-right: 15px;margin-left: -30px;width: 140px;border-radius: 5px;display: none;"><span class="font-weight-bold"><i class="fa-solid fa-check-double"></i></span> <span class="texto-agregar">Marcar todo</span></button>
+                           <button class="btn btn-custom-outline-success2" id="desmarcarTodo" style="margin-right: 15px;margin-left: -30px;width: 160px;border-radius: 5px;display: none;"><span class="font-weight-bold"><i class="fa-solid fa-check-double"></i></span> <span class="texto-agregar">Desmarcar todo</span></button>
                     <div class="btn-group me-2">
-                <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 190px; line-height: 5px;"><span class="font-weight-bold">+</span> <span class="texto-agregar">Agregar Noticia</span></button>
+                <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 160px; line-height: 5px;"><span class="font-weight-bold">+</span> <span class="texto-agregar">Agregar Noticia</span></button>
                     </div>
-                   <select id="tiempoSeleccionado2" style="border: none; width: 110px; margin-left: 115px";>
+                   <select id="tiempoSeleccionado2" style="border: none; width: 110px; margin-left: 15px";>
                     <option value="" selected disabled>Prioridad</option>
                     <option value="Alta">Alta</option>
                     <option value="Media">Media</option>
                     <option value="Baja">Baja</option>
                 </select>
-                <select id="tiempoSeleccionado2" style="border: none; width: 90px; margin-left: 20px";>
+                <select id="tiempoSeleccionado3" style="border: none; width: 90px; margin-left: 20px";>
                     <option value="" selected disabled>Fecha</option>
                     <option value="ultimaHora">Última Hora</option>
                     <option value="ultimoDia">Último Día</option>
@@ -154,13 +244,13 @@ class Biblioteca {
                          </button>
                     </div>
                 </div>
-                <select id="tiempoSeleccionadoMobile" style="border: none; width: 110px; margin-left: 115px; display: none">
+                <select id="tiempoSeleccionadoMobile1" style="border: none; width: 110px; margin-left: 115px; display: none">
                     <option value="" selected disabled>Prioridad</option>
                     <option value="Alta">Alta</option>
                     <option value="Media">Media</option>
                     <option value="Baja">Baja</option>
                 </select>
-                <select id="tiempoSeleccionadoMobile" style="border: none; width: 90px; margin-left: 20px; display: none">
+                <select id="tiempoSeleccionadoMobile2" style="border: none; width: 90px; margin-left: 20px; display: none">
                     <option value="" selected disabled>Fecha</option>
                     <option value="ultimaHora">Última Hora</option>
                     <option value="ultimoDia">Último Día</option>
@@ -168,18 +258,143 @@ class Biblioteca {
                     <option value="ultimoMes">Último Mes</option>
                     <option value="ultimoAno">Último Año</option>
                 </select>
-                
                 <div id="pillsMobile-container" class="pill-container"></div>
-                <div class="search-results-container">
+                <div class="spinner-border" role="status" style="color: #cdab68;margin-left: 50%;margin-top: 30%;display: none;">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="search-results-container1">
                     <div id="noticiasBiblioteca"></div> 
                     <div class="d-flex justify-content-center">
-                   
                     </div>
                 </div>
                 </div>
+                <button class="btn btn-custom-outline-success3" id="generarBtn2" style="display: none; margin-left: 1500px">ACEPTAR</button>
+                <button class="btn btn-custom-outline-success4" id="generarBtn3" style=" display: none;">CANCELAR</button>
             </form>
         
         `;
+        setTimeout(() => {
+            const tiempoSeleccionadoNormal = document.getElementById('tiempoSeleccionado2');
+            const tiempoSeleccionadoMobile = document.getElementById('tiempoSeleccionadoMobile1');
+            const tiempoSeleccionadoNormal1 = document.getElementById('tiempoSeleccionado3');
+            const tiempoSeleccionadoMobile1 = document.getElementById('tiempoSeleccionadoMobile2');
+            tiempoSeleccionadoNormal.addEventListener('change', () => {
+                const valorSeleccionado = tiempoSeleccionadoNormal.value;
+                tiempoSeleccionadoMobile.value = valorSeleccionado;
+                for (let option of tiempoSeleccionadoMobile.options) {
+                    if (option.value === valorSeleccionado) {
+                        option.selected = true;
+                    } else {
+                        option.selected = false;
+                    }
+                }
+            });
+            tiempoSeleccionadoMobile.addEventListener('change', () => {
+                const valorSeleccionado = tiempoSeleccionadoMobile.value;
+                tiempoSeleccionadoNormal.value = valorSeleccionado;
+                for (let option of tiempoSeleccionadoNormal.options) {
+                    if (option.value === valorSeleccionado) {
+                        option.selected = true;
+                    } else {
+                        option.selected = false;
+                    }
+                }
+            });
+            tiempoSeleccionadoNormal1.addEventListener('change', () => {
+                const valorSeleccionado = tiempoSeleccionadoNormal1.value;
+                tiempoSeleccionadoMobile1.value = valorSeleccionado;
+                for (let option of tiempoSeleccionadoMobile1.options) {
+                    if (option.value === valorSeleccionado) {
+                        option.selected = true;
+                    } else {
+                        option.selected = false;
+                    }
+                }
+            });
+            tiempoSeleccionadoMobile1.addEventListener('change', () => {
+                const valorSeleccionado = tiempoSeleccionadoMobile1.value;
+                tiempoSeleccionadoNormal1.value = valorSeleccionado;
+                for (let option of tiempoSeleccionadoNormal1.options) {
+                    if (option.value === valorSeleccionado) {
+                        option.selected = true;
+                    } else {
+                        option.selected = false;
+                    }
+                }
+            });
+        }, 0);
+        return body;
+    }
+    renderModalExportar = () => {
+        return `
+    <div id="modalExportar" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <div class="spinner-border" id="spinner-exportar" role="status" style="color: #cdab68;margin-left: 48%;margin-top: 3%;display: none;" bis_skin_checked="1"><span class="visually-hidden">Loading...</span></div>
+                    <button type="button" id="cancelModal" class="close" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="text-center mb-3">Exportar a:</h5>
+                    <div class="text-center">
+                        <button id="exportarPDF" class="btn export-button mr-3" style="background-color: #e11c00;">
+                            <i class="fas fa-file-pdf fa-2x" style="color: #ffffff;width: 70px;"></i>
+                        </button>
+                        <button id="exportarExcel" class="btn export-button mr-3" style="background-color: #127c44;">
+                            <i class="fas fa-file-excel fa-2x" style="color: #ffffff"></i>
+                            <span class="button-label" style="color: #ffffff; font-weight: bold">Excel</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="prioridadCheckbox" style="margin-top: 5px;">
+                        <label class="form-check-label" for="prioridadCheckbox" style="vertical-align: middle;"> Ordenar por prioridad</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="fechaCheckbox" style="margin-top: 5px;margin-left: 10px;">
+                        <label class="form-check-label" for="fechaCheckbox" style="vertical-align: middle;"> Ordenar por fecha</label>
+                    </div>
+                    <div class="form-check form-check-inline" style="display: none">
+                        <input class="form-check-input" type="radio" name="ordenRadio" id="ascendenteRadio" value="ascendente">
+                        <label class="form-check-label" for="ascendenteRadio">Ascendente</label>
+                    </div>
+                    <div class="form-check form-check-inline" style="display: none">
+                        <input class="form-check-input" type="radio" name="ordenRadio" id="descendenteRadio" value="descendente">
+                        <label class="form-check-label" for="descendenteRadio">Descendente</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+    }
+    cancelarExportar = () => {
+        const aceptarBtn = this.dom.querySelector("#generarBtn2");
+        const cancelarBtn = this.dom.querySelector("#generarBtn3");
+        const generarBtn = this.dom.querySelector("#generarBtn1");
+        const marcarBtn = this.dom.querySelector("#marcarTodo");
+        const desmarcarBtn = this.dom.querySelector("#desmarcarTodo");
+        generarBtn.style.display = "block";
+        this.dom.querySelector("#marcarTodo").style.display = "none";
+        const prioridadCheckbox = document.querySelector(`#prioridadCheckbox`);
+        const fechaCheckbox = document.querySelector(`#fechaCheckbox`);
+        const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = false;
+        });
+        const checkContainers = document.querySelectorAll('.check-container');
+        checkContainers.forEach((checkContainer) => {
+            checkContainer.style.display = 'none';
+        });
+        prioridadCheckbox.checked = false;
+        fechaCheckbox.checked = false;
+        marcarBtn.style.display = "none";
+        desmarcarBtn.style.display = "none";
+        aceptarBtn.style.display = 'none';
+        cancelarBtn.style.display = 'none';
     }
     renderModal = () => {
         return `
@@ -297,7 +512,6 @@ class Biblioteca {
 
         `;
     }
-
     renderModalError = () => {
         return `
     <div id="modalError" class="modal fade">
@@ -313,7 +527,7 @@ class Biblioteca {
                     <p style="font-size: 25px;" class="text-center">Verifica si la noticia está duplicada o los datos son incorrectos.</p>
                 </div>
                 <div class="modal-footer">
-            <button class="btn btn-success btn-block" id="dismissButton" data-dismiss="modal">Salir del form</button>
+            <button class="btn btn-success btn-block" id="dismissButton" data-dismiss="modal">Regresar</button>
                 </div>
             </div>
             </div>
@@ -336,7 +550,7 @@ class Biblioteca {
                     <p style="font-size: 25px;" class="text-center">La eliminación de la noticia no se ha realizado con éxito.</p>
                 </div>
                 <div class="modal-footer">
-            <button class="btn btn-success btn-block" id="dismissButton" data-dismiss="modal">Regresar al form</button>
+            <button class="btn btn-success btn-block" id="dismissButton" data-dismiss="modal">Regresar</button>
                 </div>
             </div>
             </div>
@@ -367,6 +581,29 @@ class Biblioteca {
       </div>
     </div>
     `;
+    }
+
+
+    renderModalErrorGenerico = () => {
+        return `
+        <div id="modalErrorMensaje" class="modal fade">
+            <div class="modal-dialog modal-error">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="icon-box">
+                            <i class="material-icons">warning</i>
+                        </div>
+                        <h4 class="modal-title w-100">¡Ooops!</h4>\t
+                    </div>
+                    <div class="modal-body">
+                        <p id="mensaje" style="font-size: 25px;" class="text-center"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success btn-block" id="dismissButton" data-dismiss="modal">Regresar</button>
+                    </div>
+                </div>
+            </div>
+        </div>`;
     }
 
     renderModalCampo = () => {
@@ -560,42 +797,54 @@ class Biblioteca {
             elementoNoticiaCoincidente.classList.add('noticiaBiblioteca');
 
             elementoNoticiaCoincidente.innerHTML = `
-        <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${enlace}">
-            <img src="${imagen}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${imagen}'; this.classList.add('card-img-top', 'card-img-custom');">
-            <div class="card-body">
-                <div class="text-section-Biblioteca">
-                    <h5 class="card-title fw-bold">${id} ${titulo}</h5>
-                     <p class="card-text descripcion">${descripcion}</p>
-                    <div class="pill-container"></div> 
-                </div>
-                <div class="cta-section">
-                    <p class="card-text" >${fechaFormateada}</p>
-                    <div class="semaforoModal2">
-                        <input type="radio" name="prioridad-${index}" class="AltaModal2" value="Alta" ${prioridad === 'Alta' ? 'checked' : ''}>
-                        <input type="radio" name="prioridad-${index}" class="MediaModal2" value="Media" ${prioridad === 'Media' ? 'checked' : ''}>
-                        <input type="radio" name="prioridad-${index}" class="BajaModal2" value="Baja" ${prioridad === 'Baja' ? 'checked' : ''}>
+            <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${enlace}">
+                <img src="${imagen}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${imagen}'; this.classList.add('card-img-top', 'card-img-custom');">
+                <div class="card-body">
+                    <div class="text-section-Biblioteca">
+                        <h5 class="card-title fw-bold">${titulo}</h5>
+                        <p class="card-text descripcion">${descripcion}</p>
+                        <div class="pill-container"></div> 
                     </div>
-                    <div class="c-btn-group">
-                        <button class="borrar-container">
-                             <i class="fas fa-trash-can" id="borrarBtn" style="font-size: 1.3em; margin-top: 9px; border: none; color: red;"></i>
-                        </button>
-                        <a href="${enlace}" id="enlaceBtn2" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${fuente}" style="margin-bottom: 6px;">
-                            <i class="fas fa-share" style="font-size: 1.5em; color: ${colorBorde};"></i>
-                        </a>
+                    <div class="check-container">
+                    <div class="checkbox-wrapper-18">
+                        <div class="round">
+                            <input type="checkbox" id="noticiaCheckbox-${index}" />
+                            <label for="noticiaCheckbox-${index}"></label>
+                        </div>
+                    </div>
+                </div>
+                    </div>  
+                    <div class="cta-section">
+                        <p class="card-text" >${fecha}</p>
+                        <div class="semaforoModal2">
+                            <input type="radio" name="prioridad-${index}" class="AltaModal2" value="Alta" ${prioridad === 'Alta' ? 'checked' : ''}>
+                            <input type="radio" name="prioridad-${index}" class="MediaModal2" value="Media" ${prioridad === 'Media' ? 'checked' : ''}>
+                            <input type="radio" name="prioridad-${index}" class="BajaModal2" value="Baja" ${prioridad === 'Baja' ? 'checked' : ''}>
+                        </div>
+                        <div class="c-btn-group">
+                            <button class="borrar-container" id="borrarBtn">
+                                <i class="fas fa-trash-can" style="font-size: 1.2em; color: #f10;"></i>
+                            </button>
+                            <a href="${enlace}" id="enlaceBtn2" class="btn" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="${fuente}" style="margin-bottom: 6px;">
+                                <i class="fas fa-share" style="font-size: 1.5em; color: ${colorBorde};"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    `;
+        `;
 
-            noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
-            const botoneseliminar = noticiasCoincidentes.querySelectorAll("button.borrar-container");
+            const borrar = elementoNoticiaCoincidente.querySelector('#borrarBtn');
+            borrar.addEventListener('click', () => {
+                event.preventDefault();
+                this.showModalBorrar(id);
+            });
 
-            botoneseliminar.forEach((button, colorIndex) => {
-                button.addEventListener('click', () => {
-                    const idd = this.state.noticias[colorIndex].id;
-                    this.showModalBorrar(idd);
-                });
+            elementoNoticiaCoincidente.addEventListener('dblclick', (event) => {
+                const checkbox = document.querySelector(`#noticiaCheckbox-${index}`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
             });
 
             //LOGICA PARA CAMBIAR PRIORIDAD DE UNA NOTICA
@@ -606,6 +855,10 @@ class Biblioteca {
                 });
             });
 
+
+            noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
+            const spinner = document.querySelector('.spinner-border');
+            spinner.style.display = 'none';
             const pillsContainer1 = elementoNoticiaCoincidente.querySelector(".pill-container");
             etiquetas.forEach((etiqueta) => {
                 const pill = document.createElement("div");
@@ -622,6 +875,8 @@ class Biblioteca {
     cargarBiblioteca = async () => {
         try {
             const response = await fetch(`${backend}/NoticiasMarcadas/4-0258-0085`);
+            const spinner = document.querySelector('.spinner-border');
+            spinner.style.display = 'block';
             const data = await response.json();
             this.state.noticias = data.reverse();
             this.renderizarNoticias();
@@ -697,12 +952,7 @@ class Biblioteca {
 
     hideModalBorrarSuccess = async () => {
         this.modalSuccessBorrar.hide();
-        this.cargarBiblioteca();
-    }
 
-    hideModalError = async () => {
-        this.modalerror.hide();
-        this.modal.show();
     }
 
     hideModalBorrar = async () => {
@@ -710,6 +960,22 @@ class Biblioteca {
 
     }
 
+    hideModalError = async () => {
+        this.modalerror.hide();
+        this.modal.show();
+    }
+
+    hideModalMensaje = async () => {
+        this.modalErrorMensaje.hide();
+    }
+
+    hideModalExportar = async () => {
+        this.modalExportar.hide();
+    }
+
+    hideModalErrorGenerico = async () => {
+        this.modalErrorMensaje.hide();
+    }
     hideModalExito = async () => {
         this.modalexito.hide();
         this.resetForm();
@@ -932,9 +1198,460 @@ class Biblioteca {
             }
         } else {
         }
+    }
+    exportarAPDF = async (indicesSeleccionados) => {
+        const spinner =this.dom.querySelector("#spinner-exportar");
+        spinner.style.display = 'block';
+        const prioridadCheckbox = document.querySelector(`#prioridadCheckbox`);
+        const fechaCheckbox = document.querySelector(`#fechaCheckbox`);
+        let noticiasOrdenadas;
+        if (prioridadCheckbox.checked) {
+            noticiasOrdenadas = indicesSeleccionados.map(index => this.state.noticias[index])
+                .sort((a, b) => {
+                    if (a.prioridad === 'Alta') return -1;
+                    if (a.prioridad === 'Baja') return 1;
+                    if (a.prioridad === 'Media' && b.prioridad === 'Alta') return 1;
+                    if (a.prioridad === 'Media' && b.prioridad === 'Baja') return -1;
+                    return 0;
+                });
+            if (fechaCheckbox.checked) {
+                noticiasOrdenadas = noticiasOrdenadas.sort((a, b) => {
+                    if (a.prioridad === b.prioridad) {
+                        const fechaA = new Date(b.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
+                        const fechaB = new Date(a.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
+                        return fechaA - fechaB;
+                    }
+                    return 0;
+                });
+            }
+        } else {
+            if (fechaCheckbox.checked) {
+                noticiasOrdenadas = indicesSeleccionados
+                    .map(index => this.state.noticias[index])
+                    .sort((a, b) => {
+                        const fechaA = new Date(b.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
+                        const fechaB = new Date(a.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
+                        return fechaA - fechaB;
+                    });
+            } else {
+                noticiasOrdenadas = indicesSeleccionados.map(index => this.state.noticias[index]);
+            }
+        }
+        const doc = new jsPDF('p', 'in', 'letter');
+        const margenIzquierda = 0.5;
+        const margenDerecha = 8.25 - 0.25;
+        const margenArriba = 0.5;
+        const margenAbajo = 11.75 - 0.5;
+        doc.setFont("Verdana");
+        doc.setFontSize(18);
+        doc.setFontStyle('bold');
+        doc.text('Noticias Seleccionadas', margenIzquierda, margenArriba + 0.5);
+        doc.setLineWidth(0.01);
+        doc.line(margenIzquierda, margenArriba + 0.7, margenDerecha, margenArriba + 0.7);
+        let currentY = margenArriba + 1;
+        for (const noticia of noticiasOrdenadas) {
+            const formatoImagen = this.obtenerFormatoImagen(noticia.imagen);
+            let imagenBase64;
+            if (formatoImagen === 'WEBP') {
+                const urlImagen = `${backend}/proxy/img?url=` + noticia.imagen;
+                imagenBase64 = await this.convertirWebpAFormato(urlImagen, 'jpeg');
+            } else {
+                imagenBase64 = await this.obtenerImagenBase64(noticia.imagen);
+            }
+            const imagenAncho = 160 / 72;
+            const imagenAltura = 100 / 72;
+            if (currentY + imagenAltura > margenAbajo - 0.5) {
+                doc.addPage();
+                currentY = margenArriba + 0.5;
+            }
+            try {
+                doc.addImage(imagenBase64, formatoImagen, margenIzquierda, currentY, imagenAncho, imagenAltura);
+            } catch (error) {
+                const urlImagen = `${backend}/proxy/img?url=` + noticia.imagen;
+                imagenBase64 = await this.convertirWebpAFormato(urlImagen, 'jpeg');
+                try {
+                    doc.addImage(imagenBase64, 'JPEG', margenIzquierda, currentY, imagenAncho, imagenAltura);
+                } catch (error) {
+                }
+            }
+            const espacioDisponible = margenDerecha - (margenIzquierda + imagenAncho);
+            const titulo = noticia.titulo.replace(/(\r\n|\n|\r)/gm, ' ');
+            doc.setFontSize(12);
+            doc.setFontStyle('bold');
+            const lineasTitulo = doc.splitTextToSize(titulo, espacioDisponible);
+            const numLineasTitulo = lineasTitulo.length;
+            doc.text(lineasTitulo, margenIzquierda + imagenAncho + 0.2, currentY + 0.1);
+            const descripcion = noticia.descripcion.replace(/(\r\n|\n|\r)/gm, ' ');
+            doc.setFontSize(10);
+            doc.setFontStyle('normal');
+            const descripcionLineas = doc.splitTextToSize(descripcion, espacioDisponible);
+            doc.text(descripcionLineas, margenIzquierda + imagenAncho + 0.2, currentY + numLineasTitulo * 0.2 + 0.1);
+            const infoAdicional = `Fecha: ${noticia.fecha}  Fuente: ${noticia.fuente}  Prioridad: ${noticia.prioridad}`;
+            doc.setFontSize(10);
+            doc.setFontStyle('normal');
+            let fontSizeInfoAdicional = 8;
+            let infoAdicionalCabe = false;
+            while (!infoAdicionalCabe && fontSizeInfoAdicional > 6) {
+                doc.setFontSize(fontSizeInfoAdicional);
+                const alturaInfoAdicional = (doc.getTextDimensions(infoAdicional).h / 72);
+                if (currentY + numLineasTitulo * 0.2 + (descripcionLineas.length * 0.2) + alturaInfoAdicional + 0.3 <= currentY + imagenAltura) {
+                    infoAdicionalCabe = true;
+                } else {
+                    fontSizeInfoAdicional--;
+                }
+            }
+            doc.text(infoAdicional, margenIzquierda + imagenAncho + 0.2, currentY + numLineasTitulo * 0.2 + (descripcionLineas.length * 0.2) + 0.1);
+            const enlace = `Enlace: ${noticia.enlace}`;
+            doc.setFontSize(6);
+            doc.setTextColor(0, 0, 255);
+            doc.setFontStyle('normal');
+            let fontSizeEnlace = 6;
+            let enlaceCabe = false;
+            while (!enlaceCabe && fontSizeEnlace > 4) {
+                doc.setFontSize(fontSizeEnlace);
+                const alturaEnlace = (doc.getTextDimensions(enlace).h / 72);
+                if (currentY + numLineasTitulo * 0.2 + (descripcionLineas.length * 0.2) + alturaEnlace + 0.5 <= currentY + imagenAltura) {
+                    enlaceCabe = true;
+                } else {
+                    fontSizeEnlace--;
+                }
+            }
+            doc.text(enlace, margenIzquierda + imagenAncho + 0.2, currentY + numLineasTitulo * 0.2 + (descripcionLineas.length * 0.2) + 0.3);
+            doc.setTextColor(0, 0, 0);
+            const alturaTotalNoticia = Math.max(imagenAltura, (doc.getTextDimensions(lineasTitulo).h / 72)) + ((descripcionLineas.length + 1) * 0.2) + 0.1;
+            currentY += alturaTotalNoticia;
+        }
+        spinner.style.display = 'none';
+        this.cancelarExportar();
+        this.hideModalExportar();
+        doc.save('noticias_seleccionadas.pdf');
+    }
+    exportarAXLSX = async (indicesSeleccionados) => {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Noticias Seleccionadas');
+        worksheet.columns = [
+            {
+                header: 'Título',
+                key: 'titulo',
+                width: 40,
+                style: {alignment: {vertical: 'middle', horizontal: 'center'}}
+            },
+            {
+                header: 'Descripción',
+                key: 'descripcion',
+                width: 60,
+                style: {alignment: {vertical: 'middle', horizontal: 'left'}}
+            },
+            {header: 'Fecha', key: 'fecha', width: 20, style: {alignment: {vertical: 'middle', horizontal: 'center'}}},
+            {
+                header: 'Fuente',
+                key: 'fuente',
+                width: 30,
+                style: {alignment: {vertical: 'middle', horizontal: 'center'}}
+            },
+            {
+                header: 'Prioridad',
+                key: 'prioridad',
+                width: 15,
+                style: {alignment: {vertical: 'middle', horizontal: 'center'}}
+            },
+            {header: 'Enlace', key: 'enlace', width: 50, style: {alignment: {vertical: 'middle', horizontal: 'center'}}}
+        ];
+        const prioridadCheckbox = document.querySelector(`#prioridadCheckbox`);
+        const fechaCheckbox = document.querySelector(`#fechaCheckbox`);
+        let noticiasOrdenadas;
+        if (prioridadCheckbox.checked) {
+            noticiasOrdenadas = indicesSeleccionados.map(index => this.state.noticias[index])
+                .sort((a, b) => {
+                    if (a.prioridad === 'Alta') return -1;
+                    if (a.prioridad === 'Baja') return 1;
+                    if (a.prioridad === 'Media' && b.prioridad === 'Alta') return 1;
+                    if (a.prioridad === 'Media' && b.prioridad === 'Baja') return -1;
+                    return 0;
+                });
+            if (fechaCheckbox.checked) {
+                noticiasOrdenadas = noticiasOrdenadas.sort((a, b) => {
+                    if (a.prioridad === b.prioridad) {
+                        const fechaA = new Date(b.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
+                        const fechaB = new Date(a.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
+                        return fechaA - fechaB;
+                    }
+                    return 0;
+                });
+            }
+        } else {
+            if (fechaCheckbox.checked) {
+                noticiasOrdenadas = indicesSeleccionados
+                    .map(index => this.state.noticias[index])
+                    .sort((a, b) => {
+                        const fechaA = new Date(b.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
+                        const fechaB = new Date(a.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
+                        return fechaA - fechaB;
+                    });
+            } else {
+                noticiasOrdenadas = indicesSeleccionados.map(index => this.state.noticias[index]);
+            }
+        }
+        noticiasOrdenadas.forEach(noticia => {
+            const tituloSinSaltos = noticia.titulo.replace(/(\r\n|\n|\r)/gm, ' ');
+            const descripcionSinSaltos = noticia.descripcion.replace(/(\r\n|\n|\r)/gm, ' ');
+            worksheet.addRow({
+                titulo: tituloSinSaltos,
+                descripcion: descripcionSinSaltos,
+                fecha: noticia.fecha,
+                fuente: noticia.fuente,
+                prioridad: noticia.prioridad,
+                enlace: {text: 'Ver enlace', hyperlink: noticia.enlace}
+            });
+        });
+        worksheet.getRow(1).eachCell(cell => {
+            cell.font = {bold: true};
+            cell.border = {
+                top: {style: 'thin'},
+                left: {style: 'thin'},
+                bottom: {style: 'thin'},
+                right: {style: 'thin'}
+            };
+            cell.alignment = {vertical: 'middle', horizontal: 'center', wrapText: true};
+        });
+        worksheet.columns.forEach((column, index) => {
+            if (index >= 2 && index <= 5) {
+                column.eachCell({includeEmpty: true}, (cell) => {
+                    cell.alignment = {vertical: 'middle', horizontal: 'center', wrapText: true};
+                    cell.border = {
+                        top: {style: 'thin'},
+                        left: {style: 'thin'},
+                        bottom: {style: 'thin'},
+                        right: {style: 'thin'}
+                    };
+                    cell.textWrap = true;
+                });
+            } else {
+                column.eachCell({includeEmpty: true}, (cell) => {
+                    cell.alignment = {wrapText: true};
+                    cell.border = {
+                        top: {style: 'thin'},
+                        left: {style: 'thin'},
+                        bottom: {style: 'thin'},
+                        right: {style: 'thin'}
+                    };
+                    cell.textWrap = true;
+                });
+            }
+        });
+        const prioridadStyles = {
+            Alta: {fill: {type: 'pattern', pattern: 'solid', fgColor: {argb: 'da9595'}}},
+            Media: {fill: {type: 'pattern', pattern: 'solid', fgColor: {argb: 'ffe699'}}},
+            Baja: {fill: {type: 'pattern', pattern: 'solid', fgColor: {argb: 'c2d699'}}}
+        };
+        worksheet.getColumn('prioridad').eachCell({includeEmpty: true}, (cell) => {
+            const prioridad = cell.value;
+            if (prioridad && prioridadStyles[prioridad]) {
+                cell.fill = prioridadStyles[prioridad].fill;
+            }
+        });
+        worksheet.columns.forEach(column => {
+            column.width = Math.max(column.width, 15);
+        });
+        const worksheetCalculos = workbook.addWorksheet('Calculos');
+        const fuenteCounts = {};
+        noticiasOrdenadas.forEach(noticia => {
+            fuenteCounts[noticia.fuente] = (fuenteCounts[noticia.fuente] || 0) + 1;
+        });
 
+        const prioridadesRepetidas = {};
+        noticiasOrdenadas.forEach(noticia => {
+            prioridadesRepetidas[noticia.prioridad] = (prioridadesRepetidas[noticia.prioridad] || 0) + 1;
+        });
+
+        const canvasPie = document.createElement('canvas');
+        canvasPie.style.position = 'absolute';
+        canvasPie.style.left = '-9999px';
+        const ctxPie = canvasPie.getContext('2d');
+        const myPieChart = new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(prioridadesRepetidas),
+                datasets: [{
+                    label: 'Frecuencia de Prioridades',
+                    data: Object.values(prioridadesRepetidas),
+                    backgroundColor: [
+                        'rgb(246,161,160)',
+                        'rgb(236,229,160)',
+                        'rgb(140,225,153)',
+                    ],
+                    borderColor: [
+                        'rgb(246,161,160)',
+                        'rgb(236,229,160)',
+                        'rgb(140,225,153)',
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                animation: false,
+                plugins: {
+                    datalabels: {
+                        formatter: (value, ctx) => {
+                            const total = ctx.dataset.data.reduce((acc, val) => acc + val, 0);
+                            const percentage = value / total * 100;
+                            return percentage.toFixed(2) + "%";
+                        },
+                        color: '#000000',
+                        font: {
+                            size: 36
+                        }
+                    }
+                }
+            },
+            legend: {
+                labels: {
+                    font: {
+                        size: 36
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        const chartContainerPie = document.createElement('div');
+        chartContainerPie.appendChild(canvasPie);
+        document.body.appendChild(chartContainerPie);
+        const canvas = document.createElement('canvas');
+        canvas.style.position = 'absolute';
+        canvas.style.left = '-9999px';
+        const ctx = canvas.getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(fuenteCounts),
+                datasets: [{
+                    label: 'Frecuencia de Fuentes',
+                    data: Object.values(fuenteCounts),
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive : true,
+                animation: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            },
+            plugins:[
+                {
+                    beforeDraw(chart){
+                        const {ctx, canvas} = chart;
+                        ctx.save();
+                        ctx.fillStyle = '#FFF';
+                        ctx.fillRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+                        ctx.restore();
+                    }
+                }
+            ]
+        });
+
+        const chartContainer = document.createElement('div');
+        chartContainer.appendChild(canvas);
+        document.body.appendChild(chartContainer);
+        setTimeout(function() {
+            const image = canvas.toDataURL("image/png").split(';base64,')[1];
+            const imageId = workbook.addImage({
+                base64: image,
+                extension: 'png',
+            });
+            worksheetCalculos.addImage(imageId,
+                {
+                    tl: { col: 2, row: 1 },
+                    ext: { width: canvas.offsetWidth-20, height: canvas.offsetHeight-20 }
+                }
+            );
+            const imagePie = canvasPie.toDataURL("image/png").split(';base64,')[1];
+            const imageIdPie = workbook.addImage({
+                base64: imagePie,
+                extension: 'png',
+            });
+            worksheetCalculos.addImage(imageIdPie, {
+                tl: { col: 21, row: 2 },
+                ext: { width: canvasPie.offsetWidth / 3, height: canvasPie.offsetHeight / 3}
+            });
+            workbook.xlsx.writeBuffer().then(function(buffer) {
+                saveAs(new Blob([buffer]), 'noticias_seleccionadas.xlsx');
+            });
+            document.body.removeChild(chartContainer);
+            document.body.removeChild(chartContainerPie);
+        }, 200);
     }
 
+    obtenerFormatoImagen(url) {
+        var extension = url.split('.').pop().toLowerCase();
+        switch (extension) {
+            case 'jpg':
+            case 'jpeg':
+                return 'JPEG';
+            case 'png':
+                return 'PNG';
+            case 'gif':
+                return 'GIF';
+            case 'webp':
+                return 'WEBP';
+            default:
+                return 'JPEG';
+        }
+    }
+
+    convertirWebpAFormato(urlWebp, formato) {
+        return new Promise((resolve, reject) => {
+            var img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.onload = function () {
+                var canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                var imageDataURL = canvas.toDataURL('image/' + formato);
+                resolve(imageDataURL);
+            };
+            img.onerror = function () {
+                reject(new Error('Error al cargar la imagen'));
+            };
+            img.src = urlWebp;
+        });
+    }
+
+    async obtenerImagenBase64(url) {
+        const proxyUrls = [
+            'https://corsproxy.io/?',
+            `${backend}/proxy/img?url=`
+        ];
+        for (const proxyUrl of proxyUrls) {
+            try {
+                const response = await fetch(proxyUrl + url);
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                const blob = await response.blob();
+                const reader = new FileReader();
+                return new Promise((resolve, reject) => {
+                    reader.readAsDataURL(blob);
+                    reader.onloadend = () => {
+                        resolve(reader.result);
+                    };
+                    reader.onerror = reject;
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                continue;
+            }
+        }
+        throw new Error('No se pudo obtener la imagen');
+    }
 
     emptyEntity = () => {
         var entity = '';
@@ -946,7 +1663,8 @@ class Biblioteca {
     }
 
 
-    deleteNoticia = async () => {
+
+    deleteNoticia = async() => {
         event.preventDefault();
         const entityId = this.deleteEntity;
         const request = new Request(`${backend}/NoticiasMarcadas/EtiquetasExternaDelete/${entityId}`, { // Cambiar a enviar el parámetro como parte de la ruta
@@ -969,17 +1687,19 @@ class Biblioteca {
                     }
                 });
 
-                try {
+                try{
 
                     const response2 = await fetch(request2);
-                    if (response2.ok) {
-                        this.hideModalBorrar();
-                        this.showModalSuccessBorrar();
-                    } else {
-                        this.hideModalBorrar();
-                        this.showModalErrorBorrar();
-                    }
-                } catch (error) {
+                        if (response2.ok) {
+                            this.hideModalBorrar();
+                            this.cargarBiblioteca();
+                            this.showModalSuccessBorrar();
+                        }
+                        else{
+                            this.hideModalBorrar();
+                            this.showModalErrorBorrar();
+                        }
+                }catch (error){
                     console.error("Error al eliminar la entidad:", error);
                 }
             } else {

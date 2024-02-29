@@ -14,6 +14,69 @@
     padding-top: 50px;
 
 }
+.search-results-container1 {
+    max-height: 700px;
+    max-width: 3000px;
+    overflow-y: auto;
+    margin-top: 5px;
+    overflow-x: hidden;
+}
+
+.check-container {
+    position: absolute;
+    margin-left: 150px;
+    margin-top: 100px;
+    top: 0;
+    transform: translate(-50%, -50%) scale(1.2);
+    z-index: 5;
+    width: 900px;
+    height: auto;
+    display: none;
+}
+
+.checkbox-wrapper-18 .round {
+    position: relative;
+}
+
+.checkbox-wrapper-18 .round label {
+    background-color: #fff;
+    border: 1px solid #1c2858;
+    border-radius: 50%;
+    cursor: pointer;
+    height: 28px;
+    width: 28px;
+    display: block;
+}
+
+.checkbox-wrapper-18 .round label:after {
+    border: 2px solid #fff;
+    border-top: none;
+    border-right: none;
+    content: "";
+    height: 6px;
+    left: 8px;
+    opacity: 0;
+    position: absolute;
+    top: 9px;
+    transform: rotate(-45deg);
+    width: 12px;
+}
+
+.checkbox-wrapper-18 .round input[type="checkbox"] {
+    visibility: hidden;
+    display: none;
+    opacity: 0;
+}
+
+.checkbox-wrapper-18 .round input[type="checkbox"]:checked + label {
+    background-color: #cdab68;
+    border-color: #cdab68;
+}
+
+.checkbox-wrapper-18 .round input[type="checkbox"]:checked + label:after {
+    opacity: 1;
+}
+
 .descripcion {
     max-height: 100px;
     overflow: hidden;
@@ -127,6 +190,14 @@ select {; /* Ancho personalizado */
     display: block;
 }
 
+.borrar-container {
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
 .required-field-error {
     border-bottom: 2px solid red; /* Agrega una lÃ­nea roja debajo del campo vacÃ­o */
 }
@@ -147,13 +218,117 @@ select {; /* Ancho personalizado */
     margin-left: 20px;
 }
 
+.btn.btn-custom-outline-success3 {
+    color: #ffffff;
+    background-color: #cdab68;
+    border-color: #cdab68;
+    width: 90px;
+    margin-right: 15px
+}
+
+.btn.btn-custom-outline-success3:hover {
+    color: #ffffff;
+    background-color: #cdab68;
+    border-color: #cdab68;
+    font-weight: bold;
+    width: 100px;
+    margin-right: 5px;
+}
+
+.btn.btn-custom-outline-success4 {
+    color: #ffffff;
+    background-color: #1c2858;
+    border-color: #1c2858;
+    width: 105px;
+}
+
+.btn.btn-custom-outline-success4:hover {
+    color: #ffffff;
+    background-color: #1c2858;
+    border-color: #1c2858;
+    font-weight: bold;
+    width: 115px;
+}
+@media (max-width: 1416px) {
+
+    .check-container {
+        margin-left: 190px !important;
+    }
+}
+
+@media (max-width: 1322px) {
+    .check-container {
+        transform: translate(3.5%, -100%) scale(1.2) !important;
+    }
+}
+
+@media (max-width: 395px) {
+    .search-results-container1 {
+        max-height: 560px !important;
+        max-width: 3000px;
+        margin-top: -25px;
+    }
+}
+
+@media (max-width: 375px) {
+
+    .search-results-container1 {
+        max-height: 400px !important;
+        max-width: 3000px !important;
+        margin-top: -30px;
+    }
+}
+
+@media (max-width: 1670px) {
+
+    #generarBtn2{
+        margin-left:95px !important;
+        margin-top: 5px !important;
+    }
+
+    #generarBtn4{
+        margin-left:95px !important;
+        margin-top: 5px !important;
+    }
+}
+
+@media (max-width: 1480px) {
+    #generarBtn1 {
+        width: 40px !important;
+        margin-left: 0px !important;
+    }
+
+    #generarBtn2{
+        margin-left:95px !important;
+        margin-top: 5px !important;
+    }
+
+    #marcarTodo{
+        width: 40px !important;
+        margin-left: 0px !important;
+    }
+
+    #desmarcarTodo{
+        width: 40px !important;
+        margin-left: 0px !important;
+    }
+}
+
 @media (max-width: 768px) {
 
     .text-section-Biblioteca {
         max-width: 100%;
     }
 
+    .search-results-container1 {
+        max-height: 580px;
+        max-width: 3000px;
+    }
+
     #tiempoSeleccionado2 {
+        display: none;
+    }
+    #tiempoSeleccionado3 {
         display: none;
     }
 
@@ -161,15 +336,32 @@ select {; /* Ancho personalizado */
         display: none;
     }
 
-    #tiempoSeleccionadoMobile {
+    #tiempoSeleccionadoMobile1 {
         display: inline-block !important;
         margin-left: 40px !important;
+    }
+
+    #tiempoSeleccionadoMobile2 {
+        display: inline-block !important;
+        margin-left: 40px !important;
+    }
+
+    .check-container {
+        position: absolute;
+        margin-left: 150px;
+        margin-top: 100px;
+        top: 0;
+        transform: translate(8%, -90%) scale(1.2);
+        z-index: 5;
+        width: 900px;
+        height: auto;
+        display: none;
     }
 
     .semaforoModal2 {
         position: absolute;
         display: block;
-        margin-right: 115px;
+        margin-right: 125px;
         margin-top: 45px;
         width: auto;
         background-color: #ffffff;
