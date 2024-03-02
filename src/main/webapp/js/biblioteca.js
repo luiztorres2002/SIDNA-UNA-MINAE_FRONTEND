@@ -1204,39 +1204,7 @@ class Biblioteca {
         spinner.style.display = 'block';
         const prioridadCheckbox = document.querySelector(`#prioridadCheckbox`);
         const fechaCheckbox = document.querySelector(`#fechaCheckbox`);
-        let noticiasOrdenadas;
-        if (prioridadCheckbox.checked) {
-            noticiasOrdenadas = indicesSeleccionados.map(index => this.state.noticias[index])
-                .sort((a, b) => {
-                    if (a.prioridad === 'Alta') return -1;
-                    if (a.prioridad === 'Baja') return 1;
-                    if (a.prioridad === 'Media' && b.prioridad === 'Alta') return 1;
-                    if (a.prioridad === 'Media' && b.prioridad === 'Baja') return -1;
-                    return 0;
-                });
-            if (fechaCheckbox.checked) {
-                noticiasOrdenadas = noticiasOrdenadas.sort((a, b) => {
-                    if (a.prioridad === b.prioridad) {
-                        const fechaA = new Date(b.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
-                        const fechaB = new Date(a.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
-                        return fechaA - fechaB;
-                    }
-                    return 0;
-                });
-            }
-        } else {
-            if (fechaCheckbox.checked) {
-                noticiasOrdenadas = indicesSeleccionados
-                    .map(index => this.state.noticias[index])
-                    .sort((a, b) => {
-                        const fechaA = new Date(b.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
-                        const fechaB = new Date(a.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
-                        return fechaA - fechaB;
-                    });
-            } else {
-                noticiasOrdenadas = indicesSeleccionados.map(index => this.state.noticias[index]);
-            }
-        }
+        const noticiasOrdenadas = await this.ordenarNoticias(indicesSeleccionados, prioridadCheckbox, fechaCheckbox);
         const doc = new jsPDF('p', 'in', 'letter');
         const margenIzquierda = 0.5;
         const margenDerecha = 8.25 - 0.25;
@@ -1329,36 +1297,34 @@ class Biblioteca {
     exportarAXLSX = async (indicesSeleccionados) => {
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Noticias Seleccionadas');
+        this.configurarColumnas(worksheet);
+
+        const prioridadCheckbox = this.dom.querySelector(`#prioridadCheckbox`);
+        const fechaCheckbox = this.dom.querySelector(`#fechaCheckbox`);
+
+        const noticiasOrdenadas = await this.ordenarNoticias(indicesSeleccionados, prioridadCheckbox, fechaCheckbox);
+
+        this.agregarNoticiasALaHoja(worksheet, noticiasOrdenadas);
+        this.estilizarHoja(worksheet);
+
+        const worksheetCalculos = workbook.addWorksheet('Calculos');
+        await this.crearGraficos(workbook, worksheetCalculos, noticiasOrdenadas);
+
+        await this.guardarArchivo(workbook);
+    };
+
+    configurarColumnas = (worksheet) => {
         worksheet.columns = [
-            {
-                header: 'Título',
-                key: 'titulo',
-                width: 40,
-                style: {alignment: {vertical: 'middle', horizontal: 'center'}}
-            },
-            {
-                header: 'Descripción',
-                key: 'descripcion',
-                width: 60,
-                style: {alignment: {vertical: 'middle', horizontal: 'left'}}
-            },
-            {header: 'Fecha', key: 'fecha', width: 20, style: {alignment: {vertical: 'middle', horizontal: 'center'}}},
-            {
-                header: 'Fuente',
-                key: 'fuente',
-                width: 30,
-                style: {alignment: {vertical: 'middle', horizontal: 'center'}}
-            },
-            {
-                header: 'Prioridad',
-                key: 'prioridad',
-                width: 15,
-                style: {alignment: {vertical: 'middle', horizontal: 'center'}}
-            },
-            {header: 'Enlace', key: 'enlace', width: 50, style: {alignment: {vertical: 'middle', horizontal: 'center'}}}
+            { header: 'Título', key: 'titulo', width: 40, style: {alignment: {vertical: 'middle', horizontal: 'center'}} },
+            { header: 'Descripción', key: 'descripcion', width: 60, style: {alignment: {vertical: 'middle', horizontal: 'left'}} },
+            { header: 'Fecha', key: 'fecha', width: 20, style: {alignment: {vertical: 'middle', horizontal: 'center'}} },
+            { header: 'Fuente', key: 'fuente', width: 30, style: {alignment: {vertical: 'middle', horizontal: 'center'}} },
+            { header: 'Prioridad', key: 'prioridad', width: 15, style: {alignment: {vertical: 'middle', horizontal: 'center'}} },
+            { header: 'Enlace', key: 'enlace', width: 50, style: {alignment: {vertical: 'middle', horizontal: 'center'}} }
         ];
-        const prioridadCheckbox = document.querySelector(`#prioridadCheckbox`);
-        const fechaCheckbox = document.querySelector(`#fechaCheckbox`);
+    };
+
+    ordenarNoticias = (indicesSeleccionados, prioridadCheckbox, fechaCheckbox) => {
         let noticiasOrdenadas;
         if (prioridadCheckbox.checked) {
             noticiasOrdenadas = indicesSeleccionados.map(index => this.state.noticias[index])
@@ -1392,18 +1358,35 @@ class Biblioteca {
                 noticiasOrdenadas = indicesSeleccionados.map(index => this.state.noticias[index]);
             }
         }
+        return noticiasOrdenadas;
+    };
+
+    agregarNoticiasALaHoja = (worksheet, noticiasOrdenadas) => {
+        const prioridadStyles = {
+            Alta: {fill: {type: 'pattern', pattern: 'solid', fgColor: {argb: 'da9595'}}},
+            Media: {fill: {type: 'pattern', pattern: 'solid', fgColor: {argb: 'ffe699'}}},
+            Baja: {fill: {type: 'pattern', pattern: 'solid', fgColor: {argb: 'c2d699'}}}
+        };
         noticiasOrdenadas.forEach(noticia => {
             const tituloSinSaltos = noticia.titulo.replace(/(\r\n|\n|\r)/gm, ' ');
             const descripcionSinSaltos = noticia.descripcion.replace(/(\r\n|\n|\r)/gm, ' ');
-            worksheet.addRow({
+            const row = worksheet.addRow({
                 titulo: tituloSinSaltos,
                 descripcion: descripcionSinSaltos,
                 fecha: noticia.fecha,
                 fuente: noticia.fuente,
                 prioridad: noticia.prioridad,
-                enlace: {text: 'Ver enlace', hyperlink: noticia.enlace}
+                enlace: 'Ver enlace'
+                //{text: 'Ver enlace', hyperlink: noticia.enlace}
             });
+            const prioridadCell = row.getCell('prioridad');
+            if (prioridadCell.value && prioridadStyles[prioridadCell.value]) {
+                prioridadCell.fill = prioridadStyles[prioridadCell.value].fill;
+            }
         });
+    };
+
+    estilizarHoja = (worksheet) => {
         worksheet.getRow(1).eachCell(cell => {
             cell.font = {bold: true};
             cell.border = {
@@ -1414,6 +1397,7 @@ class Biblioteca {
             };
             cell.alignment = {vertical: 'middle', horizontal: 'center', wrapText: true};
         });
+
         worksheet.columns.forEach((column, index) => {
             if (index >= 2 && index <= 5) {
                 column.eachCell({includeEmpty: true}, (cell) => {
@@ -1439,34 +1423,21 @@ class Biblioteca {
                 });
             }
         });
-        const prioridadStyles = {
-            Alta: {fill: {type: 'pattern', pattern: 'solid', fgColor: {argb: 'da9595'}}},
-            Media: {fill: {type: 'pattern', pattern: 'solid', fgColor: {argb: 'ffe699'}}},
-            Baja: {fill: {type: 'pattern', pattern: 'solid', fgColor: {argb: 'c2d699'}}}
-        };
-        worksheet.getColumn('prioridad').eachCell({includeEmpty: true}, (cell) => {
-            const prioridad = cell.value;
-            if (prioridad && prioridadStyles[prioridad]) {
-                cell.fill = prioridadStyles[prioridad].fill;
-            }
-        });
-        worksheet.columns.forEach(column => {
-            column.width = Math.max(column.width, 15);
-        });
-        const worksheetCalculos = workbook.addWorksheet('Calculos');
-        const fuenteCounts = {};
-        noticiasOrdenadas.forEach(noticia => {
-            fuenteCounts[noticia.fuente] = (fuenteCounts[noticia.fuente] || 0) + 1;
-        });
+    };
 
+    crearGraficos = async (workbook, worksheetCalculos, noticiasOrdenadas) => {
         const prioridadesRepetidas = {};
         noticiasOrdenadas.forEach(noticia => {
             prioridadesRepetidas[noticia.prioridad] = (prioridadesRepetidas[noticia.prioridad] || 0) + 1;
         });
-
+        const fuenteCounts = {};
+        noticiasOrdenadas.forEach(noticia => {
+            fuenteCounts[noticia.fuente] = (fuenteCounts[noticia.fuente] || 0) + 1;
+        });
         const canvasPie = document.createElement('canvas');
         canvasPie.style.position = 'absolute';
         canvasPie.style.left = '-9999px';
+        Chart.defaults.font.size = 20;
         const ctxPie = canvasPie.getContext('2d');
         const myPieChart = new Chart(ctxPie, {
             type: 'pie',
@@ -1476,16 +1447,14 @@ class Biblioteca {
                     label: 'Frecuencia de Prioridades',
                     data: Object.values(prioridadesRepetidas),
                     backgroundColor: [
-                        'rgb(246,161,160)',
-                        'rgb(236,229,160)',
-                        'rgb(140,225,153)',
+                        'rgb(218,149,149)',
+                        'rgb(255,230,153)',
+                        'rgb(194,214,153)',
                     ],
                     borderColor: [
-                        'rgb(246,161,160)',
-                        'rgb(236,229,160)',
-                        'rgb(140,225,153)',
+                        'rgb(255,255,255)',
                     ],
-                    borderWidth: 1
+                    borderWidth: 2
                 }]
             },
             options: {
@@ -1500,24 +1469,26 @@ class Biblioteca {
                         },
                         color: '#000000',
                         font: {
-                            size: 36
+                            size: 36,
                         }
-                    }
-                }
-            },
-            legend: {
-                labels: {
-                    font: {
-                        size: 36
+                    },
+                    legend: {
+                        display: true,
+                        labels: {
+                            font: {
+                                size: 40,
+                                weight: 'bold'
+                            }
+                        }
                     }
                 }
             },
             plugins: [ChartDataLabels]
         });
-
         const chartContainerPie = document.createElement('div');
         chartContainerPie.appendChild(canvasPie);
         document.body.appendChild(chartContainerPie);
+
         const canvas = document.createElement('canvas');
         canvas.style.position = 'absolute';
         canvas.style.left = '-9999px';
@@ -1529,64 +1500,64 @@ class Biblioteca {
                 datasets: [{
                     label: 'Frecuencia de Fuentes',
                     data: Object.values(fuenteCounts),
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
+                    backgroundColor: 'rgb(72,74,89)',
+                    borderColor: 'rgb(213,178,117)',
+                    borderWidth: 2
                 }]
             },
             options: {
-                responsive : true,
+                indexAxis: 'y',
+                responsive: true,
                 animation: false,
                 scales: {
-                    y: {
-                        beginAtZero: true
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
                     }
                 }
             },
-            plugins:[
-                {
-                    beforeDraw(chart){
-                        const {ctx, canvas} = chart;
-                        ctx.save();
-                        ctx.fillStyle = '#FFF';
-                        ctx.fillRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
-                        ctx.restore();
-                    }
-                }
-            ]
+            plugins: [{
+                beforeDraw(chart) {
+                    const { ctx, canvas } = chart;
+                    ctx.save();
+                    ctx.fillStyle = '#FFF';
+                    ctx.fillRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+                    ctx.restore();
+                },
+            }]
         });
 
         const chartContainer = document.createElement('div');
         chartContainer.appendChild(canvas);
         document.body.appendChild(chartContainer);
-        setTimeout(function() {
-            const image = canvas.toDataURL("image/png").split(';base64,')[1];
-            const imageId = workbook.addImage({
-                base64: image,
-                extension: 'png',
-            });
-            worksheetCalculos.addImage(imageId,
-                {
-                    tl: { col: 2, row: 1 },
-                    ext: { width: canvas.offsetWidth-20, height: canvas.offsetHeight-20 }
-                }
-            );
-            const imagePie = canvasPie.toDataURL("image/png").split(';base64,')[1];
-            const imageIdPie = workbook.addImage({
-                base64: imagePie,
-                extension: 'png',
-            });
-            worksheetCalculos.addImage(imageIdPie, {
-                tl: { col: 21, row: 2 },
-                ext: { width: canvasPie.offsetWidth / 3, height: canvasPie.offsetHeight / 3}
-            });
-            workbook.xlsx.writeBuffer().then(function(buffer) {
-                saveAs(new Blob([buffer]), 'noticias_seleccionadas.xlsx');
-            });
-            document.body.removeChild(chartContainer);
-            document.body.removeChild(chartContainerPie);
-        }, 200);
-    }
+
+        await new Promise(resolve => setTimeout(resolve, 200));
+        const image = canvas.toDataURL("image/png").split(';base64,')[1];
+        const imageId = workbook.addImage({
+            base64: image,
+            extension: 'png',
+        });
+        worksheetCalculos.addImage(imageId, {
+            tl: { col: 2, row: 1 },
+            ext: { width: 1000, height: 500 }
+        });
+        const imagePie = canvasPie.toDataURL("image/png").split(';base64,')[1];
+        const imageIdPie = workbook.addImage({
+            base64: imagePie,
+            extension: 'png',
+        });
+        worksheetCalculos.addImage(imageIdPie, {
+            tl: { col: 21, row: 2 },
+            ext: { width: 500, height: 500 }
+        });
+    };
+
+    guardarArchivo = async (workbook) => {
+        const buffer = await workbook.xlsx.writeBuffer();
+        saveAs(new Blob([buffer]), 'noticias_seleccionadas.xlsx');
+    };
 
     obtenerFormatoImagen(url) {
         var extension = url.split('.').pop().toLowerCase();
@@ -1646,7 +1617,6 @@ class Biblioteca {
                     reader.onerror = reject;
                 });
             } catch (error) {
-                console.error('Error:', error);
                 continue;
             }
         }

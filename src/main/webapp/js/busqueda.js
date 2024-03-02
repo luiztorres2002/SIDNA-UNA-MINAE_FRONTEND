@@ -13,7 +13,7 @@ let apiKeyActual = 0;
 let busqueda = "";
 let etiquetas = [];
 sugerencias = [];
-
+let globalAbortController = new AbortController();
 class Busqueda {
     dom;
     modal;
@@ -27,6 +27,8 @@ class Busqueda {
         this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A'};
         this.dom = this.render();
         const self = this;
+        busqueda = " ";
+        etiquetas = [];
         this.abortController = null;
         this.entidad = {};
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
@@ -45,12 +47,14 @@ class Busqueda {
         searchInput.addEventListener("input", (event) => this.inputCambio(event));
         setTimeout(() => {
             const ultimaHora = localStorage.getItem('ultimaHora');
-            if (ultimaHora && (Date.now() - parseInt(ultimaHora)) < 3600000) {;
+            if (ultimaHora && (Date.now() - parseInt(ultimaHora)) < 3600000) {
                 this.mostrarNoticiasAlmacenadas()
                     .catch((error) => {
                         console.error('Error mostrando noticias almacenadas:', error);
                     });
             } else {
+                globalAbortController.abort();
+                globalAbortController = new AbortController();
                 this.obtenerNoticias(1)
                     .catch((error) => {
                         console.error('Error obteniendo noticias:', error);
@@ -188,7 +192,6 @@ class Busqueda {
                     etiquetas = etiquetas.filter(pill => {
                         return pill !== pillText;
                     });
-                    console.log(etiquetas);
                     this.actualizarTexto();
                 }
             });
@@ -207,7 +210,6 @@ class Busqueda {
                     etiquetas = etiquetas.filter(pill => {
                         return pill !== pillText;
                     });
-                    console.log(etiquetas);
                     this.actualizarTexto();
                 }
             });
@@ -378,6 +380,7 @@ class Busqueda {
         let noticiasCoincidentesCargadas = 0;
         this.abortController = new AbortController();
         const { signal } = this.abortController;
+        const { signal: globalAbortSignal } = globalAbortController;
         const apiUrl = this.construirApiUrl('costa rica medio ambiente y energia', 'qdr:m', apiKey,pagina);
         const TIMEOUT_MS = 9000;
         const fetchConTimeout = async (url) => {
@@ -398,7 +401,9 @@ class Busqueda {
             const imageUrls = [];
             for (const [index, result] of newsResults.entries()) {
                 if (signal.aborted) {
-                    console.log('Operación cancelada.');
+                    break;
+                }
+                if (globalAbortSignal.aborted) {
                     break;
                 }
                 if (result.source.includes('News ES Euro')) {
@@ -451,12 +456,11 @@ class Busqueda {
                 newsResults[index].backup = result.thumbnail;
                 newsResults[index].thumbnail = imageUrl;
                 if (signal.aborted) {
-                    console.log('Operación cancelada.');
                     break;
                 }
                 noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
             }
-            if (pagina === 1 && !signal.aborted) {
+            if (pagina === 1 && !signal.aborted && !globalAbortSignal.aborted) {
                 const noticias = newsResults.filter(result => !result.source.includes('News ES Euro'));
                 localStorage.setItem('noticias', JSON.stringify(noticias));
                 localStorage.setItem('ultimaHora', Date.now());
@@ -485,11 +489,12 @@ class Busqueda {
         }
         var paginationNav = document.getElementById('paginationNav');
         paginationNav.style.display = 'block';
+        globalAbortController.abort();
+        globalAbortController = new AbortController();
     }
     async corresponderPalabraClaveEnNoticias() {
         console.log(busqueda);
         if (!busqueda || busqueda.trim() === '') {
-            console.log('La búsqueda está vacía o no tiene texto.');
             this.dom.querySelector("#mensajeError").textContent = "Por favor, selecciona una etiqueta antes de buscar";
             this.showModalError();
             return;
@@ -502,7 +507,8 @@ class Busqueda {
         }
         const spinner = document.querySelector('.spinner-border');
         spinner.style.display = 'block';
-        this.inicializarAbortController.call(this);
+        this.abortController = new AbortController();
+        const { signal } = this.abortController;
         const tiempoSeleccionado = this.obtenerTiempoSeleccionado();
         const apiKey = await this.obtenerSiguienteApiKey();
         try {
@@ -523,33 +529,14 @@ class Busqueda {
         const noticiasCoincidentes = document.querySelector('#noticiasCoincidentes');
         noticiasCoincidentes.innerHTML = '';
     }
-    inicializarAbortController() {
-        this.abortController = new AbortController();
-    }
     obtenerTiempoSeleccionado() {
         return document.querySelector('#tiempoSeleccionado').value;
     }
-    async  obtenerSiguienteApiKey() {
-        const corsProxyUrl = 'https://corsproxy.io/?';
+    async obtenerSiguienteApiKey(maxIntentos = 3) {
         const apiKey = apiKeys[apiKeyActual];
-        const url = `https://serpapi.com/account?api_key=${apiKey}`;
-
-        try {
-            const response = await fetch(corsProxyUrl + url);
-            const data = await response.json();
-
-            const totalSearchesLeft = data.total_searches_left;
-
-            if (totalSearchesLeft === 1) {
-                apiKeyActual = (apiKeyActual + 1) % apiKeys.length;
-                return obtenerSiguienteApiKey();
-            } else {
-                return apiKey;
-            }
-        } catch (error) {
-            console.error('Error al obtener información de la API Key:', error);
-            return null;
-        }
+        apiKeyActual = (apiKeyActual + 1) % apiKeys.length;
+        console.log('API Key usada:', apiKey);
+        return apiKey;
     }
     obtenerTiempoQuery(tiempoSeleccionado) {
         const tiempoQueries = {
@@ -600,6 +587,7 @@ class Busqueda {
         const spinner = document.querySelector('.spinner-border');
          this.abortController = new AbortController();
          const { signal } = this.abortController;
+         const { signal: globalAbortSignal } = globalAbortController;
         spinner.style.display = 'none';
         const bordeColores = ['#1c2858', '#cdab68'];
         const botonColores = ['#cdab68', '#1c2858'];
@@ -610,7 +598,9 @@ class Busqueda {
             const tipo = "2";
             const elementoNoticiaCoincidente2 = this.crearElementoNoticiaCoincidente(result, imageUrl, colorBorde, colorBoton,tipo);
             if (signal.aborted) {
-                console.log('Operación cancelada.');
+                break;
+            }
+            if (globalAbortSignal.aborted) {
                 break;
             }
             noticiasCoincidentes.appendChild(elementoNoticiaCoincidente2);
