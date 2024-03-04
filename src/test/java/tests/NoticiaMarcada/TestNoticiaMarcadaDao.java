@@ -145,5 +145,19 @@ public class TestNoticiaMarcadaDao {
         }
     }
 
+    @Test
+    public void actualizarPrioridadNoticia() throws Exception {
+        List<NoticiaMarcada> noticiaMarcadas = noticiaMarcadaDao.getAllNoticiasMarcadas("4-0258-0085");
+        NoticiaMarcada noticiaMarcada1 = noticiaMarcadas.get(0); //CAMBIAR # SEGUN CORRESPONDA
+        String sql = "update NOTICIA_MARCADA set Prioridad = ? where PK_NoticiaMarcada_Id=?";
 
+        //CAMBIAR SEGUN CORRESPONDA
+        String prioridadNueva = "Alta";
+        PreparedStatement stm = database.prepareStatement(sql);
+        stm.setString(1, prioridadNueva);
+        stm.setInt(2, noticiaMarcada1.getId());
+        int rows = stm.executeUpdate();
+        assert rows > 0;
+        System.out.println("Test Actualizar Prioridad de Noticia Marcada Exitoso");
+    }
 }
