@@ -139,7 +139,7 @@ class Etiqueta {
             <form id="form" style="width: 85%; margin-top: 20px;"">
            <div class="input-group mb-3 mt-10" style="display: flex; align-items: center; justify-content: center;">
     <div class="btn-group me-2">
-        <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 120px; line-height: 5px;"><span class="font-weight-bold">+</span> <span class="texto-agregar">Agregar</span></button>
+        <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 120px; line-height: 5px;"><span class="font-weight-bold"><i class="fa-solid fa-plus"></i></span> <span class="texto-agregar">Agregar</span></button>
     </div>
     <input class="form-control me-2 fontAwesome" id="buscadorEtiqueta" autocomplete="off" type="text" style="width: 200px; margin-left: 700px; height: 38px; border-radius: 5px; border: 1px solid #1c2858;" placeholder="&#xf002; Buscar Etiqueta...">
     <div class="btn-group me-2">
@@ -176,6 +176,8 @@ class Etiqueta {
         </div>
 
         `;
+
+
     }
     load = () => {
         const form = this.dom.querySelector("#categorias #modal #formadd");
@@ -549,6 +551,11 @@ class Etiqueta {
         const nameColumn = document.querySelectorAll('#tablaEtiquetas tbody tr td:nth-child(1)');
         let encontrados = false;
 
+        nameColumn.forEach((cell) => {
+            const row = cell.parentElement;
+            row.classList.remove('highlight');
+        });
+
         if (searchTerm === "") {
             const etiquetaDescriptionElement = document.getElementById('mensaje');
             const modalFooter = modal.querySelector('.modal-footer');
@@ -570,7 +577,6 @@ class Etiqueta {
                 row.classList.remove("disabled-row");
                 row.classList.add('highlight');
 
-                // Scroll the table container to the matching row
                 const tableContainer = document.getElementById('tableContainer');
                 if (tableContainer) {
                     row.scrollIntoView({

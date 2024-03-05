@@ -480,7 +480,7 @@ input.BajaModal:checked {
         max-width: 100% !important;
         max-height: 510px !important;
         flex-direction: column !important;
-        margin: 1em auto !important;
+        margin: 0em auto !important;
     }
 
     #tituloBusqueda {

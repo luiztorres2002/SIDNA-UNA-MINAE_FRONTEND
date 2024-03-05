@@ -1,4 +1,4 @@
-
+//const backend = "https://needed-eagle-curious.ngrok-free.app/MINAE/minae";
 const backend = "http://localhost:8080/MINAE/minae";
 class App {
     dom;
@@ -116,6 +116,11 @@ class App {
                     <i class="button__icon fas fa-chevron-right"></i> 
                 </button>                
             </form>
+            <div class="social-login">
+            <div class="social-icons">
+            <a href="#" class="social-login__icon">Has olvidado tu contraseña?</a>
+            </div>
+            </div>
         </div>
         <div class="screen__background">
             <span class="screen__background__shape screen__background__shape4"></span>

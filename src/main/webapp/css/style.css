@@ -282,6 +282,33 @@ header ul li a {
     transition: .2s;
 }
 
+.social-login {
+    position: absolute;
+    height: 140px;
+    width: 160px;
+    text-align: center;
+    bottom: 0px;
+    right: 0px;
+    color: #fff;
+}
+
+.social-icons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.social-login__icon {
+    font-size: 10px;
+    padding: 20px 10px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.social-login__icon:hover {
+    color: #ceab69;
+}
+
 .login__submit:active,
 .login__submit:focus,
 .login__submit:hover {

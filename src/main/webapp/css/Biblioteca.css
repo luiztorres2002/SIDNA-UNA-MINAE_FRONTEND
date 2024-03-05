@@ -260,6 +260,10 @@ select {; /* Ancho personalizado */
     .check-container {
         transform: translate(3.5%, -100%) scale(1.2) !important;
     }
+
+    #selectDiv{
+        width: 160px !important;
+    }
 }
 
 @media (max-width: 395px) {
@@ -315,6 +319,10 @@ select {; /* Ancho personalizado */
 }
 
 @media (max-width: 768px) {
+
+    #selectDiv{
+        width: 0px !important;
+    }
 
     .text-section-Biblioteca {
         max-width: 100%;

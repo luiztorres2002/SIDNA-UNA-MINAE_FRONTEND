@@ -87,6 +87,7 @@ class Biblioteca {
             generarBtn3.style.display = 'inline';
         });
         cancelarBtn.addEventListener('click', (event) => {
+            event.preventDefault();
             this.cancelarExportar();
         });
         this.dom.querySelector("#generarBtn2").addEventListener('click', () => {
@@ -221,7 +222,7 @@ class Biblioteca {
                            <button class="btn btn-custom-outline-success2" id="marcarTodo" style="margin-right: 15px;margin-left: -30px;width: 140px;border-radius: 5px;display: none;"><span class="font-weight-bold"><i class="fa-solid fa-check-double"></i></span> <span class="texto-agregar">Marcar todo</span></button>
                            <button class="btn btn-custom-outline-success2" id="desmarcarTodo" style="margin-right: 15px;margin-left: -30px;width: 160px;border-radius: 5px;display: none;"><span class="font-weight-bold"><i class="fa-solid fa-check-double"></i></span> <span class="texto-agregar">Desmarcar todo</span></button>
                     <div class="btn-group me-2">
-                <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 160px; line-height: 5px;"><span class="font-weight-bold">+</span> <span class="texto-agregar">Agregar Noticia</span></button>
+                <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 160px; line-height: 5px;"><span class="font-weight-bold"><i class="fa-solid fa-plus"></i></span> <span class="texto-agregar">Agregar Noticia</span></button>
                     </div>
                    <select id="tiempoSeleccionado2" style="border: none; width: 110px; margin-left: 15px";>
                     <option value="" selected disabled>Prioridad</option>
@@ -229,14 +230,15 @@ class Biblioteca {
                     <option value="Media">Media</option>
                     <option value="Baja">Baja</option>
                 </select>
-                <select id="tiempoSeleccionado3" style="border: none; width: 90px; margin-left: 20px";>
+                <div id="selectDiv" style="position: relative; width: 200px;">
+                <select id="tiempoSeleccionado3" style="border: none; width: 90px; margin-left: 20px; max-width: 150px;";>
                     <option value="" selected disabled>Fecha</option>
-                    <option value="ultimaHora">Última Hora</option>
                     <option value="ultimoDia">Último Día</option>
                     <option value="ultimaSemana">Última Semana</option>
                     <option value="ultimoMes">Último Mes</option>
                     <option value="ultimoAno">Último Año</option>
                 </select>
+                </div>
                    <input class="form-control me-2 fontAwesome" id="buscadorEtiqueta" autocomplete="off" type="text" style="width: 100px; margin-left: 200px; height: 38px; border-radius: 5px; border: 1px solid #1c2858;" placeholder="&#xf002; Buscar..."> 
                     <div class="btn-group me-2">
                          <button type="button" class="btn btn-custom-outline-success" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
@@ -262,17 +264,30 @@ class Biblioteca {
                 <div class="spinner-border" role="status" style="color: #cdab68;margin-left: 50%;margin-top: 30%;display: none;">
                   <span class="visually-hidden">Loading...</span>
                 </div>
+               
                 <div class="search-results-container1">
                     <div id="noticiasBiblioteca"></div> 
                     <div class="d-flex justify-content-center">
                     </div>
                 </div>
                 </div>
-                <button class="btn btn-custom-outline-success3" id="generarBtn2" style="display: none; margin-left: 1500px">ACEPTAR</button>
-                <button class="btn btn-custom-outline-success4" id="generarBtn3" style=" display: none;">CANCELAR</button>
             </form>
+            <button class="btn btn-custom-outline-success3" id="generarBtn2" style="display: none; margin-left: 1500px">ACEPTAR</button>
+            <button class="btn btn-custom-outline-success4" id="generarBtn3" style=" display: none;">CANCELAR</button>
         
         `;
+
+        $(document).ready(function () {
+            $('select#tiempoSeleccionado3').change(function () {
+                var text = $(this).find('option:selected').text();
+                var $aux = $('<select/>').append($('<option/>').text(text));
+                $(this).after($aux);
+                $(this).width($aux.width());
+                $(this).css('margin-right', $aux.css('margin-right'));
+                $aux.remove();
+            }).change();
+        });
+
         setTimeout(() => {
             const tiempoSeleccionadoNormal = document.getElementById('tiempoSeleccionado2');
             const tiempoSeleccionadoMobile = document.getElementById('tiempoSeleccionadoMobile1');
