@@ -1,11 +1,16 @@
 .card {
     max-width: 62em !important;
-    max-height: 16em !important;
+    max-height: 12em !important;
     min-height: 12em !important;
     flex-direction: row !important;
     background-color: #ffffff !important;
     box-shadow: 4px 5px 13px 2px #7a7d74 !important;
-    margin: 2.3em auto !important;
+    margin: 0.5em auto !important;
+}
+
+.card-title {
+    max-height: 44px;
+    overflow: hidden;
 }
 
 .custom-select {
@@ -180,7 +185,7 @@ select {
 }
 
 .search-results-container {
-    max-height: 700px;
+    max-height: 660px;
     max-width: 3000px;
     overflow-y: auto;
     margin-top: 5px;

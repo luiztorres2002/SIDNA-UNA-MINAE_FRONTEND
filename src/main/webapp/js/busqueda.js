@@ -91,7 +91,7 @@ class Busqueda {
         <div class="linea-amarilla"></div>
         <div class="linea-verde"></div>
         </div>
-        <div class="container justify-content-center" id="tituloBusqueda" style="text-align: center; font-family: Verdana; font-size: 32px;"> 
+        <div class="container justify-content-center" id="tituloBusqueda" style="text-align: center; font-family: Verdana; font-size: 28px;"> 
                 Últimas Noticias Ambientales
         </div>
         <div class="d-flex justify-content-center">

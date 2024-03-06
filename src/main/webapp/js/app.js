@@ -16,7 +16,6 @@ class App {
         this.dom.querySelector('#dropdwonUsuario').style.display = 'none';
         this.renderMenuItems();
         this.busquedaShow();
-
     }
 
     render = () => {

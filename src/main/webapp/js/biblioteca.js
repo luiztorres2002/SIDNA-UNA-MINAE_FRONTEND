@@ -212,7 +212,7 @@ class Biblioteca {
          <div class="linea-azul"></div>
         <div class="linea-amarilla"></div>
         <div class="linea-verde"></div>
-                   <div class="container justify-content-center" style="text-align: center; font-family: Verdana; font-size: 32px;"> 
+                   <div class="container justify-content-center" style="text-align: center; font-family: Verdana; font-size: 28px;"> 
                            Biblioteca Personal
                         </div>
                     <div class="d-flex justify-content-center">
@@ -1135,7 +1135,7 @@ class Biblioteca {
             diaa = '09';
         }
 
-        this.entity["fecha"] = anio + "-" + mes + "-" + diaa;
+        this.entity["fecha"] = diaa + "/" + mes + "/" + anio;
 
         delete this.entity['dia'];
         delete this.entity['mes'];
@@ -1567,6 +1567,8 @@ class Biblioteca {
             tl: { col: 21, row: 2 },
             ext: { width: 500, height: 500 }
         });
+        chartContainer.removeChild(canvas);
+        chartContainerPie.removeChild(canvasPie);
     };
 
     guardarArchivo = async (workbook) => {
