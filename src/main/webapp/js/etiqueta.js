@@ -41,6 +41,7 @@ class Etiqueta {
             const descripcion = this.dom.querySelector("#txtNombre").value;
             this.agregarEtiqueta2(descripcion);
         });
+        this.dom.querySelector("#etiquetaCancelar").addEventListener('click', this.cancelarAgregar);
         this.dom.querySelector("#categorias #modalEditar #formEdit #save").addEventListener('click', () => {
             const etiquetaId = this.dom.querySelector("#categorias #modalEditar #formEdit #etiquetaId").value;
             const descripcion = this.dom.querySelector("#categorias #modalEditar #formEdit #input").value;
@@ -272,7 +273,7 @@ class Etiqueta {
           <input type="hidden" id="etiquetaId" name="etiquetaId" value="">
           
           <div class="form-group mb-2">
-            <input id="input" type="text" autocomplete="off"  class="form-control" style="border-right-color: white; border-left-color: white; border-top-color: white; border-bottom-color: black">
+            <input id="input" type="text" autocomplete="off"  class="form-control" style="border-right-color: black; border-left-color: black; border-top-color: black; border-bottom-color: black">
           </div>
 
           <div class="form-group mb-2 align-content-lg-end">
@@ -304,6 +305,11 @@ class Etiqueta {
     cancelarEdit = () => {
         event.preventDefault();
         this.modalEditar.hide();
+    }
+
+    cancelarAgregar=()=>{
+        event.preventDefault();
+        this.modal.hide();
     }
 
     editarEtiqueta = (etiquetaId, descripcion) => {
@@ -389,16 +395,17 @@ class Etiqueta {
         </button>
       </div>
       <div class="modal-body p-4 py-5 p-md-5">
-        <h3 class="text-center mb-3">Agregar nueva etiqueta</h3>
+        <h3 class="text-left mb-3">Agregar Etiqueta <button class="btn  btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Add"><i class="fa fa-edit fa-lg"></i></button></h3>
         <ul class="ftco-footer-social p-0 text-center">
         </ul>
         <form action="#" id="formadd" class="signup-form">
         <input type="hidden" id="etiquetaId" name="etiquetaId" value="" >
          <div class="form-group mb-2">
-            <input type="text" id="txtNombre" class="form-control mt-4" autocomplete="off">
+            <input type="text" id="txtNombre" autocomplete="off" class="form-control" style="border-right-color: black; border-left-color: black; border-top-color: black; border-bottom-color: black">
         </div>
           <div class="form-group mb-2">
-            <button type="submit" id="etiquetaAgregar" class="form-control mt-3 btn btn-primary rounded submit px-3">Aceptar</button>
+            <button type="submit" id="etiquetaAgregar" style="background-color: #cdab68" class="rounded text-light">Aceptar</button>
+            <button type="submit" id="etiquetaCancelar" style="background-color: white" class="rounded">Cancelar</button>
           </div>
           <div class="form-group d-md-flex">
           </div>
