@@ -44,7 +44,7 @@ public class ProxyResource {
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == 200) {
                 byte[] imageBytes = EntityUtils.toByteArray(response.getEntity());
-                String contentType = response.getEntity().getContentType() != null ? response.getEntity().getContentType().getValue() : "image/jpeg"; // Establecer un tipo de contenido predeterminado si es nulo
+                String contentType = response.getEntity().getContentType() != null ? response.getEntity().getContentType().getValue() : "image/jpeg";
                 return Response.ok(imageBytes, contentType).build();
             } else {
                 return Response.status(statusCode).entity("La solicitud no pudo completarse exitosamente").build();

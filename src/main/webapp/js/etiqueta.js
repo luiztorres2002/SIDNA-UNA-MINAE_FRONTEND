@@ -273,7 +273,7 @@ class Etiqueta {
           <input type="hidden" id="etiquetaId" name="etiquetaId" value="">
           
           <div class="form-group mb-2">
-            <input id="input" type="text" autocomplete="off"  class="form-control" style="border-right-color: black; border-left-color: black; border-top-color: black; border-bottom-color: black">
+            <input id="input" type="text" autocomplete="off"  class="form-control" style="border-right-color: white; border-left-color: white; border-top-color: white; border-bottom-color: black">
           </div>
 
           <div class="form-group mb-2 align-content-lg-end">
@@ -558,6 +558,11 @@ class Etiqueta {
         const nameColumn = document.querySelectorAll('#tablaEtiquetas tbody tr td:nth-child(1)');
         let encontrados = false;
 
+
+        const removeAccents = (str) => {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        };
+
         nameColumn.forEach((cell) => {
             const row = cell.parentElement;
             row.classList.remove('highlight');
@@ -578,8 +583,8 @@ class Etiqueta {
         }
 
         nameColumn.forEach((cell) => {
-            const cellText = cell.textContent.trim().toLowerCase();
-            if (cellText === searchTerm) {
+            const cellText = removeAccents(cell.textContent.trim().toLowerCase());
+            if (cellText === removeAccents(searchTerm)) {
                 const row = cell.parentElement;
                 row.classList.remove("disabled-row");
                 row.classList.add('highlight');

@@ -813,7 +813,7 @@ class Biblioteca {
 
             elementoNoticiaCoincidente.innerHTML = `
             <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${enlace}">
-                <img src="${imagen}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${imagen}'; this.classList.add('card-img-top', 'card-img-custom');">
+                <img src="${imagen}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='images/default.png'; this.classList.add('card-img-top', 'card-img-custom');">
                 <div class="card-body">
                     <div class="text-section-Biblioteca">
                         <h5 class="card-title fw-bold">${titulo}</h5>
@@ -1654,8 +1654,8 @@ class Biblioteca {
     deleteNoticia = async() => {
         event.preventDefault();
         const entityId = this.deleteEntity;
-        const request = new Request(`${backend}/NoticiasMarcadas/EtiquetasExternaDelete/${entityId}`, { // Cambiar a enviar el parámetro como parte de la ruta
-            method: 'POST', // Cambiar el método a POST
+        const request = new Request(`${backend}/NoticiasMarcadas/EtiquetasExternaDelete/${entityId}`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -1677,15 +1677,15 @@ class Biblioteca {
                 try{
 
                     const response2 = await fetch(request2);
-                        if (response2.ok) {
-                            this.hideModalBorrar();
-                            this.cargarBiblioteca();
-                            this.showModalSuccessBorrar();
-                        }
-                        else{
-                            this.hideModalBorrar();
-                            this.showModalErrorBorrar();
-                        }
+                    if (response2.ok) {
+                        this.hideModalBorrar();
+                        this.cargarBiblioteca();
+                        this.showModalSuccessBorrar();
+                    }
+                    else{
+                        this.hideModalBorrar();
+                        this.showModalErrorBorrar();
+                    }
                 }catch (error){
                     console.error("Error al eliminar la entidad:", error);
                 }

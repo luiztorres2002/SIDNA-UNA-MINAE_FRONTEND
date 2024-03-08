@@ -569,24 +569,24 @@ class Busqueda {
         return await response.json();
     }
 
-     mostrarMensajeNoNoticias() {
+    mostrarMensajeNoNoticias() {
         const noticiasCoincidentes = document.querySelector('#noticiasCoincidentes');
         noticiasCoincidentes.innerHTML = '<p style="margin-top: 25%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 24px;">No se encontraron noticias.</p>';
-         this.ocultarSpinner();
+        this.ocultarSpinner();
     }
 
-     async mostrarNoticiasCoincidentes(newsResults) {
-         if (this.abortController) {
-             this.abortController.abort();
-         }
-         var paginationNav = document.getElementById('paginationNav');
-         paginationNav.style.display = 'none';
-         let noticiasCoincidentesCargadas = 0;
+    async mostrarNoticiasCoincidentes(newsResults) {
+        if (this.abortController) {
+            this.abortController.abort();
+        }
+        var paginationNav = document.getElementById('paginationNav');
+        paginationNav.style.display = 'none';
+        let noticiasCoincidentesCargadas = 0;
         const noticiasCoincidentes = document.querySelector('#noticiasCoincidentes');
         const spinner = document.querySelector('.spinner-border');
-         this.abortController = new AbortController();
-         const { signal } = this.abortController;
-         const { signal: globalAbortSignal } = globalAbortController;
+        this.abortController = new AbortController();
+        const { signal } = this.abortController;
+        const { signal: globalAbortSignal } = globalAbortController;
         spinner.style.display = 'none';
         const bordeColores = ['#1c2858', '#cdab68'];
         const botonColores = ['#cdab68', '#1c2858'];
@@ -647,7 +647,9 @@ class Busqueda {
         elementoNoticiaCoincidente2.classList.add('noticia-coincidente');
         elementoNoticiaCoincidente2.innerHTML = `
         <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${result.link}">
-            <img src="${imageUrl}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${result.backup}'; this.classList.add('card-img-top', 'card-img-custom');">
+            <img src="${imageUrl}" class="card-img-top card-img-custom" alt="" 
+     data-alternative="${result.backup},images/default.png" 
+     onerror="loadAlternative(this, this.getAttribute('data-alternative').split(/,/)); this.classList.add('card-img-top', 'card-img-custom');">
             <div class="card-body">
                 <div class="text-section">
                     <h5 class="card-title fw-bold">${result.title}</h5>
@@ -781,12 +783,12 @@ class Busqueda {
         });
     }
 
-     ocultarSpinner() {
+    ocultarSpinner() {
         const spinner = document.querySelector('.spinner-border');
         spinner.style.display = 'none';
     }
 
-     manejarErrorApi(error) {
+    manejarErrorApi(error) {
         console.error('Error al obtener datos de la API:', error);
     }
 

@@ -136,9 +136,9 @@ header ul li a {
 }
 
 .dropdown {
-    position: fixed !important;
-    right: 50px;
-    top: 20px;
+    position: fixed;
+    left: 12%;
+    top: -10px;
     display: inline-block;
     background-color: #1c2858;
     padding: 8px;
@@ -377,7 +377,7 @@ header ul li a {
 body {
     position: relative;
     padding-bottom: 5em;
-    min-height: 200vh;
+    min-height: 132vh;
 }
 
 footer {
@@ -390,6 +390,10 @@ footer {
 @media (max-width: 768px) {
     #footer {
         font-size: 0.7em !important;
+    }
+
+    .footer-dark {
+        display: none;
     }
 
     ::-webkit-scrollbar {
@@ -405,7 +409,6 @@ footer {
 }
 
 .footer-dark {
-    padding: 50px 0;
     color: #f0f9ff;
     background-color: #282d32;
 }
@@ -533,4 +536,3 @@ a:hover + .box, .box:hover {
 .anchor_preview {
     color: black;
 }
-

@@ -154,6 +154,12 @@ tr.disabled-row {
     color: #888;
 }
 
+@media (max-width: 1900px) {
+    header ul li a {
+        padding: 12px 75px;
+    }
+}
+
 @media (max-width: 1670px) {
     header ul li a {
         text-decoration: none;
@@ -164,10 +170,28 @@ tr.disabled-row {
     }
 }
 
+@media (max-width: 1221px) {
+    header ul li a {
+        padding: 12px 70px !important;
+    }
+}
+
+@media (max-width: 1117px) {
+    header ul li a {
+        padding: 12px 50px !important;
+    }
+}
+
+@media (max-width: 910px) {
+    header ul li a {
+        padding: 5px 30px !important;
+    }
+}
+
 @media (max-width: 1480px) {
     header ul li a {
         text-decoration: none;
-        padding: 5px 50px;
+        padding: 12px 80px;
         color: #000000;
         border-radius: 20px;
         font-size: 0.68em !important;

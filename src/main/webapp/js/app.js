@@ -14,8 +14,44 @@ class App {
         this.dom = this.render();
         this.renderBodyFiller();
         this.dom.querySelector('#dropdwonUsuario').style.display = 'none';
-        this.renderMenuItems();
-        this.busquedaShow();
+        const loginButton = this.dom.querySelector('#loginButton');
+        loginButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            const usuario = this.dom.querySelector('#loginTxt').value;
+            const spanUsuario = this.dom.querySelector('#usuarioTxt');
+            this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
+            spanUsuario.textContent = usuario;
+            localStorage.setItem('usuario', usuario);
+            this.renderMenuItems();
+            this.dom.querySelector('#menuItems').style.display = "flex";
+            login.style.display = 'none';
+            this.dom.querySelector('#loginTxt').value = "";
+            this.dom.querySelector('#passwordTxt').value = "";
+            this.busquedaShow();
+        });
+        const usuario = localStorage.getItem('usuario');
+        if (usuario) {
+            const spanUsuario = this.dom.querySelector('#usuarioTxt');
+            this.renderMenuItems();
+            this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
+            spanUsuario.textContent = usuario;
+            this.busquedaShow();
+        } else {
+            const login = this.dom.querySelector('#login');
+            login.style.display = 'flex';
+        }
+        //this.renderMenuItems();
+        //this.busquedaShow();
+        this.dom.querySelector('#cerrarSesion').addEventListener('click', () => {
+            const login = this.dom.querySelector('#login');
+            this.renderBodyFiller();
+            this.Busqueda.dom.style.display = "none";
+            this.dom.querySelector('#menuItems').style.display = "none";
+            this.dom.querySelector('#dropdwonUsuario').style.display = 'none';
+            localStorage.removeItem('usuario');
+            login.style.display = 'flex';
+            console.log("Se cerró la sesión");
+        });
     }
 
     render = () => {
@@ -35,9 +71,11 @@ class App {
     renderMenu = () => {
         return `
         <header id="menu">
-            <a id="logonav" href="#" ><img src="images/Minae.png"  width="300" height="65" style="margin-right: 200px;"></a>
+            <a id="logonav" href="#" style="width: 22%"><img src="images/Minae.png"  width="300" height="65" style="margin-right: 200px;"></a>
+            <div style="width: 58%">
         <ul class="navbar" id='menuItems'>
         </ul>
+        </div>
         <div id="dropdwonUsuario"  class="dropdown">
             <button id="userIcon" class="dropbtn"><i class="fa-solid fa-user" style="color: #ffffff;"></i><span id="usuarioTxt" class="texto-agregar" style="margin-left: 10px;font-weight: bold;">Usuario</span></button>
             <div class="dropdown-content">

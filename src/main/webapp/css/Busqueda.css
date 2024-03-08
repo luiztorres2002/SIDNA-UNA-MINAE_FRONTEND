@@ -9,7 +9,7 @@
 }
 
 .card-title {
-    max-height: 44px;
+    max-height: 49px;
     overflow: hidden;
 }
 
@@ -434,6 +434,13 @@ input.BajaModal:checked {
     cursor: pointer;
 }
 
+
+@media (max-width: 1900px) {
+    .search-container {
+        max-width: 520px !important;
+    }
+}
+
 @media (max-width: 1669px) {
     .search-container {
         max-height: 600px;
@@ -460,6 +467,10 @@ input.BajaModal:checked {
         max-height: 600px;
         max-width: 220px !important;
         overflow-y: auto;
+    }
+
+    #logonav {
+        width: 190px !important;
     }
 
     #dropdwonUsuario{
@@ -586,6 +597,8 @@ input.BajaModal:checked {
         margin-right: 0px !important;
     }
 }
+
+
 
 @media (max-width: 385px) {
     #buscar {
