@@ -1,17 +1,10 @@
 class Biblioteca {
-
     dom;
-
     modal;
-
     state;
-
     deleteEntity;
-
     modalerror;
-
     modalCampo;
-
     modalexito;
 
     constructor() {
@@ -115,7 +108,6 @@ class Biblioteca {
             }
         });
         this.dom.querySelector("#exportarPDF").addEventListener('click', () => {
-
             const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
             const checkboxesMarcados = [];
             checkboxes.forEach((checkbox, index) => {
@@ -276,7 +268,6 @@ class Biblioteca {
             <button class="btn btn-custom-outline-success4" id="generarBtn3" style=" display: none;">CANCELAR</button>
         
         `;
-
         $(document).ready(function () {
             $('select#tiempoSeleccionado3').change(function () {
                 var text = $(this).find('option:selected').text();
@@ -287,7 +278,6 @@ class Biblioteca {
                 $aux.remove();
             }).change();
         });
-
         setTimeout(() => {
             const tiempoSeleccionadoNormal = document.getElementById('tiempoSeleccionado2');
             const tiempoSeleccionadoMobile = document.getElementById('tiempoSeleccionadoMobile1');
@@ -420,10 +410,8 @@ class Biblioteca {
                 <button type="button" id = "cancelModal" class="close d-flex align-items-center justify-content-center" aria-label="Close" style="font-size: 36px; width: 50px; height: 50px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); border: 2px solid #ccc; border-radius: 50%;">
   <span aria-hidden="true" class="ion-ios-close"></span>
 </button>
-
             </div>
             <div class="modal-body p-4 py-3 p-md-3">
-
                 <img src="images/Minae.png" class="w-50 mx-auto d-block" alt="...">
                 <ul class="ftco-footer-social p-0 text-center"></ul>
                 <h4 class="mt-4 text-center"> Ingreso de noticia de medio externo</h4>
@@ -479,7 +467,6 @@ class Biblioteca {
         </div>
       </div>
     </div>
-
     <div class="col-md-6">
       <div class="form-group">
         <legend id="prioridadlegend" class="col-form-label pt-0 align-items-center d-flex" style="font-size: 22px; padding-left: 10px; font-family: Verdana">
@@ -524,7 +511,6 @@ class Biblioteca {
         </div>
     </div>
 </div>
-
         `;
     }
     renderModalError = () => {
@@ -549,7 +535,6 @@ class Biblioteca {
         </div>  
         `;
     }
-
     renderModalErrorBorrar = () => {
         return `
 <div id="modalErrorBorrar" class="modal fade">
@@ -570,11 +555,9 @@ class Biblioteca {
             </div>
             </div>
         </div>  
-
     
         `;
     }
-
     renderModalSuccessBorrar = () => {
         return `
     <div id="sucessBorrar" class="modal fade">
@@ -597,8 +580,6 @@ class Biblioteca {
     </div>
     `;
     }
-
-
     renderModalErrorGenerico = () => {
         return `
         <div id="modalErrorMensaje" class="modal fade">
@@ -620,7 +601,6 @@ class Biblioteca {
             </div>
         </div>`;
     }
-
     renderModalCampo = () => {
         return `
     <div id="modalcampo" class="modal fade">
@@ -633,10 +613,8 @@ class Biblioteca {
             </div>
         </div>
     </div>
-
     `;
     }
-
     renderModalBorrar = () => {
         return `
         <div id="modalborrar" class="modal fade" tabindex="-1">
@@ -650,7 +628,6 @@ class Biblioteca {
                     <div class="modal-body p-4 py-5 p-md-5">
                         <div class="text-center">
                             <img src="images/Minae.png" class="w-50 mx-auto d-block mb-4" alt="...">
-
                         </div>
                         <h4 class="text-center mb-2 mt-2">¿Estás seguro de que deseas eliminar esta noticia de tu biblioteca? </h4>
                        
@@ -672,8 +649,6 @@ class Biblioteca {
         </div>
     `;
     }
-
-
     renderModalSuccess = () => {
         return `
         <div id="sucessmodal" class="modal fade">
@@ -696,7 +671,6 @@ class Biblioteca {
         </div>   
         `;
     }
-
     verificarCamposLlenados = () => {
         const titulo = document.getElementById('titulo').value;
         const descripcion = document.getElementById('descripcion').value;
@@ -708,14 +682,12 @@ class Biblioteca {
         const anio = document.getElementById('anio').value;
         const regexAnio = /^\d{4}$/;
         const regexEnlace = /^(https?:\/\/).+/i;
-
         const tituloLegend = document.getElementById('titulolegend');
         const descripcionLegend = document.getElementById('descripcionlegend');
         const fechaLegend = document.getElementById('fechalegend');
         const prioridadLegend = document.getElementById('prioridadlegend');
         const fuenteLegend = document.getElementById('fuentelegend');
         const enlaceLegend = document.getElementById('enlacelegend');
-
         tituloLegend.style.color = 'black';
         tituloLegend.style.textDecoration = 'none';
         descripcionLegend.style.color = 'black';
@@ -728,55 +700,46 @@ class Biblioteca {
         fuenteLegend.style.textDecoration = 'none';
         enlaceLegend.style.color = 'black';
         enlaceLegend.style.textDecoration = 'none';
-
         if (titulo.trim() === '') {
             tituloLegend.style.color = 'red';
             tituloLegend.style.textDecoration = 'underline';
             tituloLegend.title = 'Debes ingresar un título';
         }
-
         if (descripcion.trim() === '') {
             descripcionLegend.style.color = 'red';
             descripcionLegend.style.textDecoration = 'underline';
             descripcionLegend.title = 'Debes ingresar una descripción de la noticia';
         }
-
         if (mes.trim() === '' || mes.trim() === 'Mes') {
             fechaLegend.style.color = 'red';
             fechaLegend.style.textDecoration = 'underline';
             fechaLegend.title = 'Elige un mes válido';
         }
-
         if (dia.trim() === '' || parseInt(dia) < 1 || parseInt(dia) > 31) {
             fechaLegend.style.color = 'red';
             fechaLegend.style.textDecoration = 'underline';
             fechaLegend.title = 'Ingresa un valor dentro del rango de los días (1-31)';
         }
-
         if (prioridad.trim() === '') {
             prioridadLegend.style.color = 'red';
             prioridadLegend.style.textDecoration = 'underline';
             prioridadLegend.title = 'Ingresa una prioridad válida';
         }
-
         if (fuente.trim() === '') {
             fuenteLegend.style.color = 'red';
             fuenteLegend.style.textDecoration = 'underline';
             fuenteLegend.title = 'Ingresa una fuente válida';
         }
-
         if (!regexEnlace.test(enlace)) {
             enlaceLegend.style.color = 'red';
             enlaceLegend.style.textDecoration = 'underline';
             enlaceLegend.title = 'Ingresa un enlace válido (debe comenzar con http:// o https://)';
         }
-
         if (!regexAnio.test(anio)) {
             fechaLegend.style.color = 'red';
             fechaLegend.style.textDecoration = 'underline';
             fechaLegend.title = 'Ingresa un año válido';
         }
-
         // Verificar si alguno de los campos está vacío
         if (
             titulo.trim() === '' ||
@@ -787,20 +750,16 @@ class Biblioteca {
             prioridad.trim() === '' ||
             fuente.trim() === '' ||
             enlace.trim() === '' || !regexEnlace.test(enlace) || !regexAnio.test(anio) || parseInt(dia) < 1 || parseInt(dia) > 31
-
         ) {
             this.showModalCampo();
             return false;
         }
-
         return true;
     }
     renderizarNoticias = () => {
         const bordeColores = ['#1c2858', '#cdab68'];
-
         const noticiasCoincidentes = document.getElementById('noticiasBiblioteca');
         noticiasCoincidentes.innerHTML = '';
-
         for (const [index, noticia] of this.state.noticias.entries()) {
             const {id, titulo, descripcion, prioridad, fuente, enlace, imagen, fechaGuardado, fecha} = noticia;
             const idNoticia = noticia.id;
@@ -813,7 +772,8 @@ class Biblioteca {
 
             elementoNoticiaCoincidente.innerHTML = `
             <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${enlace}">
-                <img src="${imagen}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='images/default.png'; this.classList.add('card-img-top', 'card-img-custom');">
+                <img src="${imagen}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${imagen}'; this.classList.add('card-img-top', 'card-img-custom');">
+               
                 <div class="card-body">
                     <div class="text-section-Biblioteca">
                         <h5 class="card-title fw-bold">${titulo}</h5>
@@ -848,20 +808,17 @@ class Biblioteca {
                 </div>
             </div>
         `;
-
             const borrar = elementoNoticiaCoincidente.querySelector('#borrarBtn');
             borrar.addEventListener('click', () => {
                 event.preventDefault();
                 this.showModalBorrar(id);
             });
-
             elementoNoticiaCoincidente.addEventListener('dblclick', (event) => {
                 const checkbox = document.querySelector(`#noticiaCheckbox-${index}`);
                 if (checkbox) {
                     checkbox.checked = true;
                 }
             });
-
             //LOGICA PARA CAMBIAR PRIORIDAD DE UNA NOTICA
             const radioButtons = elementoNoticiaCoincidente.querySelectorAll(`input[name="prioridad-${index}"]`);
             radioButtons.forEach(radioButton => {
@@ -869,8 +826,6 @@ class Biblioteca {
                     this.actualizarPrioridad(id, radioButton.value);
                 });
             });
-
-
             noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
             const spinner = document.querySelector('.spinner-border');
             spinner.style.display = 'none';
@@ -886,7 +841,6 @@ class Biblioteca {
             });
         }
     };
-
     cargarBiblioteca = async () => {
         try {
             const response = await fetch(`${backend}/NoticiasMarcadas/4-0258-0085`);
@@ -899,7 +853,6 @@ class Biblioteca {
             console.log('Error al cargar la lista de noticias:', error);
         }
     }
-
     actualizarPrioridad = (noticiaID, nuevaPrioridad) => {
         const url = `${backend}/NoticiasMarcadas/4-0258-0085/${noticiaID}?input=${nuevaPrioridad}`;
         fetch(url, {
@@ -917,7 +870,6 @@ class Biblioteca {
         });
         event.preventDefault();
     }
-
     showModal = async () => {
         this.resetForm();
         const titulo = document.getElementById('titulo');
@@ -936,58 +888,44 @@ class Biblioteca {
         prioridad.setAttribute('disabled', 'disabled');
         this.modal.show();
     }
-
     showModalError = async () => {
         this.modal.hide();
         this.modalerror.show();
     }
-
     showModalCampo = async () => {
         this.modalCampo.show();
     }
-
     showModalFaltaCampo = async () => {
         this.modalerror.show();
     }
-
     showModalBorrar = (idd) => {
         event.preventDefault();
         this.deleteEntity = " ";
         this.deleteEntity = idd;
         this.modalBorrar.show();
     }
-
     showModalErrorBorrar = async () => {
         this.modalErrorBorrar.show();
     }
-
     showModalSuccessBorrar = async () => {
         this.modalSuccessBorrar.show();
     }
-
     hideModalBorrarSuccess = async () => {
         this.modalSuccessBorrar.hide();
-
     }
-
     hideModalBorrar = async () => {
         this.modalBorrar.hide();
-
     }
-
     hideModalError = async () => {
         this.modalerror.hide();
         this.modal.show();
     }
-
     hideModalMensaje = async () => {
         this.modalErrorMensaje.hide();
     }
-
     hideModalExportar = async () => {
         this.modalExportar.hide();
     }
-
     hideModalErrorGenerico = async () => {
         this.modalErrorMensaje.hide();
     }
@@ -996,35 +934,26 @@ class Biblioteca {
         this.resetForm();
         this.reset();
     }
-
     hideModalCampo = async () => {
         this.modalCampo.hide();
-
     }
-
     hidemodal = () => {
-
         this.modal.hide();
         this.modal.resetForm();
         this.reset();
     }
-
-
     showModalExito = () => {
         // Cargar los datos de la entidad en el formulario del modal
         this.modal.hide();
         this.modalexito.show();
     }
-
     obtenerNumeroDeMes = async (nombreMes) => {
         const meses = [
             "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
             "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
         ];
-
         // Busca el índice del nombre del mes en el array de meses
         const indice = meses.indexOf(nombreMes);
-
         // Si se encuentra el nombre del mes, devuelve su número (1 al 12)
         // Si no se encuentra, devuelve -1 como valor predeterminado para indicar que no se encontró
         if (indice !== -1) {
@@ -1033,7 +962,6 @@ class Biblioteca {
             return -1;
         }
     }
-
     load = async () => {
         const form = this.dom.querySelector("#biblioteca #modal #form");
         const formData = new FormData(form);
@@ -1041,19 +969,13 @@ class Biblioteca {
         for (let [key, value] of formData.entries()) {
             this.entity[key] = value;
         }
-
         // Imprime los datos en la consola
         console.log(this.entity);
     }
-
-
     createNew = () => {
         this.state.mode = 'A'; //agregar
         this.showModal();
-
     }
-
-
     resetForm = () => {
         var formulario = this.dom.querySelector("#biblioteca #modal #form");
         formulario.reset();
@@ -1063,7 +985,6 @@ class Biblioteca {
         const prioridadLegend = document.getElementById('prioridadlegend');
         const fuenteLegend = document.getElementById('fuentelegend');
         const enlaceLegend = document.getElementById('enlacelegend');
-
         tituloLegend.style.color = 'black';
         descripcionLegend.style.color = 'black';
         fechaLegend.style.color = 'black';
@@ -1071,14 +992,12 @@ class Biblioteca {
         fuenteLegend.style.color = 'black';
         enlaceLegend.style.color = 'black';
     }
-
     add = async () => {
         await this.load();
         const dia = this.entity['dia'];
         const anio = this.entity['anio'];
         const m = this.entity['mes'];
         let mes = null;
-
         if (m === 'Enero') {
             mes = '01';
         } else if (m === 'Febrero') {
@@ -1104,9 +1023,7 @@ class Biblioteca {
         } else if (m === 'Diciembre') {
             mes = '12';
         }
-
         let diaa = this.entity['dia'];
-
         if (diaa == '1') {
             diaa = '01';
         }
@@ -1134,9 +1051,7 @@ class Biblioteca {
         if (diaa == '9') {
             diaa = '09';
         }
-
         this.entity["fecha"] = diaa + "/" + mes + "/" + anio;
-
         delete this.entity['dia'];
         delete this.entity['mes'];
         delete this.entity['anio'];
@@ -1146,12 +1061,10 @@ class Biblioteca {
             try {
                 const proxyUrl1 = `${backend}/proxy?url=`;
                 const proxyUrl2 = 'https://corsproxy.io/?';
-
                 const newsResponse1 = await fetch(proxyUrl1 + enlace);
                 const newsHtml1 = await newsResponse1.text();
                 const newsDocument1 = new DOMParser().parseFromString(newsHtml1, 'text/html');
                 const ogImage1 = newsDocument1.querySelector('meta[property="og:image"]');
-
                 if (ogImage1) {
                     imageUrl = ogImage1.getAttribute('content');
                 } else {
@@ -1159,21 +1072,16 @@ class Biblioteca {
                     const newsHtml2 = await newsResponse2.text();
                     const newsDocument2 = new DOMParser().parseFromString(newsHtml2, 'text/html');
                     const ogImage2 = newsDocument2.querySelector('meta[property="og:image"]');
-
                     if (ogImage2) {
-
                         imageUrl = ogImage2.getAttribute('content');
                     } else {
                         console.error('No se pudo encontrar una imagen en ninguno de los proxies.');
                     }
                 }
-
                 this.entity['imagen'] = imageUrl;
-
             } catch (error) {
                 console.error('Error al obtener datos de noticia', error);
             }
-
             let descripciones = ["Noticia Externa"];
             this.entidad['id'] = '1';
             this.entidad['titulo'] = this.entity.titulo;
@@ -1215,7 +1123,7 @@ class Biblioteca {
         }
     }
     exportarAPDF = async (indicesSeleccionados) => {
-        const spinner =this.dom.querySelector("#spinner-exportar");
+        const spinner = this.dom.querySelector("#spinner-exportar");
         spinner.style.display = 'block';
         const prioridadCheckbox = document.querySelector(`#prioridadCheckbox`);
         const fechaCheckbox = document.querySelector(`#fechaCheckbox`);
@@ -1313,32 +1221,45 @@ class Biblioteca {
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Noticias Seleccionadas');
         this.configurarColumnas(worksheet);
-
         const prioridadCheckbox = this.dom.querySelector(`#prioridadCheckbox`);
         const fechaCheckbox = this.dom.querySelector(`#fechaCheckbox`);
-
         const noticiasOrdenadas = await this.ordenarNoticias(indicesSeleccionados, prioridadCheckbox, fechaCheckbox);
-
         this.agregarNoticiasALaHoja(worksheet, noticiasOrdenadas);
         this.estilizarHoja(worksheet);
-
         const worksheetCalculos = workbook.addWorksheet('Calculos');
         await this.crearGraficos(workbook, worksheetCalculos, noticiasOrdenadas);
-
         await this.guardarArchivo(workbook);
     };
-
     configurarColumnas = (worksheet) => {
         worksheet.columns = [
-            { header: 'Título', key: 'titulo', width: 40, style: {alignment: {vertical: 'middle', horizontal: 'center'}} },
-            { header: 'Descripción', key: 'descripcion', width: 60, style: {alignment: {vertical: 'middle', horizontal: 'left'}} },
-            { header: 'Fecha', key: 'fecha', width: 20, style: {alignment: {vertical: 'middle', horizontal: 'center'}} },
-            { header: 'Fuente', key: 'fuente', width: 30, style: {alignment: {vertical: 'middle', horizontal: 'center'}} },
-            { header: 'Prioridad', key: 'prioridad', width: 15, style: {alignment: {vertical: 'middle', horizontal: 'center'}} },
-            { header: 'Enlace', key: 'enlace', width: 50, style: {alignment: {vertical: 'middle', horizontal: 'center'}} }
+            {
+                header: 'Título',
+                key: 'titulo',
+                width: 40,
+                style: {alignment: {vertical: 'middle', horizontal: 'center'}}
+            },
+            {
+                header: 'Descripción',
+                key: 'descripcion',
+                width: 60,
+                style: {alignment: {vertical: 'middle', horizontal: 'left'}}
+            },
+            {header: 'Fecha', key: 'fecha', width: 20, style: {alignment: {vertical: 'middle', horizontal: 'center'}}},
+            {
+                header: 'Fuente',
+                key: 'fuente',
+                width: 30,
+                style: {alignment: {vertical: 'middle', horizontal: 'center'}}
+            },
+            {
+                header: 'Prioridad',
+                key: 'prioridad',
+                width: 15,
+                style: {alignment: {vertical: 'middle', horizontal: 'center'}}
+            },
+            {header: 'Enlace', key: 'enlace', width: 50, style: {alignment: {vertical: 'middle', horizontal: 'center'}}}
         ];
     };
-
     ordenarNoticias = (indicesSeleccionados, prioridadCheckbox, fechaCheckbox) => {
         let noticiasOrdenadas;
         if (prioridadCheckbox.checked) {
@@ -1375,7 +1296,6 @@ class Biblioteca {
         }
         return noticiasOrdenadas;
     };
-
     agregarNoticiasALaHoja = (worksheet, noticiasOrdenadas) => {
         const prioridadStyles = {
             Alta: {fill: {type: 'pattern', pattern: 'solid', fgColor: {argb: 'da9595'}}},
@@ -1400,7 +1320,6 @@ class Biblioteca {
             }
         });
     };
-
     estilizarHoja = (worksheet) => {
         worksheet.getRow(1).eachCell(cell => {
             cell.font = {bold: true};
@@ -1412,7 +1331,6 @@ class Biblioteca {
             };
             cell.alignment = {vertical: 'middle', horizontal: 'center', wrapText: true};
         });
-
         worksheet.columns.forEach((column, index) => {
             if (index >= 2 && index <= 5) {
                 column.eachCell({includeEmpty: true}, (cell) => {
@@ -1439,7 +1357,6 @@ class Biblioteca {
             }
         });
     };
-
     crearGraficos = async (workbook, worksheetCalculos, noticiasOrdenadas) => {
         const prioridadesRepetidas = {};
         noticiasOrdenadas.forEach(noticia => {
@@ -1503,7 +1420,6 @@ class Biblioteca {
         const chartContainerPie = document.createElement('div');
         chartContainerPie.appendChild(canvasPie);
         document.body.appendChild(chartContainerPie);
-
         const canvas = document.createElement('canvas');
         canvas.style.position = 'absolute';
         canvas.style.left = '-9999px';
@@ -1535,7 +1451,7 @@ class Biblioteca {
             },
             plugins: [{
                 beforeDraw(chart) {
-                    const { ctx, canvas } = chart;
+                    const {ctx, canvas} = chart;
                     ctx.save();
                     ctx.fillStyle = '#FFF';
                     ctx.fillRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
@@ -1543,11 +1459,9 @@ class Biblioteca {
                 },
             }]
         });
-
         const chartContainer = document.createElement('div');
         chartContainer.appendChild(canvas);
         document.body.appendChild(chartContainer);
-
         await new Promise(resolve => setTimeout(resolve, 200));
         const image = canvas.toDataURL("image/png").split(';base64,')[1];
         const imageId = workbook.addImage({
@@ -1555,8 +1469,8 @@ class Biblioteca {
             extension: 'png',
         });
         worksheetCalculos.addImage(imageId, {
-            tl: { col: 2, row: 1 },
-            ext: { width: 1000, height: 500 }
+            tl: {col: 2, row: 1},
+            ext: {width: 1000, height: 500}
         });
         const imagePie = canvasPie.toDataURL("image/png").split(';base64,')[1];
         const imageIdPie = workbook.addImage({
@@ -1564,13 +1478,12 @@ class Biblioteca {
             extension: 'png',
         });
         worksheetCalculos.addImage(imageIdPie, {
-            tl: { col: 21, row: 2 },
-            ext: { width: 500, height: 500 }
+            tl: {col: 21, row: 2},
+            ext: {width: 500, height: 500}
         });
         chartContainer.removeChild(canvas);
         chartContainerPie.removeChild(canvasPie);
     };
-
     guardarArchivo = async (workbook) => {
         const buffer = await workbook.xlsx.writeBuffer();
         saveAs(new Blob([buffer]), 'noticias_seleccionadas.xlsx');
@@ -1644,14 +1557,10 @@ class Biblioteca {
         var entity = '';
         return entity;
     }
-
     reset = () => {
         this.state.entity = this.emptyEntity();
     }
-
-
-
-    deleteNoticia = async() => {
+    deleteNoticia = async () => {
         event.preventDefault();
         const entityId = this.deleteEntity;
         const request = new Request(`${backend}/NoticiasMarcadas/EtiquetasExternaDelete/${entityId}`, {
@@ -1660,33 +1569,27 @@ class Biblioteca {
                 'Content-Type': 'application/json'
             }
         });
-
         try {
             const response = await fetch(request);
-
             if (response.ok) {
-
                 const cedula = "4-0258-0085";
-                const request2 = new Request(`${backend}/NoticiasMarcadas/ExternaDelete/${entityId}/${cedula}`, { // Cambiar a enviar el parámetro como parte de la ruta
-                    method: 'POST', // Cambiar el método a POST
+                const request2 = new Request(`${backend}/NoticiasMarcadas/ExternaDelete/${entityId}/${cedula}`, {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
-
-                try{
-
+                try {
                     const response2 = await fetch(request2);
                     if (response2.ok) {
                         this.hideModalBorrar();
                         this.cargarBiblioteca();
                         this.showModalSuccessBorrar();
-                    }
-                    else{
+                    } else {
                         this.hideModalBorrar();
                         this.showModalErrorBorrar();
                     }
-                }catch (error){
+                } catch (error) {
                     console.error("Error al eliminar la entidad:", error);
                 }
             } else {
@@ -1696,5 +1599,4 @@ class Biblioteca {
             console.error("Error al eliminar la entidad:", error);
         }
     }
-
 }

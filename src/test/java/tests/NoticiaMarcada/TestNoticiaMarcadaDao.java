@@ -160,4 +160,26 @@ public class TestNoticiaMarcadaDao {
         assert rows > 0;
         System.out.println("Test Actualizar Prioridad de Noticia Marcada Exitoso");
     }
+
+    @Test
+    public void deleteNoticiaMarcada() throws Exception{
+        List<NoticiaMarcada> noticiaMarcadas = noticiaMarcadaDao.getAllNoticiasMarcadas("4-0258-0085");
+        NoticiaMarcada noticiaMarcada1 = noticiaMarcadas.get(0); //CAMBIAR # SEGUN CORRESPONDA
+        String sql = "DELETE FROM NOTICIA_MARCADA\n" +
+                "WHERE Fk_NoticiaMarcada_UsuarioCedula = ? \n" +
+                "AND PK_NoticiaMarcada_Id = ?;\n";
+        String sql2 = "DELETE FROM NOTICIAMARCADA_ETIQUETA\n" +
+                "WHERE FK_NOTICIAMARCADAETIQUETA_NOTICIAMARCADAID = ?;\n";
+        //primera parte
+        PreparedStatement stm1 = database.prepareStatement(sql2);
+        stm1.setInt(1, noticiaMarcada1.getId());
+        stm1.executeUpdate();
+        //segunda parte
+        PreparedStatement stm2  = database.prepareStatement(sql);
+        stm2.setString(1, noticiaMarcada1.getUsuarioCedula());
+        stm2.setInt(2, noticiaMarcada1.getId());
+        int rows = stm2.executeUpdate();
+        assert rows > 0;
+        System.out.println("Test eliminar noticia exitoso");
+    }
 }

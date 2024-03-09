@@ -94,6 +94,8 @@ public class NoticiaMarcadaDao {
         String sql = "DELETE FROM NOTICIAMARCADA_ETIQUETA\n" +
                 "WHERE FK_NOTICIAMARCADAETIQUETA_NOTICIAMARCADAID = ?;\n";
 
+
+
         PreparedStatement stm = db.prepareStatement(sql);
         stm.setInt(1, id); // Establecer el parámetro como un int
 
@@ -135,6 +137,29 @@ public class NoticiaMarcadaDao {
                 }
                 return noticiasMarcadas;
             }
+        }
+    }
+
+    public List<NoticiaMarcada> getNoticiaXPrioridad(String prioridad, String usuarioCedula){
+        String sql = "SELECT * \n" +
+                "FROM NOTICIA_MARCADA \n" +
+                "WHERE Prioridad = ? \n" +
+                "AND Fk_NoticiaMarcada_UsuarioCedula = ?";
+
+        List<NoticiaMarcada> noticiasMarcadas = new ArrayList<>();
+        try(PreparedStatement statement = db.prepareStatement(sql)){
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    NoticiaMarcada noticiaMarcada = mapResultSetToNoticiaMarcada(resultSet);
+                    List<Etiqueta> etiquetas = etiquetaDao.getEtiquetasByNoticiaMarcadaId(noticiaMarcada.getId());
+                    noticiaMarcada.setEtiquetas(etiquetas);
+                    noticiasMarcadas.add(noticiaMarcada);
+                }
+                return noticiasMarcadas;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 

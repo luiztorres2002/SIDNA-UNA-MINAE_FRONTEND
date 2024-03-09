@@ -51,7 +51,16 @@ public class NoticiasMarcadas {
         }
     }
 
+    @POST
+    @Path("/ObtenerPorPrioridad/{id}/{prioridad}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public List<NoticiaMarcada> getAllNoticiasMarcadas(@PathParam("id") String id, @PathParam("prioridad") String prioridad) {
+        Database db = new Database();
+        NoticiaMarcadaDao noticiaMarcadaDao = new NoticiaMarcadaDao(db);
+        return noticiaMarcadaDao.getNoticiaXPrioridad(prioridad, id);
+    }
 
+        
     @POST
     @Path("/EtiquetasExternaDelete/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -66,6 +75,9 @@ public class NoticiasMarcadas {
             throw new RuntimeException(e);
         }
     }
+
+
+
 
     @GET
     @Path("/{usuarioCedula}")

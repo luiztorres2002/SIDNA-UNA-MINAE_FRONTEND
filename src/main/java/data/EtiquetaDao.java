@@ -109,18 +109,18 @@ public class EtiquetaDao {
         return new Etiqueta(etiquetaId, descripcion, usuarioCedula, estado);
     }
 
-        public void addEtiqueta(Etiqueta etiqueta) throws SQLException {
-            String sql = "INSERT INTO ETIQUETA (Descripcion,FK_Etiqueta_UsuarioCedula,Estado) VALUES (?,?,?)";
-            try (PreparedStatement statement = db.prepareStatement(sql)) {
-                statement.setString(1, etiqueta.getDescripcion());
-                statement.setString(2, etiqueta.getUsuarioCedula());
-                statement.setBoolean(3, etiqueta.getEstado());
-                statement.executeUpdate();
-            } catch (SQLException e) {
+    public void addEtiqueta(Etiqueta etiqueta) throws SQLException {
+        String sql = "INSERT INTO ETIQUETA (Descripcion,FK_Etiqueta_UsuarioCedula,Estado) VALUES (?,?,?)";
+        try (PreparedStatement statement = db.prepareStatement(sql)) {
+            statement.setString(1, etiqueta.getDescripcion());
+            statement.setString(2, etiqueta.getUsuarioCedula());
+            statement.setBoolean(3, etiqueta.getEstado());
+            statement.executeUpdate();
+        } catch (SQLException e) {
 
-                e.printStackTrace();
-            }
+            e.printStackTrace();
         }
+    }
 
     public void updateEtiqueta(Etiqueta etiqueta) throws SQLException {
         String sql = "update Etiqueta set Descripcion=? where PK_EtiquetaId=?";
@@ -151,4 +151,3 @@ public class EtiquetaDao {
         return new NoticiasAsociadas(noticiaId, etiquetaId);
     }
 }
-
