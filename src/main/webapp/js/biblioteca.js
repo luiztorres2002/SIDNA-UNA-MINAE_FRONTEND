@@ -44,6 +44,19 @@ class Biblioteca {
         const cancelarBtn = this.dom.querySelector("#generarBtn3");
         const marcarBtn = this.dom.querySelector("#marcarTodo");
         const desmarcarBtn = this.dom.querySelector("#desmarcarTodo");
+        const buscadorEtiqueta = this.dom.querySelector('#buscadorEtiqueta');
+
+        buscadorEtiqueta.addEventListener('input', () => {
+            event.preventDefault();
+            const noticias = this.state.noticias;
+            const filtroEtiqueta = buscadorEtiqueta.value.trim(); //.trim() elimina cualquier espacio a inicio o final de una cadena.
+            const noticiasFiltradas = noticias.filter(noticia => noticia.etiquetas.some(etiqueta => etiqueta.descripcion === filtroEtiqueta));
+            this.state.noticias = noticiasFiltradas;
+            this.renderizarNoticias();
+            this.state.noticias = noticias;
+        });
+
+
         marcarBtn.addEventListener('click', (event) => {
             event.preventDefault();
             marcarBtn.style.display = "none";
