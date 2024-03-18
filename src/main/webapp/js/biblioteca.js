@@ -49,13 +49,18 @@ class Biblioteca {
         buscadorEtiqueta.addEventListener('input', () => {
             event.preventDefault();
             const noticias = this.state.noticias;
-            const filtroEtiqueta = buscadorEtiqueta.value.trim(); //.trim() elimina cualquier espacio a inicio o final de una cadena.
-            const noticiasFiltradas = noticias.filter(noticia => noticia.etiquetas.some(etiqueta => etiqueta.descripcion === filtroEtiqueta));
-            this.state.noticias = noticiasFiltradas;
+            const filtroEtiqueta = buscadorEtiqueta.value.trim();
+
+            if (filtroEtiqueta === "") {
+                this.state.noticias = noticias;
+            } else {
+                const noticiasFiltradas = noticias.filter(noticia => noticia.etiquetas.some(etiqueta => etiqueta.descripcion === filtroEtiqueta)
+                );
+                this.state.noticias = noticiasFiltradas;
+            }
             this.renderizarNoticias();
             this.state.noticias = noticias;
         });
-
 
         marcarBtn.addEventListener('click', (event) => {
             event.preventDefault();
