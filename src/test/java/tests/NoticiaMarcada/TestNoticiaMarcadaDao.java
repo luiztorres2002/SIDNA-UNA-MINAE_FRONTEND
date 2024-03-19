@@ -194,4 +194,18 @@ public class TestNoticiaMarcadaDao {
         System.out.println("Etiqueta: " + etiqueta.getDescripcion());
         System.out.println("Test Filtrar por Etiqueta Exitoso");
     }
+
+    @Test
+    public void filtrarPorPrioridad()throws Exception{
+        String sql="select * from NOTICIA_MARCADA where Fk_NoticiaMarcada_UsuarioCedula=? and Prioridad=?";
+        PreparedStatement stm=database.prepareStatement(sql);
+        String cedula = "4-0258-0085";
+        String prioridad = "Media"; //CAMBIAR LA PRIORIDAD PARA FILTRAR
+        stm.setString(1, cedula);
+        stm.setString(2, prioridad);
+        ResultSet resultSet = stm.executeQuery();
+        assertNotNull(resultSet);
+        System.out.println("Prioridad Seleccionada: "+prioridad);
+        System.out.println("Test Filtrar por Prioridad Exitoso");
+    }
 }
