@@ -44,6 +44,23 @@ class Biblioteca {
         const cancelarBtn = this.dom.querySelector("#generarBtn3");
         const marcarBtn = this.dom.querySelector("#marcarTodo");
         const desmarcarBtn = this.dom.querySelector("#desmarcarTodo");
+        const prioridadSelecionador = this.dom.querySelector("#tiempoSeleccionado2");
+
+        prioridadSelecionador.addEventListener('change', async (event) => {
+            event.preventDefault();
+
+
+            await this.cargarBiblioteca();
+
+
+            const noticias = this.state.noticias;
+
+            const noticiasFiltradas = noticias.filter(noticia => noticia.prioridad === prioridadSelecionador.value);
+            this.state.noticias = noticiasFiltradas;
+            this.renderizarNoticias();
+        });
+
+
         marcarBtn.addEventListener('click', (event) => {
             event.preventDefault();
             marcarBtn.style.display = "none";
