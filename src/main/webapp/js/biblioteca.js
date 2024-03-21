@@ -44,6 +44,32 @@ class Biblioteca {
         const cancelarBtn = this.dom.querySelector("#generarBtn3");
         const marcarBtn = this.dom.querySelector("#marcarTodo");
         const desmarcarBtn = this.dom.querySelector("#desmarcarTodo");
+        const buscadorEtiqueta = this.dom.querySelector('#buscadorEtiqueta');
+
+        buscadorEtiqueta.addEventListener('input', () => {
+            // Función para normalizar strings eliminando tildes y convirtiendo a minúsculas
+            function normalizeString(str) {
+                return str.toLowerCase()
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "");
+            }
+
+            event.preventDefault();
+            const noticias = this.state.noticias;
+            const filtroEtiqueta = buscadorEtiqueta.value.trim().toLowerCase();
+
+            if (filtroEtiqueta === "") {
+                this.state.noticias = noticias;
+            } else {
+                const noticiasFiltradas = noticias.filter(noticia =>
+                    noticia.etiquetas.some(etiqueta =>
+                        normalizeString(etiqueta.descripcion) === normalizeString(filtroEtiqueta)));
+                this.state.noticias = noticiasFiltradas;
+            }
+            this.renderizarNoticias();
+            this.state.noticias = noticias;
+        });
+
         const prioridadSelecionador = this.dom.querySelector("#tiempoSeleccionado2");
 
         prioridadSelecionador.addEventListener('change', async (event) => {
