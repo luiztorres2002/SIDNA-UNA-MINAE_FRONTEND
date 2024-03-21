@@ -74,7 +74,6 @@ class Biblioteca {
 
         prioridadSelecionador.addEventListener('change', async (event) => {
             event.preventDefault();
-            await this.cargarBiblioteca();
             const noticias = this.state.noticias;
             const noticiasFiltradas = noticias.filter(noticia => noticia.prioridad === prioridadSelecionador.value);
             this.state.noticias = noticiasFiltradas;
