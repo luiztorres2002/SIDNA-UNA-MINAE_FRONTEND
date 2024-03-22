@@ -208,4 +208,22 @@ public class TestNoticiaMarcadaDao {
         System.out.println("Prioridad Seleccionada: "+prioridad);
         System.out.println("Test Filtrar por Prioridad Exitoso");
     }
+
+    @Test
+    public void filtarPorFechaGuardado()throws Exception{
+        String cedula = "4-0258-0085";
+        List<NoticiaMarcada>noticiaMarcadaList=noticiaMarcadaDao.getAllNoticiasMarcadas(cedula);
+        NoticiaMarcada noticiaMarcada1=noticiaMarcadaList.get(3);//CAMBIAR # PARA SELECCIONAR OTRA NOTICIA DEL ARRAY
+
+        java.sql.Date fechaGuardado= (java.sql.Date) noticiaMarcada1.getFechaGuardado();
+        String  sql ="select * from NOTICIA_MARCADA where Fk_NoticiaMarcada_UsuarioCedula=? and Fechaguardado=?";
+
+        PreparedStatement stm = database.prepareStatement(sql);
+        stm.setString(1, cedula);
+        stm.setDate(2, fechaGuardado);
+        ResultSet resultSet= database.executeQuery(stm);
+        assertNotNull(resultSet);
+        System.out.println("Fecha de Guardado: "+fechaGuardado);
+        System.out.println("Test Filtrar por Fecha de Guardado Exitoso");
+    }
 }
