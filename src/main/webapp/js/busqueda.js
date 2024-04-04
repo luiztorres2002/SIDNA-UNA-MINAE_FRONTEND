@@ -506,7 +506,7 @@ class Busqueda {
                     !result.link.includes('www.nacion.com/viva/musica') &&
                     !result.link.includes('www.cuerpomente.com/') &&
                     !result.link.includes('www.crhoy.com/entretenimiento/'));
-                localStorage.setItem('noticias', JSON.stringify(noticias));
+                localStorage.setItem('noticias', JSON.stringify(noticias.slice(0, 25)));
                 localStorage.setItem('ultimaHora', Date.now());
             }
         }
