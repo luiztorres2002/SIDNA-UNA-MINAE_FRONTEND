@@ -34,6 +34,9 @@ class Admin {
         <div class="linea-amarilla"></div>
         <div class="linea-verde"></div>
         <div class="container" style="margin-top: 40px;">
+        <button class="btn btn-custom-outline-success2 agregarUsuarioBtn" style="width: 190px; color: #005b04; border-color: #005b04; margin-bottom: 50px;">
+               <i class="fa-solid fa-plus"></i> <span class="texto-agregar">Agregar Usuario</span>
+                </button>
             <table id="usuariosTable" class="table">
                 <thead>
                     <tr>
@@ -83,8 +86,8 @@ class Admin {
                 <button class="btn btn-custom-outline-success eliminarUsuarioBtn" style="width: 110px; color: #D32F2F; border-color: #D32F2F;">
                     <i class="fas fa-trash-alt"></i> <span class="texto-agregar">Eliminar</span>
                 </button>
-                <button class="btn btn-custom-outline-success restablecerUsuarioBtn" style="width: 130px; color: #2196F3; border-color: #2196F3;">
-                    <i class="fas fa-undo"></i> <span class="texto-agregar">Restablecer</span>
+                <button class="btn btn-custom-outline-success restablecerUsuarioBtn" style="width: 200px; color: #2196F3; border-color: #2196F3;">
+                    <i class="fas fa-undo"></i> <span class="texto-agregar">Restablecer password</span>
                 </button>
             </td>
         `;

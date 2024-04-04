@@ -92,6 +92,12 @@ header ul li a {
     border-color: #4CAF50 !important;
 }
 
+.btn-custom-outline-success2.agregarUsuarioBtn:hover {
+    background-color: #005b04 !important;
+    color: white !important;
+    border-color: #005b04 !important;
+}
+
 .btn-custom-outline-success.eliminarUsuarioBtn:hover {
     background-color: #D32F2F !important;
     color: white !important;
