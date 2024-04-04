@@ -45,85 +45,17 @@ class Biblioteca {
         const marcarBtn = this.dom.querySelector("#marcarTodo");
         const desmarcarBtn = this.dom.querySelector("#desmarcarTodo");
         const buscadorEtiqueta = this.dom.querySelector('#buscadorEtiqueta');
-        const tiempoFiltrado = this.dom.querySelector('#tiempoSeleccionado3');
-        const botonFiltro = this.dom.querySelector('#borrarFiltro');
 
         buscadorEtiqueta.addEventListener('input', () => {
             event.preventDefault();
             const noticias = this.state.noticias;
-            const filtroEtiqueta = buscadorEtiqueta.value.trim();
-
-            if (filtroEtiqueta === "") {
-                this.state.noticias = noticias;
-            } else {
-                const noticiasFiltradas = noticias.filter(noticia => noticia.etiquetas.some(etiqueta => etiqueta.descripcion === filtroEtiqueta)
-                );
-                this.state.noticias = noticiasFiltradas;
-            }
-            this.renderizarNoticias();
-            this.state.noticias = noticias;
-        });
-
-        function mostrarBoton() {
-            var boton = document.getElementById("borrarFiltro");
-            boton.style.display = "inline"; // Cambia el display a "inline" para hacer visible el botón
-        }
-        function setDefaultFecha() {
-            var selectElement = document.getElementById("tiempoSeleccionado3");
-            selectElement.selectedIndex = 0; // Set the index of the default option
-        }
-        function setDefaultPrioridad() {
-            var selectElement = document.getElementById("tiempoSeleccionado2");
-            selectElement.selectedIndex = 0; // Set the index of the default option
-        }
-
-        botonFiltro.addEventListener('click',() => {
-            botonFiltro.style.display = "none";
-            setDefaultFecha();
-            setDefaultPrioridad();
-            this.renderizarNoticias();
-        });
-
-        tiempoFiltrado.addEventListener('change',()=> {
-            event.preventDefault();
-            const noticias = this.state.noticias;
-            let noticiasFiltradas = noticias;
-            const fechaActual = new Date();
-            const seleccion = tiempoFiltrado.value;
-            let fechaLimite;
-            switch (seleccion) {
-                case "ultimoDia":
-                    fechaLimite = new Date(Date.now() - (24 * 60 * 60 * 1000)); // Restar 24 horas
-                    break;
-                case "ultimaSemana":
-                    fechaLimite = new Date(Date.now() - (7 * 24 * 60 * 60 * 1000)); // Restar 7 días
-                    break;
-                case "ultimoMes":
-                    fechaLimite = new Date();
-                    fechaLimite.setMonth(fechaLimite.getMonth() - 1); // Restar 1 mes
-                    break;
-                case "ultimoAno":
-                    fechaLimite = new Date();
-                    fechaLimite.setFullYear(fechaLimite.getFullYear() - 1); // Restar 1 año
-                    break;
-                default:
-                    fechaLimite = new Date(0); // Si no se selecciona nada, mostrar todas las noticias
-                    break;
-            }
-            // Filtramos las noticias según la fecha límite
-            noticiasFiltradas = noticiasFiltradas.filter(noticia => {
-                const [dia,mes,ano] = noticia.fecha.split('/');
-                const fechaNoticia = new Date(`${mes}/${dia}/${ano}`);
-                return fechaNoticia >= fechaLimite && fechaNoticia <= fechaActual;
-            });
-            mostrarBoton();
+            const filtroEtiqueta = buscadorEtiqueta.value.trim(); //.trim() elimina cualquier espacio a inicio o final de una cadena.
+            const noticiasFiltradas = noticias.filter(noticia => noticia.etiquetas.some(etiqueta => etiqueta.descripcion === filtroEtiqueta));
             this.state.noticias = noticiasFiltradas;
             this.renderizarNoticias();
             this.state.noticias = noticias;
-
-
-
         });
+
 
         marcarBtn.addEventListener('click', (event) => {
             event.preventDefault();
@@ -212,7 +144,6 @@ class Biblioteca {
         });
     }
 
-
     async procesarRespuesta(response) {
         if (response.ok) {
             const html = await response.text();
@@ -290,16 +221,13 @@ class Biblioteca {
                            Biblioteca Personal
                         </div>
                     <div class="d-flex justify-content-center">
-                           <form id="form" style="width: 85%;"">
+                            <form id="form" style="width: 85%;"">
                            <div class="input-group  mt-10" style="display: flex; align-items: center; justify-content: center;">
                            <button class="btn btn-custom-outline-success2" id="generarBtn1" style="margin-right: 15px;margin-left: -30px;width: 104px;border-radius: 5px;"><span class="font-weight-bold"><i class="fa-regular fa-file-lines"></i></span> <span class="texto-agregar">Reportar</span></button>
                            <button class="btn btn-custom-outline-success2" id="marcarTodo" style="margin-right: 15px;margin-left: -30px;width: 140px;border-radius: 5px;display: none;"><span class="font-weight-bold"><i class="fa-solid fa-check-double"></i></span> <span class="texto-agregar">Marcar todo</span></button>
                            <button class="btn btn-custom-outline-success2" id="desmarcarTodo" style="margin-right: 15px;margin-left: -30px;width: 160px;border-radius: 5px;display: none;"><span class="font-weight-bold"><i class="fa-solid fa-check-double"></i></span> <span class="texto-agregar">Desmarcar todo</span></button>
                     <div class="btn-group me-2">
                 <button type="button" class="btn btn-custom-outline-success" id="agregar" style="height: 40px; width: 160px; line-height: 5px;"><span class="font-weight-bold"><i class="fa-solid fa-plus"></i></span> <span class="texto-agregar">Agregar Noticia</span></button>
-                    </div>
-                    <div class="btn-group me-2">
-                         <button class="btn btn-custom-outline-success2" id="borrarFiltro" style="display: none; height: 40px; margin-left: 6px; width: 140px; line-height: 5px;"><span class="font-weight-bold"><i class="fa-solid fa-filter-circle-xmark"></i></span> <span class="texto-agregar">Borrar filtro</span></button>
                     </div>
                    <select id="tiempoSeleccionado2" style="border: none; width: 110px; margin-left: 15px";>
                     <option value="" selected disabled>Prioridad</option>
@@ -335,7 +263,7 @@ class Biblioteca {
                     <option value="ultimoDia">Último Día</option>
                     <option value="ultimaSemana">Última Semana</option>
                     <option value="ultimoMes">Último Mes</option>
-                    <option value="ultimoAno">Último Año</option>    
+                    <option value="ultimoAno">Último Año</option>
                 </select>
                 <div id="pillsMobile-container" class="pill-container"></div>
                 <div class="spinner-border" role="status" style="color: #cdab68;margin-left: 50%;margin-top: 30%;display: none;">
@@ -349,7 +277,7 @@ class Biblioteca {
                 </div>
                 </div>
             </form>
-            <button class="btn btn-custom-outline-success3" id="generarBtn2" style=" display: none; margin-left: 1500px">ACEPTAR</button>
+            <button class="btn btn-custom-outline-success3" id="generarBtn2" style="display: none; margin-left: 1500px">ACEPTAR</button>
             <button class="btn btn-custom-outline-success4" id="generarBtn3" style=" display: none;">CANCELAR</button>
         
         `;

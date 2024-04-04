@@ -222,6 +222,7 @@ tr.disabled-row {
         width: 40px !important;
     }
 
+
     #loading-spinner {
         display: none;
         position: fixed;

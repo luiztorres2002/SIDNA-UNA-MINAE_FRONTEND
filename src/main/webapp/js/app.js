@@ -8,8 +8,15 @@ class App {
     Etiqueta;
     Biblioteca;
     Busqueda;
-
     constructor() {
+        this.state = {};
+        this.dom = this.render();
+        this.renderBodyFiller();
+        this.dom.querySelector('#dropdwonUsuario').style.display = 'none';
+        this.renderMenuItems();
+        this.busquedaShow();
+    }
+    /*constructor() {
         this.state = {};
         this.dom = this.render();
         this.renderBodyFiller();
@@ -52,7 +59,7 @@ class App {
             login.style.display = 'flex';
             console.log("Se cerró la sesión");
         });
-    }
+    }*/
 
     render = () => {
         const html = `

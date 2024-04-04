@@ -76,9 +76,6 @@ public class NoticiasMarcadas {
         }
     }
 
-
-
-
     @GET
     @Path("/{usuarioCedula}")
     @Produces(MediaType.APPLICATION_JSON)

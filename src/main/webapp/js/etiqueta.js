@@ -25,6 +25,8 @@ class Etiqueta {
         };
         this.cargarEtiquetas();
         this.dom = this.render();
+        globalAbortController.abort();
+        globalAbortController = new AbortController();
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
         this.modalerror = new bootstrap.Modal(this.dom.querySelector('#modalError'));
         this.dom.querySelector("#categorias #agregar").addEventListener('click', this.createNew);
@@ -456,6 +458,7 @@ class Etiqueta {
         this.state.entity = this.emptyEntity();
     }
     cargarEtiquetas = async () => {
+        const usuario = localStorage.getItem('usuario');
         try {
             const response = await fetch(`${backend}/etiquetas/4-0258-0085`);
             const data = await response.json();
@@ -557,7 +560,6 @@ class Etiqueta {
         const searchTerm = searchInput.value.trim().toLowerCase();
         const nameColumn = document.querySelectorAll('#tablaEtiquetas tbody tr td:nth-child(1)');
         let encontrados = false;
-
 
         const removeAccents = (str) => {
             return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
