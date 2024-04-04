@@ -1,5 +1,5 @@
 //const backend = "https://needed-eagle-curious.ngrok-free.app/MINAE/minae";
-const backend = "http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae";
+const backend = "http://localhost:8080/MINAE/minae";
 class App {
     dom;
     modal;
@@ -8,59 +8,69 @@ class App {
     Etiqueta;
     Biblioteca;
     Busqueda;
-    constructor() {
-        this.state = {};
-        this.dom = this.render();
-        this.renderBodyFiller();
-        this.dom.querySelector('#dropdwonUsuario').style.display = 'none';
-        this.renderMenuItems();
-        this.busquedaShow();
-    }
-    /*constructor() {
+    Admin;
+   constructor() {
         this.state = {};
         this.dom = this.render();
         this.renderBodyFiller();
         this.dom.querySelector('#dropdwonUsuario').style.display = 'none';
         const loginButton = this.dom.querySelector('#loginButton');
-        loginButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            const usuario = this.dom.querySelector('#loginTxt').value;
-            const spanUsuario = this.dom.querySelector('#usuarioTxt');
-            this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
-            spanUsuario.textContent = usuario;
-            localStorage.setItem('usuario', usuario);
-            this.renderMenuItems();
-            this.dom.querySelector('#menuItems').style.display = "flex";
-            login.style.display = 'none';
-            this.dom.querySelector('#loginTxt').value = "";
-            this.dom.querySelector('#passwordTxt').value = "";
-            this.busquedaShow();
-        });
-        const usuario = localStorage.getItem('usuario');
-        if (usuario) {
-            const spanUsuario = this.dom.querySelector('#usuarioTxt');
-            this.renderMenuItems();
-            this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
-            spanUsuario.textContent = usuario;
-            this.busquedaShow();
-        } else {
-            const login = this.dom.querySelector('#login');
-            login.style.display = 'flex';
-        }
-        //this.renderMenuItems();
-        //this.busquedaShow();
-        this.dom.querySelector('#cerrarSesion').addEventListener('click', () => {
-            const login = this.dom.querySelector('#login');
-            this.renderBodyFiller();
-            this.Busqueda.dom.style.display = "none";
-            this.dom.querySelector('#menuItems').style.display = "none";
-            this.dom.querySelector('#dropdwonUsuario').style.display = 'none';
-            localStorage.removeItem('usuario');
-            login.style.display = 'flex';
-            console.log("Se cerró la sesión");
-        });
-    }*/
+       loginButton.addEventListener('click', (event) => {
+           event.preventDefault();
+           const usuario = this.dom.querySelector('#loginTxt').value;
+           const spanUsuario = this.dom.querySelector('#usuarioTxt');
+           this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
+           spanUsuario.textContent = usuario;
+           localStorage.setItem('usuario', usuario);
 
+           if (usuario === 'Admin') {
+               this.renderMenuItemsAdmin();
+               this.adminShow();
+           } else {
+               this.renderMenuItems();
+               this.busquedaShow();
+           }
+
+           this.dom.querySelector('#menuItems').style.display = "flex";
+           login.style.display = 'none';
+           this.dom.querySelector('#loginTxt').value = "";
+           this.dom.querySelector('#passwordTxt').value = "";
+       });
+       const usuario = localStorage.getItem('usuario');
+       if (usuario) {
+           const spanUsuario = this.dom.querySelector('#usuarioTxt');
+           this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
+           spanUsuario.textContent = usuario;
+
+           if (usuario === 'Admin') {
+               this.renderMenuItemsAdmin();
+               this.adminShow();
+           } else {
+               this.renderMenuItems();
+               this.busquedaShow();
+           }
+
+       } else {
+           const login = this.dom.querySelector('#login');
+           login.style.display = 'flex';
+       }
+       this.dom.querySelector('#cerrarSesion').addEventListener('click', () => {
+           const login = this.dom.querySelector('#login');
+           this.renderBodyFiller();
+           this.dom.querySelector('#menuItems').style.display = "none";
+           this.dom.querySelector('#dropdwonUsuario').style.display = 'none';
+           login.style.display = 'flex';
+           console.log("Se cerró la sesión");
+
+           const usuario = localStorage.getItem('usuario');
+           if (usuario === 'Admin') {
+               this.Admin.dom.style.display = "none";
+           } else {
+               this.Busqueda.dom.style.display = "none";
+           }
+           localStorage.removeItem('usuario');
+       });
+    }
     render = () => {
         const html = `
             ${this.renderMenu()}
@@ -274,6 +284,33 @@ class App {
         this.dom.querySelector("#app>#menu #menuItems #Biblioteca")?.addEventListener('click', e => this.bibliotecaShow());
         this.dom.querySelector("#app>#menu #menuItems #Etiquetas")?.addEventListener('click', e => this.etiquetaShow());
         this.dom.querySelector("#app>#menu #menuItems #Busqueda")?.addEventListener('click', e => this.busquedaShow());
+
+    }
+    renderMenuItemsAdmin = () => {
+        var html = '';
+
+        html += `
+            <li><a href="#" id="Admin" class="activeAd">PANEL ADMIN</a></li>
+
+    `;
+        this.dom.querySelector('#app>#menu #menuItems').replaceChildren();
+        this.dom.querySelector('#app>#menu #menuItems').innerHTML = html;
+        this.dom.querySelector("#app>#menu #menuItems #Admin")?.addEventListener('click', e => this.adminShow());
+    }
+
+    adminShow = () => {
+        this.Admin = new Admin();
+        const menuItems = this.dom.querySelectorAll("#app>#menu #menuItems a");
+
+        menuItems.forEach((menuItem) => {
+            if (menuItem.id === "Admin") {
+                menuItem.classList.add("active");
+            } else {
+                menuItem.classList.remove("active");
+            }
+        });
+
+        this.dom.querySelector('#app>#body').replaceChildren(this.Admin.dom);
 
     }
 

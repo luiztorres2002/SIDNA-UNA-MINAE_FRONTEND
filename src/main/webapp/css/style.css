@@ -86,6 +86,31 @@ header ul li a {
     color: #ffffff;
 }
 
+.btn-custom-outline-success2.editarUsuarioBtn:hover {
+    background-color: #4CAF50 !important;
+    color: white !important;
+    border-color: #4CAF50 !important;
+}
+
+.btn-custom-outline-success.eliminarUsuarioBtn:hover {
+    background-color: #D32F2F !important;
+    color: white !important;
+    border-color: #D32F2F !important;
+}
+
+.btn-custom-outline-success.restablecerUsuarioBtn:hover {
+    background-color: #2196F3 !important;
+    color: white !important;
+    border-color: #2196F3 !important;
+}
+
+
+#Admin.active {
+    background: #1c2858;
+    font-weight: bold;
+    color: #ffffff;
+}
+
 #menu {
     display: flex;
     align-items: center;

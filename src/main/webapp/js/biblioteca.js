@@ -1,5 +1,6 @@
 let exportando = false;
 let cambio = false;
+var checkboxesMarcados = [];
 class Biblioteca {
     dom;
     modal;
@@ -13,6 +14,8 @@ class Biblioteca {
         this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A', noticias: []};
         this.dom = this.render();
         this.entidad = {};
+        exportando = false;
+        checkboxesMarcados = [];
         this.deleteEntity = " ";
         const self = this;
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
@@ -205,10 +208,12 @@ class Biblioteca {
             marcarBtn.style.display = "none";
             desmarcarBtn.style.display = "block";
             const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
-            const checkboxesMarcados = [];
-            checkboxes.forEach((checkbox, index) => {
+            checkboxes.forEach(checkbox => {
                 checkbox.checked = true;
-                checkboxesMarcados.push(index);
+                const idNoticia = parseInt(checkbox.id.split('-')[1]);
+                if (!checkboxesMarcados.includes(idNoticia)) {
+                    checkboxesMarcados.push(idNoticia);
+                }
             });
         });
         desmarcarBtn.addEventListener('click', (event) => {
@@ -218,6 +223,7 @@ class Biblioteca {
             const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
             checkboxes.forEach((checkbox, index) => {
                 checkbox.checked = false;
+                checkboxesMarcados = [];
             });
         });
         generarBtn.addEventListener('click', (event) => {
@@ -242,22 +248,6 @@ class Biblioteca {
             this.cancelarExportar();
         });
         this.dom.querySelector("#generarBtn2").addEventListener('click', () => {
-            const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
-            const checkboxesMarcados = [];
-            checkboxes.forEach((checkbox, index) => {
-                if (checkbox.checked) {
-                    checkboxesMarcados.push(index);
-                }
-            });
-        });
-        this.dom.querySelector("#generarBtn2").addEventListener('click', () => {
-            const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
-            const checkboxesMarcados = [];
-            checkboxes.forEach((checkbox, index) => {
-                if (checkbox.checked) {
-                    checkboxesMarcados.push(index);
-                }
-            });
             if (checkboxesMarcados.length === 0) {
                 this.dom.querySelector("#mensaje").textContent = "Por favor, selecciona al menos una noticia.";
                 this.modalErrorMensaje.show();
@@ -266,26 +256,18 @@ class Biblioteca {
             }
         });
         this.dom.querySelector("#exportarPDF").addEventListener('click', () => {
-            const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
-            const checkboxesMarcados = [];
-            checkboxes.forEach((checkbox, index) => {
-                if (checkbox.checked) {
-                    checkboxesMarcados.push(index);
-                }
-            });
+            console.log(checkboxesMarcados);
             this.exportarAPDF(checkboxesMarcados);
+            checkboxesMarcados = [];
+            exportando = false;
         });
         this.dom.querySelector("#exportarExcel").addEventListener('click', () => {
-            const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
-            const checkboxesMarcados = [];
-            checkboxes.forEach((checkbox, index) => {
-                if (checkbox.checked) {
-                    checkboxesMarcados.push(index);
-                }
-            });
+            console.log(checkboxesMarcados);
             this.exportarAXLSX(checkboxesMarcados);
             this.cancelarExportar();
             this.hideModalExportar();
+            exportando = false;
+            checkboxesMarcados = [];
         });
     }
 
@@ -930,7 +912,9 @@ class Biblioteca {
 
             elementoNoticiaCoincidente.innerHTML = `
             <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${enlace}">
-                <img src="${imagen}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${imagen}'; this.classList.add('card-img-top', 'card-img-custom');">
+                <img src="${imagen}" class="card-img-top card-img-custom" alt="" 
+                data-alternative="${imagen},images/default.png" 
+                onerror="loadAlternative(this, this.getAttribute('data-alternative').split(/,/)); this.classList.add('card-img-top', 'card-img-custom');">
                
                 <div class="card-body">
                     <div class="text-section-Biblioteca">
@@ -941,8 +925,8 @@ class Biblioteca {
                     <div class="check-container">
                     <div class="checkbox-wrapper-18">
                         <div class="round">
-                            <input type="checkbox" id="noticiaCheckbox-${index}" />
-                            <label for="noticiaCheckbox-${index}"></label>
+                            <input type="checkbox" id="noticiaCheckbox-${idNoticia}" />
+                            <label for="noticiaCheckbox-${idNoticia}"></label>
                         </div>
                     </div>
                 </div>
@@ -966,15 +950,41 @@ class Biblioteca {
                 </div>
             </div>
         `;
+            const checkbox = elementoNoticiaCoincidente.querySelector(`#noticiaCheckbox-${idNoticia}`);
+            if (checkboxesMarcados.includes(idNoticia)) {
+                checkbox.checked = true;
+            }
+            checkbox.addEventListener('change', (event) => {
+                if (event.target.checked) {
+                    checkboxesMarcados.push(id);
+                } else {
+                    const index = checkboxesMarcados.indexOf(id);
+                    if (index > -1) {
+                        checkboxesMarcados.splice(index, 1);
+                    }
+                }
+            });
+
             const borrar = elementoNoticiaCoincidente.querySelector('#borrarBtn');
             borrar.addEventListener('click', () => {
                 event.preventDefault();
                 this.showModalBorrar(id);
             });
             elementoNoticiaCoincidente.addEventListener('dblclick', (event) => {
-                const checkbox = document.querySelector(`#noticiaCheckbox-${index}`);
+                const checkbox = event.currentTarget.querySelector('input[type="checkbox"]');
                 if (checkbox) {
-                    checkbox.checked = true;
+                    if (checkbox.checked) {
+                        checkbox.checked = false;
+                        const index = checkboxesMarcados.indexOf(id);
+                        if (index > -1) {
+                            checkboxesMarcados.splice(index, 1);
+                        }
+                    } else {
+                        checkbox.checked = true;
+                        if (!checkboxesMarcados.includes(id)) {
+                            checkboxesMarcados.push(id);
+                        }
+                    }
                 }
             });
             //LOGICA PARA CAMBIAR PRIORIDAD DE UNA NOTICA
@@ -1449,7 +1459,7 @@ class Biblioteca {
     ordenarNoticias = (indicesSeleccionados, prioridadCheckbox, fechaCheckbox) => {
         let noticiasOrdenadas;
         if (prioridadCheckbox.checked) {
-            noticiasOrdenadas = indicesSeleccionados.map(index => this.state.noticias[index])
+            noticiasOrdenadas = this.state.noticias.filter(noticia => indicesSeleccionados.includes(noticia.id))
                 .sort((a, b) => {
                     if (a.prioridad === 'Alta') return -1;
                     if (a.prioridad === 'Baja') return 1;
@@ -1469,15 +1479,14 @@ class Biblioteca {
             }
         } else {
             if (fechaCheckbox.checked) {
-                noticiasOrdenadas = indicesSeleccionados
-                    .map(index => this.state.noticias[index])
+                noticiasOrdenadas = this.state.noticias.filter(noticia => indicesSeleccionados.includes(noticia.id))
                     .sort((a, b) => {
                         const fechaA = new Date(b.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
                         const fechaB = new Date(a.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
                         return fechaA - fechaB;
                     });
             } else {
-                noticiasOrdenadas = indicesSeleccionados.map(index => this.state.noticias[index]);
+                noticiasOrdenadas = this.state.noticias.filter(noticia => indicesSeleccionados.includes(noticia.id));
             }
         }
         return noticiasOrdenadas;

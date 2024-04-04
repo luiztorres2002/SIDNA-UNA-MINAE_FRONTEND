@@ -8,6 +8,8 @@ import javax.swing.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UsuarioDao {
 
@@ -20,6 +22,54 @@ public class UsuarioDao {
         this.db = db;
         departamentoDao = new DepartamentoDao(db);
         rolDao = new RolDao(db);
+    }
+
+    public List<Usuario> getAllUsuarios() throws Exception {
+        List<Usuario> usuarios = new ArrayList<>();
+        String sql = "SELECT\n" +
+                "  Rol.PK_RolId,\n" +
+                "  Rol.Descripcion,\n" +
+                "  Departamento.PK_DepartamentoId,\n" +
+                "  Departamento.Nombre,\n" +
+                "  Usuario.Pk_UsuarioCedula,\n" +
+                "  Usuario.Nombre as UsuarioName,\n" +
+                "  Usuario.PrimerApellido,\n" +
+                "  Usuario.SegundoApellido,\n" +
+                "  Usuario.Email,\n" +
+                "  Usuario.Contrasena\n" +
+                "FROM\n" +
+                "  Rol,\n" +
+                "  Departamento,\n" +
+                "  Usuario\n" +
+                "WHERE\n" +
+                "  Rol.PK_RolId = Usuario.Fk_Usuario_RolId\n" +
+                "  AND Departamento.PK_DepartamentoId = Usuario.Fk_Usuario_DepartamentoId\n" +
+                "GROUP BY\n" +
+                "  Rol.PK_RolId,\n" +
+                "  Rol.Descripcion,\n" +
+                "  Departamento.PK_DepartamentoId,\n" +
+                "  Departamento.Nombre,\n" +
+                "  Usuario.Pk_UsuarioCedula,\n" +
+                "  Usuario.Nombre,\n" +
+                "  Usuario.PrimerApellido,\n" +
+                "  Usuario.SegundoApellido,\n" +
+                "  Usuario.Email,\n" +
+                "  Usuario.Contrasena;\n";
+
+        try (PreparedStatement stm = db.prepareStatement(sql);
+             ResultSet rs = stm.executeQuery()) {
+
+            while (rs.next()) {
+                Usuario usuario = from(rs);
+                usuario.setDepartamento(departamentoDao.from(rs));
+                usuario.setRol(rolDao.from(rs));
+                usuarios.add(usuario);
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al leer los usuarios: " + e.getMessage());
+        }
+
+        return usuarios;
     }
 
     public void create(Usuario usuario) throws Exception{
