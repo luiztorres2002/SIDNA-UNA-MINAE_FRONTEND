@@ -139,6 +139,7 @@ class Biblioteca {
                 if (limpiarFiltroOption) {
                     limpiarFiltroOption.remove();
                 }
+
             } else {
                 if (!limpiarFiltroOption) {
                     const limpiarFiltroPrioridadOption = document.createElement('option');
