@@ -34,7 +34,7 @@ class Admin {
         <div class="linea-amarilla"></div>
         <div class="linea-verde"></div>
         <div class="container" style="margin-top: 40px;">
-        <button class="btn btn-custom-outline-success2 agregarUsuarioBtn" style="width: 190px; color: #005b04; border-color: #005b04; margin-bottom: 50px;">
+        <button class="btn btn-custom-outline-success2 agregarUsuarioBtn" style="width: 190px; color: #4CAF50; border-color: #4CAF50; margin-bottom: 50px;">
                <i class="fa-solid fa-plus"></i> <span class="texto-agregar">Agregar Usuario</span>
                 </button>
             <table id="usuariosTable" class="table">
@@ -80,7 +80,7 @@ class Admin {
             <td style="text-align: center; vertical-align: middle;">${email}</td>
             <td style="text-align: center; vertical-align: middle;">${rol.descripcion}</td>
             <td style="text-align: center; vertical-align: middle;">
-                <button class="btn btn-custom-outline-success2 editarUsuarioBtn" style="width: 90px; color: #4CAF50; border-color: #4CAF50;">
+                <button class="btn btn-custom-outline-success2 editarUsuarioBtn" style="width: 90px; color: #ef8929; border-color: #ef8929;">
                     <i class="fas fa-edit"></i> <span class="texto-agregar">Editar</span>
                 </button>
                 <button class="btn btn-custom-outline-success eliminarUsuarioBtn" style="width: 110px; color: #D32F2F; border-color: #D32F2F;">

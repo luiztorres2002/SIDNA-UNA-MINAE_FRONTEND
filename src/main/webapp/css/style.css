@@ -87,15 +87,15 @@ header ul li a {
 }
 
 .btn-custom-outline-success2.editarUsuarioBtn:hover {
-    background-color: #4CAF50 !important;
+    background-color: #ef8929 !important;
     color: white !important;
-    border-color: #4CAF50 !important;
+    border-color: #ef8929 !important;
 }
 
 .btn-custom-outline-success2.agregarUsuarioBtn:hover {
-    background-color: #005b04 !important;
+    background-color: #4CAF50 !important;
     color: white !important;
-    border-color: #005b04 !important;
+    border-color: #4CAF50 !important;
 }
 
 .btn-custom-outline-success.eliminarUsuarioBtn:hover {
