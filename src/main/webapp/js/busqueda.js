@@ -43,6 +43,10 @@ class Busqueda {
         this.dom.querySelector("#busqueda  #modalError #dismissButton").addEventListener('click', this.hideModalError);
         this.dom.querySelector("#busqueda  #sucessmodal #sucessbuton").addEventListener('click', this.hideModalExito);
         const searchInput = this.dom.querySelector("#search-input");
+        const fechaSeleccionar = this.dom.querySelector("#tiempoSeleccionado");
+        fechaSeleccionar.addEventListener('change',() =>{
+            this.corresponderPalabraClaveEnNoticias();
+        });
         searchInput.addEventListener("input", (event) => this.inputCambio(event));
         setTimeout(() => {
             const ultimaHora = localStorage.getItem('ultimaHora');
@@ -391,21 +395,58 @@ class Busqueda {
             ]);
         };
         const corsProxyUrl = 'https://corsproxy.io/?';
-        const response = await fetch(corsProxyUrl + apiUrl);
+        let response = await fetch(corsProxyUrl + apiUrl);
+        if (response.status === 429) {
+            const newApiKey = await this.obtenerSiguienteApiKey();
+            const newApiUrl = this.construirApiUrl('costa rica medio ambiente y energia', 'qdr:m', newApiKey, pagina);
+            response = await fetch(corsProxyUrl + newApiUrl);
+        }
         const searchData = await response.json();
         const newsResults = searchData.news_results;
+        if (pagina === 1) {
+            const externalJsonUrl = 'https://ssc2308.github.io/newsJSON/news.json';
+            const externalResponse = await fetch(externalJsonUrl);
+            const externalData = await externalResponse.json();
+            externalData.news_results.forEach(noticia => {
+                const fechaCreacion = new Date(noticia.date);
+                const fechaActual = new Date();
+                const diferenciaMilisegundos = fechaActual - fechaCreacion;
+                const diferenciaMinutos = Math.floor(diferenciaMilisegundos / (1000 * 60));
+                const diferenciaHoras = Math.floor(diferenciaMinutos / 60);
+                const diferenciaDias = Math.floor(diferenciaHoras / 24);
+                if (diferenciaDias > 0) {
+                    noticia.date = `hace ${diferenciaDias} día${diferenciaDias !== 1 ? 's' : ''}`;
+                } else if (diferenciaHoras > 0) {
+                    noticia.date = `hace ${diferenciaHoras} hora${diferenciaHoras !== 1 ? 's' : ''}`;
+                } else {
+                    noticia.date = `hace ${diferenciaMinutos} minuto${diferenciaMinutos !== 1 ? 's' : ''}`;
+                }
+            });
+            if (externalData.news_results && externalData.news_results.length > 0) {
+                for (const result of externalData.news_results) {
+                    const existe = newsResults.some(existingResult => existingResult.link === result.link);
+                    if (!existe) {
+                        newsResults.push(result);
+                    }
+                }
+            }
+
+        }
+
         if (newsResults.length === 0) {
             noticiasCoincidentes.innerHTML = '<p>No se encontraron noticias.</p>';
         } else {
+            const news = this.ordenarNoticiasPorTiempo(newsResults);
             const imageUrls = [];
-            for (const [index, result] of newsResults.entries()) {
+            for (const [index, result] of news.slice(0, 25).entries()) {
                 if (signal.aborted) {
                     break;
                 }
-                if (globalAbortSignal.aborted) {
-                    break;
-                }
-                if (result.source.includes('News ES Euro')) {
+                if (result.source.includes('News ES Euro') ||
+                    result.link.includes('www.nacion.com/viva/musica') ||
+                    result.link.includes('www.cuerpomente.com/') ||
+                    result.link.includes('www.crhoy.com/entretenimiento/') ||
+                    result.link.includes('https://dialogo-americas.com/es/')){
                     continue;
                 }
                 let imageUrl = '';
@@ -447,24 +488,74 @@ class Busqueda {
                 } catch (error) {
                     console.error(`Error al obtener datos de noticia (${result.link}):`, error);
                 }
+
                 const colorBorde = bordeColores[index % bordeColores.length];
                 const colorBoton = botonColores[index % botonColores.length];
                 const tipo = "1";
                 spinner.style.display = 'none';
                 const elementoNoticiaCoincidente = this.crearElementoNoticiaCoincidente(result, imageUrl, colorBorde, colorBoton,tipo,result.thumbnail);
-                newsResults[index].backup = result.thumbnail;
-                newsResults[index].thumbnail = imageUrl;
+                news[index].backup = result.thumbnail;
+                news[index].thumbnail = imageUrl;
                 if (signal.aborted) {
                     break;
                 }
                 noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
             }
             if (pagina === 1 && !signal.aborted && !globalAbortSignal.aborted) {
-                const noticias = newsResults.filter(result => !result.source.includes('News ES Euro'));
+                const noticias = news.filter(result => !result.source.includes('News ES Euro') &&
+                    !result.link.includes('www.nacion.com/viva/musica') &&
+                    !result.link.includes('www.cuerpomente.com/') &&
+                    !result.link.includes('www.crhoy.com/entretenimiento/'));
                 localStorage.setItem('noticias', JSON.stringify(noticias));
                 localStorage.setItem('ultimaHora', Date.now());
             }
         }
+    }
+
+    convertirFechaANumerico(fecha) {
+        const ahora = new Date();
+
+        const regex = /hace (\d+) (minuto|hora|día|semana|mes)/;
+        const match = fecha.match(regex);
+
+        if (!match) {
+            return Infinity;
+        }
+
+        const valor = parseInt(match[1]);
+        const unidad = match[2];
+
+        let factor;
+        switch (unidad) {
+            case 'minuto':
+                factor = 60;
+                break;
+            case 'hora':
+                factor = 60 * 60;
+                break;
+            case 'día':
+                factor = 24 * 60 * 60;
+                break;
+            case 'semana':
+                factor = 7 * 24 * 60 * 60;
+                break;
+            case 'mes':
+                factor = 30 * 24 * 60 * 60;
+                break;
+            default:
+                factor = 1;
+        }
+
+        return valor * factor;
+    }
+
+    ordenarNoticiasPorTiempo(noticias) {
+        noticias.sort((a, b) => {
+            const tiempoA = this.convertirFechaANumerico(a.date);
+            const tiempoB = this.convertirFechaANumerico(b.date);
+            return tiempoA - tiempoB;
+        });
+        return noticias;
     }
     async mostrarNoticiasAlmacenadas() {
         const bordeColores = ['#1c2858', '#cdab68'];
@@ -558,9 +649,7 @@ class Busqueda {
         } else {
             inicio = 0;
         }
-
         const apiUrl = `https://serpapi.com/search?api_key=${apiKey}&q=${encodedKeyword}&location=Costa%20Rica&google_domain=google.co.cr&gl=cr&lr=lang_es&hl=es&tbm=nws&tbs=sbd:1${tiempoQuery ? `,${tiempoQuery}` : ''}&num=${resultsPerPage}&start=${inicio}`;
-
         return encodeURI(apiUrl);
     }
     async  obtenerDatosApi(apiUrl) {
@@ -993,7 +1082,8 @@ class Busqueda {
         this.entidad['fuente'] = fuente;
         this.entidad['enlace'] = enlace;
         this.entidad['fechaGuardado'] = '2023-11-11';
-        this.entidad['usuarioCedula'] = '1';
+        //const usuario = localStorage.getItem('usuario');
+        this.entidad['usuarioCedula'] = '4-0258-0085';
         this.entidad['imagen'] = imagen;
         const etiquetasDescripcion = [];
         descripciones.forEach(descripcion => {

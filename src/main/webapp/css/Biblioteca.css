@@ -313,6 +313,10 @@ select {; /* Ancho personalizado */
         margin-left: 0px !important;
     }
 
+    #buscar{
+            width: 40px !important;
+    }
+
     #desmarcarTodo{
         width: 40px !important;
         margin-left: 0px !important;

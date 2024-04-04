@@ -43,7 +43,6 @@ public class Service {
     }
 
     public void noticiaMarcadaAdd(NoticiaMarcada noticiaMarcada) throws Exception {
-        noticiaMarcada.setUsuarioCedula("4-0258-0085");
         noticiaMarcada.setId(1);
         noticiaMarcadaDao.create(noticiaMarcada);
     }
@@ -55,7 +54,6 @@ public class Service {
 
 
     public void noticiaMarcadaAdd2(NoticiaMarcada noticiaMarcada) throws Exception {
-        noticiaMarcada.setUsuarioCedula("4-0258-0085");
         noticiaMarcada.setId(1);
         noticiaMarcadaDao.createexterna(noticiaMarcada);
     }

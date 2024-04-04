@@ -1,5 +1,5 @@
 //const backend = "https://needed-eagle-curious.ngrok-free.app/MINAE/minae";
-const backend = "http://localhost:8080/UNA_MINAE_SIDNA_FRONTEND_war_exploded/minae";
+const backend = "http://localhost:8080/MINAE/minae";
 class App {
     dom;
     modal;
@@ -8,8 +8,15 @@ class App {
     Etiqueta;
     Biblioteca;
     Busqueda;
-
     constructor() {
+        this.state = {};
+        this.dom = this.render();
+        this.renderBodyFiller();
+        this.dom.querySelector('#dropdwonUsuario').style.display = 'none';
+        this.renderMenuItems();
+        this.busquedaShow();
+    }
+    /*constructor() {
         this.state = {};
         this.dom = this.render();
         this.renderBodyFiller();
@@ -52,7 +59,7 @@ class App {
             login.style.display = 'flex';
             console.log("Se cerró la sesión");
         });
-    }
+    }*/
 
     render = () => {
         const html = `
