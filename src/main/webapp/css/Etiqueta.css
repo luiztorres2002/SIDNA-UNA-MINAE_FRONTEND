@@ -222,6 +222,18 @@ tr.disabled-row {
         width: 40px !important;
     }
 
+    #editarUsuarioBtn {
+        width: 40px !important;
+    }
+
+    #eliminarUsuarioBtn {
+        width: 40px !important;
+    }
+
+    #restablecerUsuarioBtn {
+        width: 40px !important;
+    }
+
 
     #loading-spinner {
         display: none;

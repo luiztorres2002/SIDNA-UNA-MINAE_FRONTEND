@@ -97,13 +97,13 @@ class Admin {
             <td style="text-align: center; vertical-align: middle;">${email}</td>
             <td style="text-align: center; vertical-align: middle;">${rol.descripcion}</td>
             <td style="text-align: center; vertical-align: middle;">
-                <button class="btn btn-custom-outline-success2 editarUsuarioBtn" style="width: 90px; color: #ef8929; border-color: #ef8929;">
+                <button class="btn btn-custom-outline-success2 editarUsuarioBtn" id="editarUsuarioBtn" style="width: 90px; color: #ef8929; border-color: #ef8929;">
                     <i class="fas fa-edit"></i> <span class="texto-agregar">Editar</span>
                 </button>
-                <button class="btn btn-custom-outline-success eliminarUsuarioBtn" style="width: 110px; color: #D32F2F; border-color: #D32F2F;">
+                <button class="btn btn-custom-outline-success eliminarUsuarioBtn" id="eliminarUsuarioBtn"  style="width: 110px; color: #D32F2F; border-color: #D32F2F;">
                     <i class="fas fa-trash-alt"></i> <span class="texto-agregar">Eliminar</span>
                 </button>
-                <button class="btn btn-custom-outline-success restablecerUsuarioBtn" style="width: 200px; color: #2196F3; border-color: #2196F3;">
+                <button class="btn btn-custom-outline-success restablecerUsuarioBtn" id="restablecerUsuarioBtn" style="width: 200px; color: #2196F3; border-color: #2196F3;">
                     <i class="fas fa-undo"></i> <span class="texto-agregar">Restablecer password</span>
                 </button>
             </td>
