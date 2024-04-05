@@ -5,11 +5,18 @@ class Admin {
 
     state;
 
-
+    deleteEntity;
 
     constructor() {
         this.state = {'entities': new Array(), 'mode': 'A', usuarios: []};
         this.dom = this.render();
+        this.modalBorrarUsuario = new bootstrap.Modal(this.dom.querySelector('#modalborrarusuario'));
+        this.modalExitoGenerico = new bootstrap.Modal(this.dom.querySelector('#modalExitoGenerico'));
+        this.modalErrorGenerico = new bootstrap.Modal(this.dom.querySelector('#modalErrorGenerico'));
+
+        //querys selectors
+        this.dom.querySelector("#admin #modalborrarusuario #confirmarb").addEventListener('click', this.deleteUser.bind(this));
+
 
         setTimeout(() => {
             this.cargarUsuarios();
@@ -20,7 +27,9 @@ class Admin {
     render = () => {
         const html = `
             ${this.renderBody()}
-  
+            ${this.renderModalBorrarUsuario()}
+            ${this.renderModalErrorGenerico()}
+            ${this.renderModalExitoGenerico()}
         `;
         const rootContent = document.createElement('div');
         rootContent.id = 'admin';
@@ -107,7 +116,7 @@ class Admin {
 
             const eliminarBtn = row.querySelector('.eliminarUsuarioBtn');
             eliminarBtn.addEventListener('click', () => {
-                console.log('Eliminando usuario cédula:', cedula);
+                this.showModalBorrar(cedula);
             });
 
             const restablecerBtn = row.querySelector('.restablecerUsuarioBtn');
@@ -118,4 +127,139 @@ class Admin {
             tbody.appendChild(row);
         });
     }
+
+
+
+    //Luis
+    renderModalBorrarUsuario = () => {
+        return `
+        <div id="modalborrarusuario" class="modal fade" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" id="cancelModal" class="close d-flex align-items-center justify-content-center" aria-label="Close" style="font-size: 36px; width: 50px; height: 50px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); border: 2px solid #ccc; border-radius: 50%;">
+                            <span aria-hidden="true" class="ion-ios-close"></span>
+                        </button>
+                    </div>
+                    <div class="modal-body p-4 py-5 p-md-5">
+                        <div class="text-center">
+                            <img src="images/Minae.png" class="w-50 mx-auto d-block mb-4" alt="...">
+                        </div>
+                        <h4 class="text-center mb-2 mt-2">¿Estás seguro de que deseas eliminar este usuario del sistema? </h4>
+                       
+                       
+                        <ul class="ftco-footer-social p-0 text-center">
+                        </ul>
+                         
+                        <form action="#" id="formmarcar" class="signup-form">
+                            <div class="btn-group mt-4 d-flex justify-content-center">
+                                <button type="submit" id="confirmarb" class="btn btn-outline-primary rounded submit ml-4 mr-3">Confirmar</button>
+                                <button type="button" id="cancelarb" class="btn btn-outline-secondary rounded submit">Cancelar</button>
+                            </div>
+                            <div class="form-group d-md-flex">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    }
+
+    showModalBorrar = (cedula) => {
+        event.preventDefault();
+        this.deleteEntity = " ";
+        this.deleteEntity = cedula;
+        console.log(cedula);
+        this.modalBorrarUsuario.show();
+    }
+
+    showModalErrorGenerico = (mensaje) => {
+        var mensajeElement = document.getElementById("mensaje");
+        mensajeElement.textContent = mensaje;
+        this.modalErrorGenerico.show();
+    }
+
+    showModalExitoGenerico = (mensaje) => {
+        var mensajeElement = document.getElementById("mensajeGenerico");
+        mensajeElement.textContent = mensaje;
+        this.modalExitoGenerico.show();
+    }
+
+    //Modal Generico Error
+    renderModalErrorGenerico = () => {
+        return `
+        <div id="modalErrorGenerico" class="modal fade">
+            <div class="modal-dialog modal-error">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="icon-box">
+                            <i class="material-icons">warning</i>
+                        </div>
+                        <h4 class="modal-title w-100">¡Ooops!</h4>\t
+                    </div>
+                    <div class="modal-body">
+                        <p id="mensaje" style="font-size: 25px;" class="text-center"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success btn-block" id="dismissButton" data-dismiss="modal">Regresar</button>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    //modalGenericoExito
+    renderModalExitoGenerico= () => {
+        return `
+        <div id="modalExitoGenerico" class="modal fade">
+          <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="icon-box">
+                        <i class="material-icons">&#xE876;</i>
+                    </div>
+                    <h4 class="modal-title w-100">¡Confirmado!</h4>\t
+                </div>
+                <div class="modal-body">
+                    <p id="mensajeGenerico" style="font-size: 25px;" class="text-center"></p>
+                </div>
+                <div class="modal-footer">
+            <button class="btn btn-success btn-block" id="sucessbuton" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+            </div>
+        </div>   
+        `;
+    }
+
+
+
+
+    //BACKEND
+    deleteUser = async () => {
+        event.preventDefault();
+        const entityId = this.deleteEntity;
+        const request = new Request(`${backend}/usuarios/delete/${entityId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        try {
+            const response = await fetch(request);
+            if (response.ok) {
+                this.modalBorrarUsuario.hide();
+                this.cargarUsuarios();
+                this.showModalExitoGenerico("Se ha eliminado al usuario exitosamente.");
+
+            } else {
+
+                this.showModalErrorGenerico("No se pudo eliminar el usuario");
+            }
+        } catch (error) {
+            console.error("Error al eliminar la entidad:", error);
+        }
+    }
+
 }

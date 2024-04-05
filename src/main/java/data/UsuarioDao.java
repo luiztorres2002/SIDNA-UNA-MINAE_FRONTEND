@@ -147,6 +147,19 @@ public class UsuarioDao {
         }
     }
 
+    //listo
+    public void deleteUsuario(String Cedula) throws Exception {
+        String cedulaUser = Cedula;
+        String sql = "DELETE FROM Usuario\n" +
+                "WHERE PK_UsuarioCedula = ? \n";
+        PreparedStatement stm = db.prepareStatement(sql);
+        stm.setString(1, cedulaUser);
+        int count = db.executeUpdate(stm);
+        if (count == 0) {
+            throw new Exception("No se elimino");
+        }
+    }
+
     public Usuario from(ResultSet rs) throws SQLException {
         Usuario usuario = new Usuario();
         usuario.setCedula(rs.getString("Pk_UsuarioCedula")); // Debe coincidir con el alias "Cedula" en la consulta SQL
@@ -158,26 +171,19 @@ public class UsuarioDao {
         return usuario;
     }
 
-    public static void main(String[] args) throws Exception {
-
-        try{
+    public static void main(String[] args) {
+        try {
             Database db = new Database();
-
-            // Crea una instancia de RolDao
-            UsuarioDao usuariDao = new UsuarioDao(db);
-            EtiquetaDao etiquetaDao = new EtiquetaDao(db);
-            Departamento departamento = new Departamento(1,"PruebaDepartamento");
-            Rol rol = new Rol(1,"Analista");
-            Usuario usuario1 = usuariDao.read("4-0258-0085");
-            System.out.println(etiquetaDao.getAllEtiquetasByUsuario("1"));
-
-            System.out.println(usuario1.toString());
-
+            UsuarioDao usuarioDao = new UsuarioDao(db);
+            String cedula = "1";
+            usuarioDao.deleteUsuario(cedula);
+            System.out.println("Usuario eliminado exitosamente.");
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
 }
