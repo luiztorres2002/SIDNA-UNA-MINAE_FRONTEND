@@ -383,7 +383,6 @@ class Busqueda {
         let noticiasCoincidentesCargadas = 0;
         this.abortController = new AbortController();
         const { signal } = this.abortController;
-        const { signal: globalAbortSignal } = globalAbortController;
         const apiUrl = this.construirApiUrl('costa rica medio ambiente y energia', 'qdr:m', apiKey,pagina);
         const TIMEOUT_MS = 9000;
         const fetchConTimeout = async (url) => {
@@ -501,7 +500,7 @@ class Busqueda {
                 }
                 noticiasCoincidentes.appendChild(elementoNoticiaCoincidente);
             }
-            if (pagina === 1 && !signal.aborted && !globalAbortSignal.aborted) {
+            if (pagina === 1 && !signal.aborted) {
                 const noticias = news.filter(result => !result.source.includes('News ES Euro') &&
                     !result.link.includes('www.nacion.com/viva/musica') &&
                     !result.link.includes('www.cuerpomente.com/') &&

@@ -77,7 +77,7 @@ class App {
             ${this.renderBody()} 
             ${this.renderFooter()}
             ${this.renderModal()}
-             ${this.renderModal2()}
+            ${this.renderModal2()}
         `;
         var rootContent = document.createElement('div');
         rootContent.id = 'app';
@@ -290,9 +290,10 @@ class App {
         var html = '';
 
         html += `
-            <li><a href="#" id="Admin" class="activeAd">PANEL ADMIN</a></li>
+            <li><a href="#" id="Admin" class="activeAd">PANEL ADMINISTRADOR</a></li>
 
     `;
+        this.dom.querySelector("#logonav")?.addEventListener('click', e => this.adminShow());
         this.dom.querySelector('#app>#menu #menuItems').replaceChildren();
         this.dom.querySelector('#app>#menu #menuItems').innerHTML = html;
         this.dom.querySelector("#app>#menu #menuItems #Admin")?.addEventListener('click', e => this.adminShow());
