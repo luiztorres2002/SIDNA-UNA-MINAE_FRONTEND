@@ -34,7 +34,7 @@ class Admin {
         <div class="linea-amarilla"></div>
         <div class="linea-verde"></div>
         <div class="container" style="margin-top: 40px;">
-        <button class="btn btn-custom-outline-success2 agregarUsuarioBtn" style="width: 190px; color: #4CAF50; border-color: #4CAF50; margin-bottom: 50px;">
+        <button class="btn btn-custom-outline-success2 agregarUsuarioBtn" style="width: 190px; background-color: #4CAF50 ; color: #ffffff; border-color: #4CAF50; margin-bottom: 50px;">
                <i class="fa-solid fa-plus"></i> <span class="texto-agregar">Agregar Usuario</span>
                 </button>
             <table id="usuariosTable" class="table">
@@ -51,12 +51,17 @@ class Admin {
                   
                 </tbody>
             </table>
+            <div class="spinner-border" role="status" style="color: #cdab68;margin-left: 50%;margin-top: 10%;display: none;">
+                  <span class="visually-hidden">Loading...</span>
+         </div>
         </div>
     `;
         return body;
     }
 
     async cargarUsuarios() {
+        const spinner = document.querySelector('.spinner-border');
+        spinner.style.display = 'block';
         try {
             const response = await fetch(`${backend}/usuarios`);
             const data = await response.json();
@@ -68,8 +73,11 @@ class Admin {
     }
 
     async renderTable() {
+        const spinner = document.querySelector('.spinner-border');
+        spinner.style.display = 'none';
         const table = document.getElementById('usuariosTable');
         const tbody = table.querySelector('tbody');
+
         this.state.usuarios.forEach((usuario) => {
             const { cedula, nombre, primerApellido, segundoApellido, email, rol } = usuario;
             const row = document.createElement('tr');
@@ -91,6 +99,22 @@ class Admin {
                 </button>
             </td>
         `;
+
+            const editarBtn = row.querySelector('.editarUsuarioBtn');
+            editarBtn.addEventListener('click', () => {
+                console.log('Editando usuario cédula:', cedula);
+            });
+
+            const eliminarBtn = row.querySelector('.eliminarUsuarioBtn');
+            eliminarBtn.addEventListener('click', () => {
+                console.log('Eliminando usuario cédula:', cedula);
+            });
+
+            const restablecerBtn = row.querySelector('.restablecerUsuarioBtn');
+            restablecerBtn.addEventListener('click', () => {
+                console.log('Restableciendo usuario cédula:', cedula);
+            });
+
             tbody.appendChild(row);
         });
     }
