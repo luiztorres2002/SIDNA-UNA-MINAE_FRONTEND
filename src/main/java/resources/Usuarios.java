@@ -93,4 +93,20 @@ public class Usuarios {
             throw new InternalServerErrorException(e);
         }
     }
+
+    @DELETE
+    @Path("/delete/{id}")
+    public Response eliminarUsuario(@PathParam("id") String id) {
+        try {
+            Database db = new Database();
+            UsuarioDao usuarioDao = new UsuarioDao(db);
+            usuarioDao.deleteUsuario(id);
+            return Response.ok().build();
+
+        } catch (Exception e) {
+            throw new InternalServerErrorException(e);
+        }
+    }
+
+
 }

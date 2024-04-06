@@ -5,13 +5,22 @@ class Admin {
 
     state;
 
+
+
     constructor() {
-        this.state = {'entities': new Array(), 'mode': 'A', usuarios: []};
+        this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A', usuarios: []};
         this.dom = this.render();
         this.modalEditarUsuario = new bootstrap.Modal(this.dom.querySelector('#modalEditarUsuario'));
         this.modalAgregarUsuario = new bootstrap.Modal(this.dom.querySelector('#modalAgregarUsuario'));
         this.modalConfirmar = new bootstrap.Modal(this.dom.querySelector('#modalConfirmacion'));
         this.modalConfirmarPass = new bootstrap.Modal(this.dom.querySelector('#modalConfirmacionPass'));
+        this.modalBorrarUsuario = new bootstrap.Modal(this.dom.querySelector('#modalborrarusuario'));
+        this.modalExitoGenerico = new bootstrap.Modal(this.dom.querySelector('#modalExitoGenerico'));
+        this.modalErrorGenerico = new bootstrap.Modal(this.dom.querySelector('#modalErrorGenerico'));
+
+        //querys selectors
+        this.dom.querySelector("#admin #modalborrarusuario #confirmarb").addEventListener('click', this.deleteUser.bind(this));
+        this.dom.querySelector("#admin #modalAgregarUsuario #guardarUsuarioBtn").addEventListener('click', this.addUser.bind(this));
         const agregarBtn = this.dom.querySelector("#agregarUsuarioBtn");
         agregarBtn.addEventListener('click', () => {
             this.modalAgregarUsuario.show();
@@ -29,7 +38,9 @@ class Admin {
             ${this.renderModalAgregar()}
             ${this.renderModalConfirmacion()}
             ${this.renderModalConfirmacionPass()}
-  
+            ${this.renderModalBorrarUsuario()}
+            ${this.renderModalErrorGenerico()}
+            ${this.renderModalExitoGenerico()}
         `;
         const rootContent = document.createElement('div');
         rootContent.id = 'admin';
@@ -131,10 +142,11 @@ class Admin {
                         }
                     }
                 });
+
                 const eliminarBtn = row.querySelector('.eliminarUsuarioBtn');
                 eliminarBtn.addEventListener('click', () => {
                     document.getElementById('modalConfirmarMensaje').innerHTML = `¿Estás seguro de que deseas eliminar a este usuario?<br>${nombre} ${primerApellido} ${segundoApellido}`;
-                    this.modalConfirmar.show();
+                    this.showModalBorrar(cedula);
                 });
 
                 const restablecerBtn = row.querySelector('.restablecerUsuarioBtn');
@@ -160,29 +172,29 @@ class Admin {
                         <form id="formEditarUsuario" autocomplete="em33">
                     <div class="mb-3">
                         <label class="form-label">Cédula</label>
-                        <input type="text" class="form-control" id="cedula" disabled>
+                        <input type="text" class="form-control" id="cedulaEditar" disabled>
                     </div>
                     <div class="row mb-3">
                         <div class="col">
                             <label class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombre" autocomplete="em33">
+                            <input type="text" class="form-control" id="nombreEditar" autocomplete="em33">
                         </div>
                         <div class="col">
                             <label class="form-label">Primer Apellido</label>
-                            <input type="text" class="form-control" id="primerApellido" autocomplete="em33">
+                            <input type="text" class="form-control" id="primerApellidoEditar" autocomplete="em33">
                         </div>
                         <div class="col">
                             <label class="form-label">Segundo Apellido</label>
-                            <input type="text" class="form-control" id="segundoApellido" autocomplete="em33">
+                            <input type="text" class="form-control" id="segundoApellidoEditar" autocomplete="em33">
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Email</label>
-                        <input class="form-control" id="correo" autocomplete="em33">
+                        <input class="form-control" id="correoEditar" autocomplete="em33">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Rol</label>
-                        <select class="form-select" id="rol">
+                        <select class="form-select" id="rolEditar">
                             <option value="Analista">Analista</option>
                             <option value="Administrador">Administrador</option>
                         </select>
@@ -198,56 +210,63 @@ class Admin {
             </div>`;
     }
 
+
     renderModalAgregar() {
         return `
-        <div class="modal fade" id="modalAgregarUsuario" tabindex="-1" aria-labelledby="modalAgregarUsuarioLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title justify-content-center" id="modalAgregarUsuarioLabel">Agregar Usuario</h5>
-                    </div>
-                    <div class="modal-body">
-                        <form id="formAgregarUsuario" autocomplete="e21">
-                            <div class="mb-3">
-                                <label class="form-label">Cédula</label>
-                                <input type="text" class="form-control" id="cedula" autocomplete="e21">
+    <div class="modal fade" id="modalAgregarUsuario" tabindex="-1" aria-labelledby="modalAgregarUsuarioLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title justify-content-center" id="modalAgregarUsuarioLabel">Agregar Usuario</h5>
+                </div>
+                <div class="modal-body">
+                    <form id="formAgregarUsuario">
+                        <div class="mb-3">
+                            <label class="form-label">Cédula</label>
+                            <input type="text" class="form-control" id="cedula" name="cedula">
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombre">
                             </div>
-                            <div class="row mb-3">
-                                <div class="col">
-                                    <label class="form-label">Nombre</label>
-                                    <input type="text" class="form-control" id="nombre" autocomplete="e21">
-                                </div>
-                                <div class="col">
-                                    <label class="form-label">Primer Apellido</label>
-                                    <input type="text" class="form-control" id="primerApellido" autocomplete="e21">
-                                </div>
-                                <div class="col">
-                                    <label class="form-label">Segundo Apellido</label>
-                                    <input type="text" class="form-control" id="segundoApellido" autocomplete="e21">
-                                </div>
+                            <div class="col">
+                                <label class="form-label">Primer Apellido</label>
+                                <input type="text" class="form-control" id="primerApellido">
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input class="form-control" id="correo" autocomplete="e212">
+                            <div class="col">
+                                <label class="form-label">Segundo Apellido</label>
+                                <input type="text" class="form-control" id="segundoApellido">
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Rol</label>
-                                <select class="form-select" id="rol">
-                                    <option value="Analista">Analista</option>
-                                    <option value="Administrador">Administrador</option>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer justify-content-center">
-                        <button type="button" class="btn btn-custom-outline-success5" id="guardarUsuarioBtn" style="width: 190px; ">Guardar</button>
-                        <button type="button" class="btn btn-custom-outline-success6" data-bs-dismiss="modal" style="width: 190px; ">Cancelar</button>
-                    </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input class="form-control" id="correo">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rol</label>
+                            <select class="form-select" id="rol">
+                                <option value="Analista">Analista</option>
+                                <option value="Administrador">Administrador</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Departamento</label>
+                            <select class="form-select" id="departamento">
+                                <option value="Departamento de comunicación">Departamento de comunicación</option>
+                                <option value="Departamento de TI">Departamento de TI</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-custom-outline-success5" id="guardarUsuarioBtn" style="width: 190px;">Guardar</button>
+                    <button type="button" class="btn btn-custom-outline-success6" data-bs-dismiss="modal" style="width: 190px;">Cancelar</button>
                 </div>
             </div>
-        </div>`;
+        </div>
+    </div>`;
     }
-
 
     renderModalConfirmacion = () => {
         return `
@@ -306,4 +325,176 @@ class Admin {
         </div>
     `;
     }
+
+    //Luis
+    renderModalBorrarUsuario = () => {
+        return `
+        <div id="modalborrarusuario" class="modal fade" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" id="cancelModal" class="close d-flex align-items-center justify-content-center" aria-label="Close" style="font-size: 36px; width: 50px; height: 50px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); border: 2px solid #ccc; border-radius: 50%;">
+                            <span aria-hidden="true" class="ion-ios-close"></span>
+                        </button>
+                    </div>
+                    <div class="modal-body p-4 py-5 p-md-5">
+                        <div class="text-center">
+                            <img src="images/Minae.png" class="w-50 mx-auto d-block mb-4" alt="...">
+                        </div>
+                        <h4 class="text-center mb-2 mt-2">¿Estás seguro de que deseas eliminar este usuario del sistema? </h4>
+                       
+                       
+                        <ul class="ftco-footer-social p-0 text-center">
+                        </ul>
+                         
+                        <form action="#" id="formmarcar" class="signup-form">
+                            <div class="btn-group mt-4 d-flex justify-content-center">
+                                <button type="submit" id="confirmarb" class="btn btn-outline-primary rounded submit ml-4 mr-3">Confirmar</button>
+                                <button type="button" id="cancelarb" class="btn btn-outline-secondary rounded submit">Cancelar</button>
+                            </div>
+                            <div class="form-group d-md-flex">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    }
+
+    showModalBorrar = (cedula) => {
+        event.preventDefault();
+        this.deleteEntity = " ";
+        this.deleteEntity = cedula;
+        console.log(cedula);
+        this.modalBorrarUsuario.show();
+    }
+
+    showModalErrorGenerico = (mensaje) => {
+        var mensajeElement = document.getElementById("mensaje");
+        mensajeElement.textContent = mensaje;
+        this.modalErrorGenerico.show();
+    }
+
+    showModalExitoGenerico = (mensage) => {
+        var mensajeElemento = document.getElementById("mensajes");
+        mensajeElemento.textContent = mensage;
+        this.modalExitoGenerico.show();
+    }
+
+    //Modal Generico Error
+    renderModalErrorGenerico = () => {
+        return `
+        <div id="modalErrorGenerico" class="modal fade">
+            <div class="modal-dialog modal-error">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="icon-box">
+                            <i class="material-icons">warning</i>
+                        </div>
+                        <h4 class="modal-title w-100">¡Ooops!</h4>\t
+                    </div>
+                    <div class="modal-body">
+                        <p id="mensaje" style="font-size: 25px;" class="text-center"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success btn-block" id="dismissButton" data-dismiss="modal">Regresar</button>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    //modalGenericoExito
+    renderModalExitoGenerico= () => {
+        return `
+        <div id="modalExitoGenerico" class="modal fade">
+          <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="icon-box">
+                        <i class="material-icons">&#xE876;</i>
+                    </div>
+                    <h4 class="modal-title w-100">¡Confirmado!</h4>\t
+                </div>
+                <div class="modal-body">
+                    <p id="mensajes" style="font-size: 25px;" class="text-center"></p>
+                </div>
+                <div class="modal-footer">
+            <button class="btn btn-success btn-block" id="sucessbuton" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+            </div>
+        </div>   
+        `;
+    }
+
+
+
+
+    //BACKEND
+    deleteUser = async () => {
+        event.preventDefault();
+        const entityId = this.deleteEntity;
+        const request = new Request(`${backend}/usuarios/delete/${entityId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        try {
+            const response = await fetch(request);
+            if (response.ok) {
+                this.modalBorrarUsuario.hide();
+                this.cargarUsuarios();
+                this.showModalExitoGenerico("Se ha eliminado al usuario exitosamente.");
+
+            } else {
+
+                this.showModalErrorGenerico("No se pudo eliminar el usuario");
+            }
+        } catch (error) {
+            console.error("Error al eliminar la entidad:", error);
+        }
+    }
+
+    load = async () => {
+        var cedula = document.getElementById('cedula').value;
+        var nombre = document.getElementById('nombre').value;
+        var primerApellido = document.getElementById('primerApellido').value;
+        var segundoApellido = document.getElementById('segundoApellido').value;
+        var correo = document.getElementById('correo').value;
+        var rol = document.getElementById('rol').value;
+        var departamento = document.getElementById('departamento').value;
+
+        var formData = new FormData();
+        formData.append('cedula', cedula);
+        formData.append('nombre', nombre);
+        formData.append('primerApellido', primerApellido);
+        formData.append('segundoApellido', segundoApellido);
+        formData.append('correo', correo);
+        formData.append('rol', rol);
+        formData.append('departamento', departamento);
+
+        this.entity = {};
+        for (let [key, value] of formData.entries()) {
+            this.entity[key] = value;
+        }
+        console.log(this.entity);
+    }
+
+
+
+    addUser = async () => {
+        await this.load();
+
+
+    }
+
+
+    emptyEntity = () => {
+        var entity = '';
+        return entity;
+    }
+
 }

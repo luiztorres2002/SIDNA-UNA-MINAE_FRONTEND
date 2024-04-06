@@ -1,6 +1,7 @@
 package data;
 
 import logic.Departamento;
+import logic.NoticiaMarcada;
 import logic.Rol;
 import logic.Usuario;
 
@@ -176,6 +177,84 @@ public class UsuarioDao {
         return usuario;
     }
 
+
+    //tengo que llamar a Rol
+    //tengo que llamar a Departamento
+
+    public void createUsuario(Usuario usuario) throws Exception {
+        String sql = "INSERT INTO USUARIO(PK_UsuarioCedula, Nombre, PrimerApellido, SegundoApellido, Email, Contrasena, FK_Usuario_RolId, FK_Usuario_DepartamentoId) values (?,?,?,?,?,?,?,?)";
+        PreparedStatement stm = db.prepareStatement(sql);
+        stm.setString(1, usuario.getCedula());
+        stm.setString(2,usuario.getNombre());
+        stm.setString(3, usuario.getPrimerApellido());
+        stm.setString(4, usuario.getSegundoApellido());
+        stm.setString(5, usuario.getEmail());
+        stm.setString(6, usuario.getContrasena());
+        stm.setInt(7, usuario.getRol().getId());
+        stm.setInt(8, usuario.getDepartamento().getId());
+        int count = db.executeUpdate(stm);
+        if (count == 0) {
+            throw new Exception("No se creo");
+        } else {
+            throw new Exception("Se creo");
+        }
+    }
+
+    public void updateUsuario(Usuario usuario) throws Exception {
+        String sql = "UPDATE USUARIO\n" +
+                "SET Nombre = ?, PrimerApellido = ?, SegundoApellido = ?, Email = ?, FK_Usuario_RolId = ?, FK_Usuario_DepartamentoId = ?\n" +
+                "WHERE PK_UsuarioCedula = ?;";
+
+        PreparedStatement stm = db.prepareStatement(sql);
+        stm.setString(1, usuario.getNombre());
+        stm.setString(2, usuario.getPrimerApellido());
+        stm.setString(3, usuario.getSegundoApellido());
+        stm.setString(4, usuario.getEmail());
+        stm.setInt(5, usuario.getRol().getId());
+        stm.setInt(6, usuario.getDepartamento().getId());
+        stm.setString(7, usuario.getCedula());
+
+        int count = db.executeUpdate(stm);
+        if (count == 0) {
+            throw new Exception("No se modifico");
+        } else {
+            throw new Exception("Se modifico con exito");
+        }
+    }
+
+    public void modificiarContrasenaUsuario(String cedula) throws Exception {
+
+        String nuevaContrasena = "Minae";
+        String sql = "UPDATE USUARIO\n" +
+                "SET Contrasena = ?\n" +
+                "WHERE PK_UsuarioCedula = ?;";
+
+        PreparedStatement stm = db.prepareStatement(sql);
+        stm.setString(1, nuevaContrasena);
+        stm.setString(2, cedula);
+
+        int count = db.executeUpdate(stm);
+        if (count == 0) {
+            throw new Exception("No se modifico");
+        } else {
+            throw new Exception("Se modifico con exito");
+        }
+
+    }
+
+    public void deleteUsuario(String Cedula) throws Exception {
+        String cedulaUser = Cedula;
+        String sql = "DELETE FROM Usuario\n" +
+                "WHERE PK_UsuarioCedula = ? \n";
+        PreparedStatement stm = db.prepareStatement(sql);
+        stm.setString(1, cedulaUser);
+        int count = db.executeUpdate(stm);
+        if (count == 0) {
+            throw new Exception("No se elimino");
+        }
+    }
+
+
     public static void main(String[] args) throws Exception {
 
         try{
@@ -183,13 +262,7 @@ public class UsuarioDao {
 
             // Crea una instancia de RolDao
             UsuarioDao usuariDao = new UsuarioDao(db);
-            EtiquetaDao etiquetaDao = new EtiquetaDao(db);
-            Departamento departamento = new Departamento(1,"PruebaDepartamento");
-            Rol rol = new Rol(1,"Analista");
-            Usuario usuario1 = usuariDao.read("4-0258-0085");
-            System.out.println(etiquetaDao.getAllEtiquetasByUsuario("1"));
-
-            System.out.println(usuario1.toString());
+            usuariDao.modificiarContrasenaUsuario("1");
 
         } catch (SQLException e) {
             e.printStackTrace();
