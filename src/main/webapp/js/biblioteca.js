@@ -1,3 +1,5 @@
+let exportando = false;
+let cambio = false;
 class Biblioteca {
     dom;
     modal;
@@ -35,6 +37,8 @@ class Biblioteca {
         this.dom.querySelector("#biblioteca #modalborrar #cancelModal").addEventListener('click', this.hideModalBorrar)
         this.dom.querySelector("#biblioteca #modalExportar #cancelModal").addEventListener('click', this.hideModalExportar)
         this.cargarBiblioteca();
+        globalAbortController.abort();
+        globalAbortController = new AbortController();
         const enlaceInput = this.dom.querySelector("#biblioteca #modal #enlace");
         enlaceInput.addEventListener('input', () => {
             const url = enlaceInput.value;
@@ -44,18 +48,157 @@ class Biblioteca {
         const cancelarBtn = this.dom.querySelector("#generarBtn3");
         const marcarBtn = this.dom.querySelector("#marcarTodo");
         const desmarcarBtn = this.dom.querySelector("#desmarcarTodo");
-        const buscadorEtiqueta = this.dom.querySelector('#buscadorEtiqueta');
+        const limpiar = this.dom.querySelector("#buscar");
+        const buscador = this.dom.querySelector("#buscadorEtiqueta");
+        const prioridadSelect = this.dom.querySelector("#tiempoSeleccionado2");
+        const fechaSelect = this.dom.querySelector("#tiempoSeleccionado3");
 
-        buscadorEtiqueta.addEventListener('input', () => {
-            event.preventDefault();
+        const filtrarNoticias = async () => {
+            if (cambio) {
+                await this.cargarBiblioteca2();
+                cambio = false;
+            }
+            if (prioridadSelect.value === "" && fechaSelect.value === "" && buscador.value.trim() === "") {
+                limpiar.style.display= 'none';
+            }
+            else {
+                limpiar.style.display= 'block';
+            }
             const noticias = this.state.noticias;
-            const filtroEtiqueta = buscadorEtiqueta.value.trim(); //.trim() elimina cualquier espacio a inicio o final de una cadena.
-            const noticiasFiltradas = noticias.filter(noticia => noticia.etiquetas.some(etiqueta => etiqueta.descripcion === filtroEtiqueta));
-            this.state.noticias = noticiasFiltradas;
-            this.renderizarNoticias();
-            this.state.noticias = noticias;
+            let noticiasFiltradas = noticias;
+
+            const opcionFecha = fechaSelect.value;
+            const fechaActual = new Date();
+            if (opcionFecha) {
+                switch (opcionFecha) {
+                    case "ultimoDia":
+                        console.log(fechaActual);
+                        const ultimoDia = new Date(fechaActual);
+                        ultimoDia.setHours(0, 0, 0, 0);
+                        ultimoDia.setDate(ultimoDia.getDate() - 1);
+                        console.log(ultimoDia);
+                        noticiasFiltradas = noticiasFiltradas.filter(noticia => {
+                            const [dia, mes, ano] = noticia.fecha.split('/');
+                            const fechaNoticia = new Date(`${mes}/${dia}/${ano}`);
+                            console.log('Fecha de la noticia:', fechaNoticia);
+                            return fechaNoticia >= ultimoDia && fechaNoticia <= fechaActual;
+                        });
+                        break;
+                    case "ultimaSemana":
+                        const unaSemanaAtras = new Date(fechaActual);
+                        unaSemanaAtras.setDate(unaSemanaAtras.getDate() - 7);
+                        noticiasFiltradas = noticiasFiltradas.filter(noticia => {
+                            const [dia, mes, ano] = noticia.fecha.split('/');
+                            const fechaNoticia = new Date(`${mes}/${dia}/${ano}`);
+                            return fechaNoticia >= unaSemanaAtras && fechaNoticia <= fechaActual;
+                        });
+                        break;
+                    case "ultimoMes":
+                        const ultimoMes = new Date(fechaActual);
+                        ultimoMes.setMonth(ultimoMes.getMonth() - 1);
+                        noticiasFiltradas = noticiasFiltradas.filter(noticia => {
+                            const [dia, mes, ano] = noticia.fecha.split('/');
+                            const fechaNoticia = new Date(`${mes}/${dia}/${ano}`);
+                            return fechaNoticia >= ultimoMes && fechaNoticia <= fechaActual;
+                        });
+                        break;
+                    default:
+
+                        break;
+                }
+            }
+
+            const opcionPrioridad = prioridadSelect.value;
+            if (opcionPrioridad && opcionPrioridad !== "todas") {
+                noticiasFiltradas = noticiasFiltradas.filter(noticia => noticia.prioridad === opcionPrioridad);
+            }
+
+            const buscadorValue = buscador.value.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            if (buscadorValue !== '') {
+                noticiasFiltradas = noticiasFiltradas.filter(noticia =>
+                    noticia.etiquetas.some(etiqueta =>
+                        etiqueta.descripcion.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(buscadorValue)
+                    )
+                );
+            }
+
+            if (noticiasFiltradas.length === 0) {
+                const noticiasBiblioteca = document.getElementById('noticiasBiblioteca');
+                noticiasBiblioteca.innerHTML = '<p style="margin-top: 25%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 24px;">No se encontraron noticias con los filtros seleccionados.</p>';
+            } else {
+                this.state.noticias = noticiasFiltradas;
+                this.renderizarNoticias();
+                this.state.noticias = noticias;
+            }
+        };
+
+        prioridadSelect.addEventListener('change', () => {
+            const limpiarFiltroOption = prioridadSelect.querySelector('option[value="Limpiar filtro"]');
+            if (prioridadSelect.value === "Limpiar filtro") {
+                prioridadSelect.selectedIndex = prioridadSelect.querySelector('option[value=""]').index;
+                if (limpiarFiltroOption) {
+                    limpiarFiltroOption.remove();
+                }
+
+            } else {
+                if (!limpiarFiltroOption) {
+                    const limpiarFiltroPrioridadOption = document.createElement('option');
+                    limpiarFiltroPrioridadOption.value = "Limpiar filtro";
+                    limpiarFiltroPrioridadOption.textContent = "Limpiar filtro";
+                    limpiarFiltroPrioridadOption.style.color = "red";
+                    prioridadSelect.insertBefore(limpiarFiltroPrioridadOption, prioridadSelect.options[1]);
+                }
+            }
+            filtrarNoticias();
         });
 
+        fechaSelect.addEventListener('change', () => {
+            const limpiarFiltroOption = fechaSelect.querySelector('option[value="Limpiar filtro"]');
+            if (fechaSelect.value === "Limpiar filtro") {
+                fechaSelect.selectedIndex = fechaSelect.querySelector('option[value=""]').index;
+                if (limpiarFiltroOption) {
+                    limpiarFiltroOption.remove();
+                }
+            } else {
+                if (!limpiarFiltroOption) {
+                    const limpiarFiltroFechaOption = document.createElement('option');
+                    limpiarFiltroFechaOption.value = "Limpiar filtro";
+                    limpiarFiltroFechaOption.textContent = "Limpiar filtro";
+                    limpiarFiltroFechaOption.style.color = "red";
+                    fechaSelect.insertBefore(limpiarFiltroFechaOption, fechaSelect.options[1]);
+                }
+            }
+            filtrarNoticias();
+        });
+
+        buscador.addEventListener('input', () => {
+            filtrarNoticias();
+        });
+
+        limpiar.addEventListener('click', (event) => {
+            prioridadSelect.selectedIndex = prioridadSelect.querySelector('option[value=""]').index;
+            const limpiarFiltroOption = prioridadSelect.querySelector('option[value="Limpiar filtro"]');
+            if (limpiarFiltroOption) {
+                limpiarFiltroOption.remove();
+            }
+            fechaSelect.selectedIndex = fechaSelect.querySelector('option[value=""]').index;
+            const limpiarFiltroOptionFecha = fechaSelect.querySelector('option[value="Limpiar filtro"]');
+            if (limpiarFiltroOptionFecha) {
+                limpiarFiltroOptionFecha.remove();
+            }
+            ajustarAnchoSelect(fechaSelect);
+        function ajustarAnchoSelect(select) {
+            var text = $(select).find('option:selected').text();
+            var $aux = $('<select/>').append($('<option/>').text(text));
+            $(select).after($aux);
+            $(select).width($aux.width());
+            $(select).css('margin-right', $aux.css('margin-right'));
+            $aux.remove();
+        }
+            buscador.value = '';
+            limpiar.style.display= 'none';
+           this.renderizarNoticias();
+        });
 
         marcarBtn.addEventListener('click', (event) => {
             event.preventDefault();
@@ -79,6 +222,7 @@ class Biblioteca {
         });
         generarBtn.addEventListener('click', (event) => {
             event.preventDefault();
+            exportando = true;
             generarBtn.style.display = "none";
             this.dom.querySelector("#marcarTodo").style.display = "block";
             const checkboxes = document.querySelectorAll('.check-container input[type="checkbox"]');
@@ -94,6 +238,7 @@ class Biblioteca {
         });
         cancelarBtn.addEventListener('click', (event) => {
             event.preventDefault();
+            exportando = false;
             this.cancelarExportar();
         });
         this.dom.querySelector("#generarBtn2").addEventListener('click', () => {
@@ -246,8 +391,8 @@ class Biblioteca {
                 </div>
                    <input class="form-control me-2 fontAwesome" id="buscadorEtiqueta" autocomplete="off" type="text" style="width: 100px; margin-left: 200px; height: 38px; border-radius: 5px; border: 1px solid #1c2858;" placeholder="&#xf002; Buscar..."> 
                     <div class="btn-group me-2">
-                         <button type="button" class="btn btn-custom-outline-success" id="buscar" style="height: 40px; line-height: 5px; width: 70px; margin-left: 50px;">
-                            <i class="fas fa-search"></i>
+                         <button type="button" class="btn btn-custom-outline-success2" id="buscar" style="height: 40px; display: none; line-height: 5px; width: 150px; margin-left: 50px;">
+                            <span class="font-weight-bold"><i class="fa-solid fa-filter"></i></span><span class="texto-agregar" style="margin-left: 5px">Limpiar Filtros</span>
                          </button>
                     </div>
                 </div>
@@ -851,10 +996,23 @@ class Biblioteca {
 `;
                 pill.style.backgroundColor = colorBorde;
                 pillsContainer1.appendChild(pill);
+                pill.addEventListener('click', () => {
+                    const buscador = this.dom.querySelector("#buscadorEtiqueta");
+                    buscador.value = etiqueta.descripcion;
+                    buscador.dispatchEvent(new Event('input'));
+                });
             });
         }
-    };
+
+        if(exportando){
+        const checkContainers = document.querySelectorAll('.check-container');
+        checkContainers.forEach((checkContainer) => {
+            checkContainer.style.display = 'block';
+        });
+        }
+    }
     cargarBiblioteca = async () => {
+        const usuario = localStorage.getItem('usuario');
         try {
             const response = await fetch(`${backend}/NoticiasMarcadas/4-0258-0085`);
             const spinner = document.querySelector('.spinner-border');
@@ -866,7 +1024,21 @@ class Biblioteca {
             console.log('Error al cargar la lista de noticias:', error);
         }
     }
+
+    cargarBiblioteca2 = async () => {
+        const usuario = localStorage.getItem('usuario');
+        try {
+            const response = await fetch(`${backend}/NoticiasMarcadas/4-0258-0085`);
+            const data = await response.json();
+            this.state.noticias = data.reverse();
+        } catch (error) {
+            console.log('Error al cargar la lista de noticias:', error);
+        }
+    }
+
+
     actualizarPrioridad = (noticiaID, nuevaPrioridad) => {
+        cambio = true;
         const url = `${backend}/NoticiasMarcadas/4-0258-0085/${noticiaID}?input=${nuevaPrioridad}`;
         fetch(url, {
             method: 'PUT',
@@ -986,6 +1158,7 @@ class Biblioteca {
         console.log(this.entity);
     }
     createNew = () => {
+        cambio = true;
         this.state.mode = 'A'; //agregar
         this.showModal();
     }
@@ -1104,7 +1277,7 @@ class Biblioteca {
             this.entidad['fuente'] = this.entity.fuente;
             this.entidad['enlace'] = document.getElementById('enlace').value;
             this.entidad['fechaGuardado'] = '2023-10-09';
-            this.entidad['usuarioCedula'] = '1';
+            this.entidad['usuarioCedula'] = '4-0258-0085';
             this.entidad['imagen'] = imageUrl;
             const etiquetasDescripcion = [];
             descripciones.forEach(descripcion => {
@@ -1574,6 +1747,7 @@ class Biblioteca {
         this.state.entity = this.emptyEntity();
     }
     deleteNoticia = async () => {
+        cambio = true;
         event.preventDefault();
         const entityId = this.deleteEntity;
         const request = new Request(`${backend}/NoticiasMarcadas/EtiquetasExternaDelete/${entityId}`, {
