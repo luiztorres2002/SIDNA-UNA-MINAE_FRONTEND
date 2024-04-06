@@ -222,25 +222,25 @@ class Admin {
                 <div class="modal-body">
                     <form id="formAgregarUsuario">
                         <div class="mb-3">
-                            <label class="form-label">Cédula</label>
+                          <legend id="cedulaLabel" class="form-label" style="font-size: 15px;">Cédula</legend>
                             <input type="text" class="form-control" id="cedula" name="cedula">
                         </div>
                         <div class="row mb-3">
                             <div class="col">
-                                <label class="form-label">Nombre</label>
+                                <legend id="nombreLabel" class="form-label" style="font-size: 15px;">Nombre</legend>
                                 <input type="text" class="form-control" id="nombre">
                             </div>
                             <div class="col">
-                                <label class="form-label">Primer Apellido</label>
+                                <legend id="primerApellidoLabel" class="form-label" style="font-size: 15px;">Primer Apellido</legend>
                                 <input type="text" class="form-control" id="primerApellido">
                             </div>
                             <div class="col">
-                                <label class="form-label">Segundo Apellido</label>
+                                <legend id="segundoApellidoLabel" class="form-label" style="font-size: 15px;">Segundo Apellido</legend>
                                 <input type="text" class="form-control" id="segundoApellido">
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Email</label>
+                         <legend id="correoLabel" class="form-label" style="font-size: 15px;">Email</legend>
                             <input class="form-control" id="correo">
                         </div>
                         <div class="mb-3">
@@ -483,10 +483,89 @@ class Admin {
         console.log(this.entity);
     }
 
+    verificarCamposLlenados = () => {
+
+        //inputs
+        const cedula = document.getElementById('cedula').value;
+        const nombre = document.getElementById('nombre').value;
+        const primerApellido = document.getElementById('primerApellido').value;
+        const segundoApellido = document.getElementById('segundoApellido').value;
+        const correo = document.getElementById('correo').value;
+        const rol = document.getElementById('rol').value;
+        const departamento = document.getElementById('departamento').value;
+
+
+        //labels
+        const cedulaLabel = document.getElementById("cedulaLabel");
+        const nombreLabel = document.getElementById("nombreLabel");
+        const primerApellidoLabel = document.getElementById("primerApellidoLabel");
+        const segundoApellidoLabel = document.getElementById("segundoApellidoLabel");
+        const correoLabel = document.getElementById("correoLabel")
+        const regexEmail = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
+
+        cedulaLabel.style.color = 'black';
+        cedulaLabel.style.textDecoration = 'none';
+        nombreLabel.style.color = 'black';
+        nombreLabel.style.textDecoration = 'none';
+        primerApellidoLabel.style.color = 'black';
+        primerApellidoLabel.style.textDecoration = 'none';
+        segundoApellidoLabel.style.color = 'black';
+        segundoApellidoLabel.style.textDecoration = 'none';
+        correoLabel.style.color = 'black';
+        correoLabel.style.textDecoration = 'none';
+
+        if(cedula.trim()===''){
+            cedulaLabel.style.color = 'red';
+            cedulaLabel.style.textDecoration = "underline";
+            cedulaLabel.style.title = 'Debes ingresar una cedula valida'
+        }
+        if(nombre.trim()===''){
+            nombreLabel.style.color = 'red';
+            nombreLabel.style.textDecoration = "underline";
+            nombreLabel.style.title = 'Debes ingresar una nombre valido'
+        }
+        if(primerApellido.trim()===''){
+            primerApellidoLabel.style.color = 'red';
+            primerApellidoLabel.style.textDecoration = "underline";
+            primerApellidoLabel.style.title = 'Debes ingresar un apellido valido'
+        }
+        if(segundoApellido.trim()===''){
+            segundoApellidoLabel.style.color = 'red';
+            segundoApellidoLabel.style.textDecoration = "underline";
+            segundoApellidoLabel.style.title = 'Debes ingresar un apellido valido'
+        }
+        if(!regexEmail.test(correo)){
+            correoLabel.style.color = 'red';
+            correoLabel.style.textDecoration = "underline";
+            correoLabel.style.title = 'Debes ingresar un correo valido'
+        }
+
+        if(
+            nombre.trim() === '' ||
+            cedula.trim() === '' ||
+            primerApellido.trim() === '' ||
+            segundoApellido.trim() === '' ||
+            !regexEmail.test(correo)
+        ) {
+            this.showModalCampo();
+            return false;
+        }
+        return true;
+    }
+
+
+
+
 
 
     addUser = async () => {
         await this.load();
+
+        if (this.verificarCamposLlenados()) {
+            alert("Bien");
+        } else {
+            alert("Mal");
+        }
 
 
     }
