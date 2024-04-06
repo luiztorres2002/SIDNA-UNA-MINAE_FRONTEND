@@ -5,8 +5,6 @@ class Admin {
 
     state;
 
-
-
     constructor() {
         this.state = {'entities': new Array(), 'mode': 'A', usuarios: []};
         this.dom = this.render();
