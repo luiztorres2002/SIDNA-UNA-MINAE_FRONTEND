@@ -126,6 +126,27 @@
     border-color: #1c2858;
     width: 70px;
 }
+.btn.btn-custom-outline-success5 {
+    color: #4CAF50;
+    border-color: #4CAF50;
+
+}
+.btn.btn-custom-outline-success6 {
+    color: #c20303;
+    border-color: #c20303;
+
+}
+.btn.btn-custom-outline-success5:hover {
+    color: #ffffff;
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+
+}
+.btn.btn-custom-outline-success6:hover {
+    color: #ffffff;
+    background-color: #c20303;
+    border-color: #c20303;
+}
 
 .btn.btn-custom-outline-success2:hover {
     color: #ffffff;

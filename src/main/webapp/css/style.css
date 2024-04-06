@@ -359,6 +359,33 @@ header ul li a {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+.modal-content {
+    border-radius: 10px;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-title {
+    width: 100%;
+}
+
+.modal-header {
+    text-align: center;
+}
+
+.form-label {
+    color: #000000 !important;
+}
+
+#cambiarContrasena {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 
 
 

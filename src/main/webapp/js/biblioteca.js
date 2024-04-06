@@ -256,13 +256,11 @@ class Biblioteca {
             }
         });
         this.dom.querySelector("#exportarPDF").addEventListener('click', () => {
-            console.log(checkboxesMarcados);
             this.exportarAPDF(checkboxesMarcados);
             checkboxesMarcados = [];
             exportando = false;
         });
         this.dom.querySelector("#exportarExcel").addEventListener('click', () => {
-            console.log(checkboxesMarcados);
             this.exportarAXLSX(checkboxesMarcados);
             this.cancelarExportar();
             this.hideModalExportar();
@@ -1121,9 +1119,7 @@ class Biblioteca {
     hideModalExportar = async () => {
         this.modalExportar.hide();
     }
-    hideModalErrorGenerico = async () => {
-        this.modalErrorMensaje.hide();
-    }
+
     hideModalExito = async () => {
         this.modalexito.hide();
         this.resetForm();
@@ -1561,6 +1557,14 @@ class Biblioteca {
         noticiasOrdenadas.forEach(noticia => {
             fuenteCounts[noticia.fuente] = (fuenteCounts[noticia.fuente] || 0) + 1;
         });
+        const etiquetaCounts = {};
+        noticiasOrdenadas.forEach(noticia => {
+            noticia.etiquetas.forEach(etiqueta => {
+                if (etiqueta.descripcion !== 'Costa Rica') {
+                    etiquetaCounts[etiqueta.descripcion] = (etiquetaCounts[etiqueta.descripcion] || 0) + 1;
+                }
+            });
+        });
         const canvasPie = document.createElement('canvas');
         canvasPie.style.position = 'absolute';
         canvasPie.style.left = '-9999px';
@@ -1618,6 +1622,56 @@ class Biblioteca {
         const canvas = document.createElement('canvas');
         canvas.style.position = 'absolute';
         canvas.style.left = '-9999px';
+        const canvasBarEtiquetas = document.createElement('canvas');
+        canvasBarEtiquetas.style.position = 'absolute';
+        canvasBarEtiquetas.style.left = '-9999px';
+        const ctxBarEtiquetas = canvasBarEtiquetas.getContext('2d');
+        const myBarChartEtiquetas = new Chart(ctxBarEtiquetas, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(etiquetaCounts),
+                datasets: [{
+                    label: 'Frecuencia de Etiquetas',
+                    data: Object.values(etiquetaCounts),
+                    backgroundColor: 'rgb(72,74,89)',
+                    borderColor: 'rgb(213,178,117)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                animation: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            font: {
+                                size: 24,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                size: 24,
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                }
+            },
+            plugins: [{
+                beforeDraw(chart) {
+                    const {ctx, canvas} = chart;
+                    ctx.save();
+                    ctx.fillStyle = '#FFF';
+                    ctx.fillRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+                    ctx.restore();
+                },
+            }]
+        });
         const ctx = canvas.getContext('2d');
         const myChart = new Chart(ctx, {
             type: 'bar',
@@ -1636,6 +1690,16 @@ class Biblioteca {
                 responsive: true,
                 animation: false,
                 scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            font: {
+                                size: 24,
+                                weight: 'bold'
+                            }
+                        }
+                    },
                     x: {
                         beginAtZero: true,
                         ticks: {
@@ -1653,6 +1717,21 @@ class Biblioteca {
                     ctx.restore();
                 },
             }]
+        });
+        const chartContainerBarEtiquetas = document.createElement('div');
+        chartContainerBarEtiquetas.appendChild(canvasBarEtiquetas);
+        document.body.appendChild(chartContainerBarEtiquetas);
+
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        const imageBarEtiquetas = canvasBarEtiquetas.toDataURL("image/png").split(';base64,')[1];
+        const imageIdBarEtiquetas = workbook.addImage({
+            base64: imageBarEtiquetas,
+            extension: 'png',
+        });
+        worksheetCalculos.addImage(imageIdBarEtiquetas, {
+            tl: {col: 12, row: 30},
+            ext: {width: 800, height: 500}
         });
         const chartContainer = document.createElement('div');
         chartContainer.appendChild(canvas);
@@ -1676,6 +1755,7 @@ class Biblioteca {
             tl: {col: 21, row: 2},
             ext: {width: 500, height: 500}
         });
+        chartContainerBarEtiquetas.removeChild(canvasBarEtiquetas);
         chartContainer.removeChild(canvas);
         chartContainerPie.removeChild(canvasPie);
     };

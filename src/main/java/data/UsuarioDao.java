@@ -147,16 +147,21 @@ public class UsuarioDao {
         }
     }
 
-    //listo
-    public void deleteUsuario(String Cedula) throws Exception {
-        String cedulaUser = Cedula;
-        String sql = "DELETE FROM Usuario\n" +
-                "WHERE PK_UsuarioCedula = ? \n";
-        PreparedStatement stm = db.prepareStatement(sql);
-        stm.setString(1, cedulaUser);
-        int count = db.executeUpdate(stm);
-        if (count == 0) {
-            throw new Exception("No se elimino");
+    public Usuario login(String usuario, String contrasena) throws Exception {
+        String sql = "SELECT * FROM Usuario WHERE PK_UsuarioCedula = ? AND Contrasena = ?";
+        try (PreparedStatement stm = db.prepareStatement(sql)) {
+            stm.setString(1, usuario);
+            stm.setString(2, contrasena);
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    String cedula = rs.getString("PK_UsuarioCedula");
+                    return read(cedula);
+                } else {
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al autenticar usuario: " + e.getMessage());
         }
     }
 
@@ -171,19 +176,26 @@ public class UsuarioDao {
         return usuario;
     }
 
-    public static void main(String[] args) {
-        try {
+    public static void main(String[] args) throws Exception {
+
+        try{
             Database db = new Database();
-            UsuarioDao usuarioDao = new UsuarioDao(db);
-            String cedula = "1";
-            usuarioDao.deleteUsuario(cedula);
-            System.out.println("Usuario eliminado exitosamente.");
+
+            // Crea una instancia de RolDao
+            UsuarioDao usuariDao = new UsuarioDao(db);
+            EtiquetaDao etiquetaDao = new EtiquetaDao(db);
+            Departamento departamento = new Departamento(1,"PruebaDepartamento");
+            Rol rol = new Rol(1,"Analista");
+            Usuario usuario1 = usuariDao.read("4-0258-0085");
+            System.out.println(etiquetaDao.getAllEtiquetasByUsuario("1"));
+
+            System.out.println(usuario1.toString());
+
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
 }
