@@ -213,59 +213,63 @@ class Admin {
 
     renderModalAgregar() {
         return `
-    <div class="modal fade" id="modalAgregarUsuario" tabindex="-1" aria-labelledby="modalAgregarUsuarioLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title justify-content-center" id="modalAgregarUsuarioLabel">Agregar Usuario</h5>
-                </div>
-                <div class="modal-body">
-                    <form id="formAgregarUsuario">
-                        <div class="mb-3">
-                          <legend id="cedulaLabel" class="form-label" style="font-size: 15px;">Cédula</legend>
-                            <input type="text" class="form-control" id="cedula" name="cedula">
+<div class="modal fade" id="modalAgregarUsuario" tabindex="-1" aria-labelledby="modalAgregarUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title justify-content-center" id="modalAgregarUsuarioLabel">Agregar Usuario</h5>
+            </div>
+            <div class="modal-body">
+                <form id="formAgregarUsuario">
+                    <div class="mb-3">
+                        <legend id="cedulaLabel" class="form-label" style="font-size: 15px;">Cédula</legend>
+                        <input type="text" class="form-control" id="cedula" name="cedula">
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <legend id="nombreLabel" class="form-label" style="font-size: 15px;">Nombre</legend>
+                            <input type="text" class="form-control" id="nombre">
                         </div>
-                        <div class="row mb-3">
-                            <div class="col">
-                                <legend id="nombreLabel" class="form-label" style="font-size: 15px;">Nombre</legend>
-                                <input type="text" class="form-control" id="nombre">
-                            </div>
-                            <div class="col">
-                                <legend id="primerApellidoLabel" class="form-label" style="font-size: 15px;">Primer Apellido</legend>
-                                <input type="text" class="form-control" id="primerApellido">
-                            </div>
-                            <div class="col">
-                                <legend id="segundoApellidoLabel" class="form-label" style="font-size: 15px;">Segundo Apellido</legend>
-                                <input type="text" class="form-control" id="segundoApellido">
-                            </div>
+                        <div class="col">
+                            <legend id="primerApellidoLabel" class="form-label" style="font-size: 15px;">Primer Apellido</legend>
+                            <input type="text" class="form-control" id="primerApellido">
                         </div>
-                        <div class="mb-3">
-                         <legend id="correoLabel" class="form-label" style="font-size: 15px;">Email</legend>
-                            <input class="form-control" id="correo">
+                        <div class="col">
+                            <legend id="segundoApellidoLabel" class="form-label" style="font-size: 15px;">Segundo Apellido</legend>
+                            <input type="text" class="form-control" id="segundoApellido">
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Rol</label>
-                            <select class="form-select" id="rol">
-                                <option value="Analista">Analista</option>
-                                <option value="Administrador">Administrador</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Departamento</label>
-                            <select class="form-select" id="departamento">
-                                <option value="Departamento de comunicación">Departamento de comunicación</option>
-                                <option value="Departamento de TI">Departamento de TI</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-custom-outline-success5" id="guardarUsuarioBtn" style="width: 190px;">Guardar</button>
-                    <button type="button" class="btn btn-custom-outline-success6" data-bs-dismiss="modal" style="width: 190px;">Cancelar</button>
-                </div>
+                    </div>
+                    <div class="mb-3">
+                        <legend id="correoLabel" class="form-label" style="font-size: 15px;">Email</legend>
+                        <input class="form-control" id="correo">
+                    </div>
+                    <div class="mb-3">
+                        <legend id="contrasenaLabel" class="form-label" style="font-size: 15px;">Contraseña</legend>
+                        <input id="passwordAgregar" type="password" class="form-control" id="contrasena">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Rol</label>
+                        <select class="form-select" id="rol">
+                            <option value="Analista">Analista</option>
+                            <option value="Administrador">Administrador</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Departamento</label>
+                        <select class="form-select" id="departamento">
+                            <option value="Departamento de comunicación">Departamento de comunicación</option>
+                            <option value="Departamento de TI">Departamento de TI</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-custom-outline-success5" id="guardarUsuarioBtn" style="width: 190px;">Guardar</button>
+                <button type="button" class="btn btn-custom-outline-success6" data-bs-dismiss="modal" style="width: 190px;">Cancelar</button>
             </div>
         </div>
-    </div>`;
+    </div>
+</div>`;
     }
 
     renderModalConfirmacion = () => {
@@ -464,6 +468,7 @@ class Admin {
         var primerApellido = document.getElementById('primerApellido').value;
         var segundoApellido = document.getElementById('segundoApellido').value;
         var correo = document.getElementById('correo').value;
+        var constrasena = document.getElementById('passwordAgregar').value;
         var rol = document.getElementById('rol').value;
         var departamento = document.getElementById('departamento').value;
 
@@ -472,10 +477,12 @@ class Admin {
         formData.append('nombre', nombre);
         formData.append('primerApellido', primerApellido);
         formData.append('segundoApellido', segundoApellido);
-        formData.append('correo', correo);
-        formData.append('rol', rol);
-        formData.append('departamento', departamento);
-
+        formData.append('email', correo);
+        formData.append('contrasena', constrasena)
+        formData.append('rol.id', "1")
+        formData.append('rol.descripcion', rol);
+        formData.append('departamento.id', "1");
+        formData.append('departamento.descripcion', departamento);
         this.entity = {};
         for (let [key, value] of formData.entries()) {
             this.entity[key] = value;
@@ -485,7 +492,6 @@ class Admin {
 
     verificarCamposLlenados = () => {
 
-        //inputs
         const cedula = document.getElementById('cedula').value;
         const nombre = document.getElementById('nombre').value;
         const primerApellido = document.getElementById('primerApellido').value;
@@ -493,17 +499,13 @@ class Admin {
         const correo = document.getElementById('correo').value;
         const rol = document.getElementById('rol').value;
         const departamento = document.getElementById('departamento').value;
-
-
-        //labels
         const cedulaLabel = document.getElementById("cedulaLabel");
         const nombreLabel = document.getElementById("nombreLabel");
         const primerApellidoLabel = document.getElementById("primerApellidoLabel");
         const segundoApellidoLabel = document.getElementById("segundoApellidoLabel");
-        const correoLabel = document.getElementById("correoLabel")
+        const correoLabel = document.getElementById("correoLabel");
         const regexEmail = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
-
-        cedulaLabel.style.color = 'black';
+        cedulaLabel.style.color = 'red';
         cedulaLabel.style.textDecoration = 'none';
         nombreLabel.style.color = 'black';
         nombreLabel.style.textDecoration = 'none';
@@ -513,31 +515,30 @@ class Admin {
         segundoApellidoLabel.style.textDecoration = 'none';
         correoLabel.style.color = 'black';
         correoLabel.style.textDecoration = 'none';
-
-        if(cedula.trim()===''){
+        if(cedula.trim() === ''){
             cedulaLabel.style.color = 'red';
-            cedulaLabel.style.textDecoration = "underline";
-            cedulaLabel.style.title = 'Debes ingresar una cedula valida'
+            cedulaLabel.style.textDecoration = 'underline';
+            cedulaLabel.style.title = 'Debes ingresar una cedula valida';
         }
-        if(nombre.trim()===''){
+        if(nombre.trim() === ''){
             nombreLabel.style.color = 'red';
-            nombreLabel.style.textDecoration = "underline";
-            nombreLabel.style.title = 'Debes ingresar una nombre valido'
+            nombreLabel.style.textDecoration = 'underline';
+            nombreLabel.style.title = 'Debes ingresar una nombre valido';
         }
-        if(primerApellido.trim()===''){
+        if(primerApellido.trim() === ''){
             primerApellidoLabel.style.color = 'red';
-            primerApellidoLabel.style.textDecoration = "underline";
-            primerApellidoLabel.style.title = 'Debes ingresar un apellido valido'
+            primerApellidoLabel.style.textDecoration = 'underline';
+            primerApellidoLabel.style.title = 'Debes ingresar un apellido valido';
         }
-        if(segundoApellido.trim()===''){
+        if(segundoApellido.trim() === ''){
             segundoApellidoLabel.style.color = 'red';
-            segundoApellidoLabel.style.textDecoration = "underline";
-            segundoApellidoLabel.style.title = 'Debes ingresar un apellido valido'
+            segundoApellidoLabel.style.textDecoration = 'underline';
+            segundoApellidoLabel.style.title = 'Debes ingresar un apellido valido';
         }
         if(!regexEmail.test(correo)){
             correoLabel.style.color = 'red';
-            correoLabel.style.textDecoration = "underline";
-            correoLabel.style.title = 'Debes ingresar un correo valido'
+            correoLabel.style.textDecoration = 'underline';
+            correoLabel.style.title = 'Debes ingresar un correo valido';
         }
 
         if(
@@ -547,7 +548,6 @@ class Admin {
             segundoApellido.trim() === '' ||
             !regexEmail.test(correo)
         ) {
-            this.showModalCampo();
             return false;
         }
         return true;
@@ -555,19 +555,28 @@ class Admin {
 
 
 
-
-
-
     addUser = async () => {
+        event.preventDefault();
         await this.load();
+        const request = new Request(`${backend}/usuarios/createUsuario`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(this.entity)
+        });
 
-        if (this.verificarCamposLlenados()) {
-            alert("Bien");
-        } else {
-            alert("Mal");
+        try {
+            const response = await fetch(request);
+            if (response.ok) {
+                console.log(this.entity);
+            } else {
+                console.log(this.entity);
+            }
         }
-
-
+        catch (error) {
+            console.error("Error al agregar la entidad", error);
+        }
     }
 
 

@@ -108,5 +108,18 @@ public class Usuarios {
         }
     }
 
+    @POST
+    @Path("/crearUsuario")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void createUser(Usuario usuario){
+        try {
+            Database db = new Database();
+            UsuarioDao usuarioDao = new UsuarioDao(db);
+            usuarioDao.createUsuario(usuario);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }
