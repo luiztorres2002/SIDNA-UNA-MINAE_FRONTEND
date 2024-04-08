@@ -1,5 +1,6 @@
 package resources;
 
+import com.fasterxml.jackson.databind.deser.impl.CreatorCandidate;
 import data.Database;
 import data.UsuarioDao;
 import jakarta.ws.rs.core.Response;
@@ -9,6 +10,7 @@ import jakarta.ws.rs.core.MediaType;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import java.sql.SQLException;
 import java.util.Base64;
 import java.util.List;
 
@@ -111,15 +113,44 @@ public class Usuarios {
     @POST
     @Path("/crearUsuario")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void createUser(Usuario usuario){
+    public Response createUser(Usuario usuario){
         try {
             Database db = new Database();
             UsuarioDao usuarioDao = new UsuarioDao(db);
             usuarioDao.createUsuario(usuario);
+            return Response.ok().build();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
+    @PUT
+    @Path("/restablecerpassword/{id}")
+    public Response restablecerContrasena(@PathParam("id") String id){
+        try{
+            Database db = new Database();
+            UsuarioDao usuarioDao = new UsuarioDao(db);
+            usuarioDao.modificiarContrasenaUsuario(id);
+            return Response.ok().build();
+
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PUT
+    @Path("/editarUsuario")
+    public Response editarUsuario(Usuario usuario){
+        try{
+            Database db = new Database();
+            UsuarioDao usuarioDao = new UsuarioDao(db);
+            usuarioDao.updateUsuario(usuario);
+            return Response.ok().build();
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 
 }

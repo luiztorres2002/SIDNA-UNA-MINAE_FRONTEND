@@ -21,6 +21,12 @@ class Admin {
         //querys selectors
         this.dom.querySelector("#admin #modalborrarusuario #confirmarb").addEventListener('click', this.deleteUser.bind(this));
         this.dom.querySelector("#admin #modalAgregarUsuario #guardarUsuarioBtn").addEventListener('click', this.addUser.bind(this));
+        this.dom.querySelector("#admin #modalConfirmacionPass #confirmarBtn").addEventListener('click', this.restablecerPassword.bind(this));
+        this.dom.querySelector("#admin #modalEditarUsuario #guardarCambiosBtn").addEventListener('click', this.editUser.bind(this));
+
+
+
+
         const agregarBtn = this.dom.querySelector("#agregarUsuarioBtn");
         agregarBtn.addEventListener('click', () => {
             this.modalAgregarUsuario.show();
@@ -122,12 +128,12 @@ class Admin {
                 const editarBtn = row.querySelector('.editarUsuarioBtn');
                 editarBtn.addEventListener('click', () => {
                     this.modalEditarUsuario.show();
-                    const nombreInput = document.querySelector('#nombre');
-                    const primerApellidoInput = document.querySelector('#primerApellido');
-                    const segundoApellidoInput = document.querySelector('#segundoApellido');
-                    const emailInput = document.querySelector('#correo');
-                    const rolSelect = document.querySelector('#rol');
-                    const cedulaInput = this.dom.querySelector('#cedula');
+                    const nombreInput = document.querySelector('#nombreEditar');
+                    const primerApellidoInput = document.querySelector('#primerApellidoEditar');
+                    const segundoApellidoInput = document.querySelector('#segundoApellidoEditar');
+                    const emailInput = document.querySelector('#correoEditar');
+                    const rolSelect = document.querySelector('#rolEditar');
+                    const cedulaInput = this.dom.querySelector('#cedulaEditar');
                     cedulaInput.value = cedula;
                     nombreInput.value = nombre;
                     primerApellidoInput.value = primerApellido;
@@ -152,7 +158,7 @@ class Admin {
                 const restablecerBtn = row.querySelector('.restablecerUsuarioBtn');
                 restablecerBtn.addEventListener('click', () => {
                     document.getElementById('modalConfirmarMensajePass').innerHTML = `<span style="font-size: smaller;">¿Estás seguro de que deseas restablecer el password a este usuario?</span><br>${nombre} ${primerApellido} ${segundoApellido}`;
-                    this.modalConfirmarPass.show();
+                    this.showmodalConfirmarPass(cedula);
                 });
 
                 tbody.appendChild(row);
@@ -195,8 +201,15 @@ class Admin {
                     <div class="mb-3">
                         <label class="form-label">Rol</label>
                         <select class="form-select" id="rolEditar">
-                            <option value="Analista">Analista</option>
-                            <option value="Administrador">Administrador</option>
+                            <option value="1">Analista</option>
+                            <option value="2">Administrador</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Departamento</label>
+                        <select class="form-select" id="departamentoEditar">
+                            <option value="1">Departamento de comunicación</option>
+                            <option value="2">Departamento de TI</option>
                         </select>
                     </div>
                 </>
@@ -250,15 +263,15 @@ class Admin {
                     <div class="mb-3">
                         <label class="form-label">Rol</label>
                         <select class="form-select" id="rol">
-                            <option value="Analista">Analista</option>
-                            <option value="Administrador">Administrador</option>
+                            <option value="1">Analista</option>
+                            <option value="2">Administrador</option>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Departamento</label>
                         <select class="form-select" id="departamento">
-                            <option value="Departamento de comunicación">Departamento de comunicación</option>
-                            <option value="Departamento de TI">Departamento de TI</option>
+                            <option value="1">Departamento de comunicación</option>
+                            <option value="2">Departamento de TI</option>
                         </select>
                     </div>
                 </form>
@@ -386,6 +399,14 @@ class Admin {
         this.modalExitoGenerico.show();
     }
 
+    showmodalConfirmarPass = (cedula) =>{
+        event.preventDefault();
+        this.deleteEntity = " ";
+        this.deleteEntity = cedula;
+        console.log(cedula);
+        this.modalConfirmarPass.show();
+    }
+
     //Modal Generico Error
     renderModalErrorGenerico = () => {
         return `
@@ -462,6 +483,36 @@ class Admin {
         }
     }
 
+    loadEdit = async () =>{
+        var cedula = document.getElementById('cedulaEditar').value;
+        var nombre = document.getElementById('nombreEditar').value;
+        var primerApellido = document.getElementById('primerApellidoEditar').value;
+        var segundoApellido = document.getElementById('segundoApellidoEditar').value;
+        var correo = document.getElementById('correoEditar').value;
+        var rol = document.getElementById('rolEditar').value;
+        var departamento = document.getElementById('departamentoEditar').value;
+
+        var usuario = {
+            cedula: cedula,
+            nombre: nombre,
+            primerApellido: primerApellido,
+            segundoApellido: segundoApellido,
+            email: correo,
+            contrasena: "asd",
+            rol: {
+                id: rol,
+                descripcion: 'Rol' // Puedes dejarlo vacío o asignarle un valor si lo tienes disponible
+            },
+            departamento: {
+                id: departamento,
+                nombre: 'Departamento' // Puedes dejarlo vacío o asignarle un valor si lo tienes disponible
+            }
+        };
+
+        this.entity = usuario;
+        console.log(this.entity);
+    }
+
     load = async () => {
         var cedula = document.getElementById('cedula').value;
         var nombre = document.getElementById('nombre').value;
@@ -472,21 +523,24 @@ class Admin {
         var rol = document.getElementById('rol').value;
         var departamento = document.getElementById('departamento').value;
 
-        var formData = new FormData();
-        formData.append('cedula', cedula);
-        formData.append('nombre', nombre);
-        formData.append('primerApellido', primerApellido);
-        formData.append('segundoApellido', segundoApellido);
-        formData.append('email', correo);
-        formData.append('contrasena', constrasena)
-        formData.append('rol.id', "1")
-        formData.append('rol.descripcion', rol);
-        formData.append('departamento.id', "1");
-        formData.append('departamento.descripcion', departamento);
-        this.entity = {};
-        for (let [key, value] of formData.entries()) {
-            this.entity[key] = value;
-        }
+        var usuario = {
+            cedula: cedula,
+            nombre: nombre,
+            primerApellido: primerApellido,
+            segundoApellido: segundoApellido,
+            email: correo,
+            contrasena: constrasena,
+            rol: {
+                id: rol,
+                descripcion: 'Rol' // Puedes dejarlo vacío o asignarle un valor si lo tienes disponible
+            },
+            departamento: {
+                id: departamento,
+                nombre: 'Departamento' // Puedes dejarlo vacío o asignarle un valor si lo tienes disponible
+            }
+        };
+
+        this.entity = usuario;
         console.log(this.entity);
     }
 
@@ -555,10 +609,44 @@ class Admin {
 
 
 
+
+    editUser = async () =>{
+        event.preventDefault();
+        await this.loadEdit();
+
+        const request = new Request(`${backend}/usuarios/editarUsuario`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(this.entity)
+        });
+
+        try {
+            const response = await fetch(request);
+            if (response.ok) {
+                this.modalEditarUsuario.hide();
+;                this.showModalExitoGenerico("Usuario modificado con exito");
+            } else {
+                this.modalEditarUsuario.hide();
+                this.showModalErrorGenerico("No se ha podido modificar el usuario");
+
+            }
+        }
+        catch (error) {
+            console.error("Error al agregar la entidad", error);
+        }
+
+
+
+    }
+
+
+
     addUser = async () => {
         event.preventDefault();
         await this.load();
-        const request = new Request(`${backend}/usuarios/createUsuario`, {
+        const request = new Request(`${backend}/usuarios/crearUsuario`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -569,15 +657,47 @@ class Admin {
         try {
             const response = await fetch(request);
             if (response.ok) {
-                console.log(this.entity);
+                this.modalAgregarUsuario.hide();
+                this.showModalExitoGenerico("Usuario creado con exito");
             } else {
-                console.log(this.entity);
+                this.modalAgregarUsuario.hide();
+                this.showModalErrorGenerico("No se ha podido crear el usuario");
+
             }
         }
         catch (error) {
             console.error("Error al agregar la entidad", error);
         }
+
+
+
     }
+
+
+   restablecerPassword = async () => {
+      event.preventDefault();
+      const entityId = this.deleteEntity;
+
+      const request = new Request(`${backend}/usuarios/restablecerpassword/${entityId}`, {
+           method: 'PUT',
+           headers: {
+               'Content-Type': 'application/json'
+           },
+       });
+       try {
+           const response = await fetch(request);
+           if (response.ok) {
+               this.modalConfirmarPass.hide();
+               this.showModalExitoGenerico("La Contraseña ha sido restablecida con exito");
+           } else {
+               this.modalConfirmarPass.hide();
+               this.showModalErrorGenerico("No se pudo restablecer la contrasena");
+           }
+       } catch (error) {
+           console.error("Error al cambiar la contrasena:", error);
+       }
+  }
+
 
 
     emptyEntity = () => {

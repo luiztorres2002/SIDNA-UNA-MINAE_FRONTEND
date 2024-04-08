@@ -196,7 +196,7 @@ public class UsuarioDao {
         if (count == 0) {
             throw new Exception("No se creo");
         } else {
-            throw new Exception("Se creo");
+            System.out.println("Usuario creado correctamente");
         }
     }
 
@@ -218,7 +218,7 @@ public class UsuarioDao {
         if (count == 0) {
             throw new Exception("No se modifico");
         } else {
-            throw new Exception("Se modifico con exito");
+            System.out.println("Usuario creado correctamente");
         }
     }
 
@@ -235,11 +235,8 @@ public class UsuarioDao {
 
         int count = db.executeUpdate(stm);
         if (count == 0) {
-            throw new Exception("No se modifico");
-        } else {
-            throw new Exception("Se modifico con exito");
+            throw new Exception("No se cambio");
         }
-
     }
 
     public void deleteUsuario(String Cedula) throws Exception {
@@ -262,11 +259,9 @@ public class UsuarioDao {
 
             // Crea una instancia de RolDao
             UsuarioDao usuariDao = new UsuarioDao(db);
-            usuariDao.modificiarContrasenaUsuario("1");
+            usuariDao.modificiarContrasenaUsuario("6");
 
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
             e.printStackTrace();
         }
     }
