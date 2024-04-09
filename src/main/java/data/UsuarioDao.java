@@ -168,7 +168,7 @@ public class UsuarioDao {
 
     public Usuario from(ResultSet rs) throws SQLException {
         Usuario usuario = new Usuario();
-        usuario.setCedula(rs.getString("Pk_UsuarioCedula")); // Debe coincidir con el alias "Cedula" en la consulta SQL
+        usuario.setCedula(rs.getString("Pk_UsuarioCedula"));
         usuario.setNombre(rs.getString("UsuarioName"));
         usuario.setPrimerApellido(rs.getString("PrimerApellido"));
         usuario.setSegundoApellido(rs.getString("SegundoApellido"));
@@ -178,9 +178,6 @@ public class UsuarioDao {
     }
 
 
-    //tengo que llamar a Rol
-    //tengo que llamar a Departamento
-
     public void createUsuario(Usuario usuario) throws Exception {
         String sql = "INSERT INTO USUARIO(PK_UsuarioCedula, Nombre, PrimerApellido, SegundoApellido, Email, Contrasena, FK_Usuario_RolId, FK_Usuario_DepartamentoId) values (?,?,?,?,?,?,?,?)";
         PreparedStatement stm = db.prepareStatement(sql);
@@ -189,7 +186,7 @@ public class UsuarioDao {
         stm.setString(3, usuario.getPrimerApellido());
         stm.setString(4, usuario.getSegundoApellido());
         stm.setString(5, usuario.getEmail());
-        stm.setString(6, usuario.getContrasena());
+        stm.setString(6, "Minae");
         stm.setInt(7, usuario.getRol().getId());
         stm.setInt(8, usuario.getDepartamento().getId());
         int count = db.executeUpdate(stm);
