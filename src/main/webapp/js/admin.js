@@ -18,7 +18,6 @@ class Admin {
         this.modalExitoGenerico = new bootstrap.Modal(this.dom.querySelector('#modalExitoGenerico'));
         this.modalErrorGenerico = new bootstrap.Modal(this.dom.querySelector('#modalErrorGenerico'));
 
-        //querys selectors
         this.dom.querySelector("#admin #modalborrarusuario #confirmarb").addEventListener('click', this.deleteUser.bind(this));
         this.dom.querySelector("#admin #modalAgregarUsuario #guardarUsuarioBtn").addEventListener('click', this.addUser.bind(this));
         this.dom.querySelector("#admin #modalConfirmacionPass #confirmarBtn").addEventListener('click', this.restablecerPassword.bind(this));
@@ -70,6 +69,7 @@ class Admin {
                         <th  style="text-align: center; vertical-align: middle;">Nombre Completo</th>
                         <th  style="text-align: center; vertical-align: middle;">Email</th>
                         <th  style="text-align: center; vertical-align: middle;">Rol</th>
+                        <th  style="text-align: center; vertical-align: middle;">Departamento</th>
                         <th  style="text-align: center; vertical-align: middle;">Acciones</th>
                     </tr>
                 </thead>
@@ -103,15 +103,16 @@ class Admin {
         spinner.style.display = 'none';
         const table = document.getElementById('usuariosTable');
         const tbody = table.querySelector('tbody');
-
+        tbody.innerHTML = '';
         this.state.usuarios.forEach((usuario) => {
-                const { cedula, nombre, primerApellido, segundoApellido, email, rol } = usuario;
-                const row = document.createElement('tr');
-                row.innerHTML = `
+            const { cedula, nombre, primerApellido, segundoApellido, email, rol,departamento } = usuario;
+            const row = document.createElement('tr');
+            row.innerHTML = `
             <td style="text-align: center; vertical-align: middle;">${cedula}</td>
             <td style="text-align: center; vertical-align: middle;">${nombre} ${primerApellido} ${segundoApellido}</td>
             <td style="text-align: center; vertical-align: middle;">${email}</td>
             <td style="text-align: center; vertical-align: middle;">${rol.descripcion}</td>
+            <td style="text-align: center; vertical-align: middle;">${departamento.nombre}</td>
             <td style="text-align: center; vertical-align: middle;">
                 <button class="btn btn-custom-outline-success2 editarUsuarioBtn" id="editarUsuarioBtn" style="width: 90px; color: #ef8929; border-color: #ef8929;">
                     <i class="fas fa-edit"></i> <span class="texto-agregar">Editar</span>
@@ -125,49 +126,56 @@ class Admin {
             </td>
         `;
 
-                const editarBtn = row.querySelector('.editarUsuarioBtn');
-                editarBtn.addEventListener('click', () => {
-                    this.modalEditarUsuario.show();
-                    const nombreInput = document.querySelector('#nombreEditar');
-                    const primerApellidoInput = document.querySelector('#primerApellidoEditar');
-                    const segundoApellidoInput = document.querySelector('#segundoApellidoEditar');
-                    const emailInput = document.querySelector('#correoEditar');
-                    const rolSelect = document.querySelector('#rolEditar');
-                    const cedulaInput = this.dom.querySelector('#cedulaEditar');
-                    cedulaInput.value = cedula;
-                    nombreInput.value = nombre;
-                    primerApellidoInput.value = primerApellido;
-                    segundoApellidoInput.value = segundoApellido;
-                    emailInput.value = email;
-                    const rolDescripcion = rol.descripcion;
-                    console.log(rolDescripcion);
-                    for (let i = 0; i < rolSelect.options.length; i++) {
-                        if (rolSelect.options[i].value === rolDescripcion) {
-                            rolSelect.options[i].selected = true;
-                            break;
-                        }
+            const editarBtn = row.querySelector('.editarUsuarioBtn');
+            editarBtn.addEventListener('click', () => {
+                this.modalEditarUsuario.show();
+                const nombreInput = document.querySelector('#nombreEditar');
+                const primerApellidoInput = document.querySelector('#primerApellidoEditar');
+                const segundoApellidoInput = document.querySelector('#segundoApellidoEditar');
+                const emailInput = document.querySelector('#correoEditar');
+                const rolSelect = document.querySelector('#rolEditar');
+                const departamentoSelect = document.querySelector('#departamentoEditar');
+                const cedulaInput = this.dom.querySelector('#cedulaEditar');
+                cedulaInput.value = cedula;
+                nombreInput.value = nombre;
+                primerApellidoInput.value = primerApellido;
+                segundoApellidoInput.value = segundoApellido;
+                emailInput.value = email;
+                const rolID = rol.id.toString();
+                const departamentoID = departamento.id.toString();
+                for (let i = 0; i < rolSelect.options.length; i++) {
+                    if (rolSelect.options[i].value === rolID) {
+                        rolSelect.options[i].selected = true;
+                        break;
                     }
-                });
+                }
+                for (let i = 0; i < departamentoSelect.options.length; i++) {
+                    if (departamentoSelect.options[i].value === departamentoID) {
+                        departamentoSelect.options[i].selected = true;
+                        break;
+                    }
+                }
+            });
 
-                const eliminarBtn = row.querySelector('.eliminarUsuarioBtn');
-                eliminarBtn.addEventListener('click', () => {
-                    document.getElementById('modalConfirmarMensaje').innerHTML = `¿Estás seguro de que deseas eliminar a este usuario?<br>${nombre} ${primerApellido} ${segundoApellido}`;
-                    this.showModalBorrar(cedula);
-                });
+            const eliminarBtn = row.querySelector('.eliminarUsuarioBtn');
+            eliminarBtn.addEventListener('click', () => {
+                document.getElementById('modalConfirmarMensaje').innerHTML = `¿Estás seguro de que deseas eliminar a este usuario?<br>${nombre} ${primerApellido} ${segundoApellido}`;
+                this.showModalBorrar(cedula);
+            });
 
-                const restablecerBtn = row.querySelector('.restablecerUsuarioBtn');
-                restablecerBtn.addEventListener('click', () => {
-                    document.getElementById('modalConfirmarMensajePass').innerHTML = `<span style="font-size: smaller;">¿Estás seguro de que deseas restablecer el password a este usuario?</span><br>${nombre} ${primerApellido} ${segundoApellido}`;
-                    this.showmodalConfirmarPass(cedula);
-                });
+            const restablecerBtn = row.querySelector('.restablecerUsuarioBtn');
+            restablecerBtn.addEventListener('click', () => {
+                document.getElementById('modalConfirmarMensajePass').innerHTML = `<span style="font-size: smaller;">¿Estás seguro de que deseas restablecer el password a este usuario?</span><br>${nombre} ${primerApellido} ${segundoApellido}`;
+                this.showmodalConfirmarPass(cedula);
+            });
 
-                tbody.appendChild(row);
+            tbody.appendChild(row);
 
         });
     }
 
     renderModalEditar() {
-                return `
+        return `
             <div class="modal fade" id="modalEditarUsuario" tabindex="-1" aria-labelledby="modalEditarUsuarioLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
@@ -208,7 +216,7 @@ class Admin {
                     <div class="mb-3">
                         <label class="form-label">Departamento</label>
                         <select class="form-select" id="departamentoEditar">
-                            <option value="1">Departamento de comunicación</option>
+                            <option value="1">Departamento de Comunicación</option>
                             <option value="2">Departamento de TI</option>
                         </select>
                     </div>
@@ -236,29 +244,25 @@ class Admin {
                 <form id="formAgregarUsuario">
                     <div class="mb-3">
                         <legend id="cedulaLabel" class="form-label" style="font-size: 15px;">Cédula</legend>
-                        <input type="text" class="form-control" id="cedula" name="cedula">
+                        <input type="text" class="form-control" id="cedula" name="cedula" autocomplete="chrome-off">
                     </div>
                     <div class="row mb-3">
                         <div class="col">
                             <legend id="nombreLabel" class="form-label" style="font-size: 15px;">Nombre</legend>
-                            <input type="text" class="form-control" id="nombre">
+                            <input type="text" class="form-control" id="nombre" autocomplete="chrome-off">
                         </div>
                         <div class="col">
                             <legend id="primerApellidoLabel" class="form-label" style="font-size: 15px;">Primer Apellido</legend>
-                            <input type="text" class="form-control" id="primerApellido">
+                            <input type="text" class="form-control" id="primerApellido" autocomplete="chrome-off">
                         </div>
                         <div class="col">
                             <legend id="segundoApellidoLabel" class="form-label" style="font-size: 15px;">Segundo Apellido</legend>
-                            <input type="text" class="form-control" id="segundoApellido">
+                            <input type="text" class="form-control" id="segundoApellido" autocomplete="chrome-off">
                         </div>
                     </div>
                     <div class="mb-3">
                         <legend id="correoLabel" class="form-label" style="font-size: 15px;">Email</legend>
-                        <input class="form-control" id="correo">
-                    </div>
-                    <div class="mb-3">
-                        <legend id="contrasenaLabel" class="form-label" style="font-size: 15px;">Contraseña</legend>
-                        <input id="passwordAgregar" type="password" class="form-control" id="contrasena">
+                        <input class="form-control" id="correo" autocomplete="chrome-off">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Rol</label>
@@ -270,7 +274,7 @@ class Admin {
                     <div class="mb-3">
                         <label class="form-label">Departamento</label>
                         <select class="form-select" id="departamento">
-                            <option value="1">Departamento de comunicación</option>
+                            <option value="1">Departamento de Comunicación</option>
                             <option value="2">Departamento de TI</option>
                         </select>
                     </div>
@@ -299,7 +303,7 @@ class Admin {
                     <div class="text-center">
                         <img src="images/Minae.png" class="w-50 mx-auto d-block mb-4" alt="...">
                     </div>
-                    <h4 id="modalConfirmarMensaje" class="text-center mb-2 mt-2"> </h4>
+                    <h4 id="modalConfirmarMensaje1" class="text-center mb-2 mt-2"> </h4>
                     <ul class="ftco-footer-social p-0 text-center">
                     </ul>
                      
@@ -331,11 +335,10 @@ class Admin {
                         <h4 id="modalConfirmarMensajePass" class="text-center mb-2 mt-2"> </h4>
                         <ul class="ftco-footer-social p-0 text-center">
                         </ul>
-                         
-                        <div class="modal-footer justify-content-center">
-                        <button type="button" class="btn btn-custom-outline-success5" id="confirmarBtn" style="width: 110px; ">Aceptar</button>
-                        <button type="button" class="btn btn-custom-outline-success6" data-bs-dismiss="modal" style="width: 110px;">Cancelar</button>
-                    </div>
+                        <div class="btn-group mt-4 d-flex justify-content-center">
+                                <button type="submit" id="confirmarBtn" class="btn btn-outline-primary rounded submit ml-4 mr-3">Confirmar</button>
+                                <button type="button"  data-bs-dismiss="modal" class="btn btn-outline-secondary rounded submit">Cancelar</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -350,7 +353,7 @@ class Admin {
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" id="cancelModal" class="close d-flex align-items-center justify-content-center" aria-label="Close" style="font-size: 36px; width: 50px; height: 50px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); border: 2px solid #ccc; border-radius: 50%;">
+                        <button type="button" id="cancelModal" data-bs-dismiss="modal" class="close d-flex align-items-center justify-content-center" aria-label="Close" style="font-size: 36px; width: 50px; height: 50px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); border: 2px solid #ccc; border-radius: 50%;">
                             <span aria-hidden="true" class="ion-ios-close"></span>
                         </button>
                     </div>
@@ -358,16 +361,14 @@ class Admin {
                         <div class="text-center">
                             <img src="images/Minae.png" class="w-50 mx-auto d-block mb-4" alt="...">
                         </div>
-                        <h4 class="text-center mb-2 mt-2">¿Estás seguro de que deseas eliminar este usuario del sistema? </h4>
-                       
-                       
+                        <h4 class="text-center mb-2 mt-2" id="modalConfirmarMensaje">¿Estás seguro de que deseas eliminar este usuario del sistema? </h4>
                         <ul class="ftco-footer-social p-0 text-center">
                         </ul>
                          
                         <form action="#" id="formmarcar" class="signup-form">
                             <div class="btn-group mt-4 d-flex justify-content-center">
                                 <button type="submit" id="confirmarb" class="btn btn-outline-primary rounded submit ml-4 mr-3">Confirmar</button>
-                                <button type="button" id="cancelarb" class="btn btn-outline-secondary rounded submit">Cancelar</button>
+                                <button type="button" id="cancelarb" data-bs-dismiss="modal" class="btn btn-outline-secondary rounded submit">Cancelar</button>
                             </div>
                             <div class="form-group d-md-flex">
                             </div>
@@ -383,7 +384,6 @@ class Admin {
         event.preventDefault();
         this.deleteEntity = " ";
         this.deleteEntity = cedula;
-        console.log(cedula);
         this.modalBorrarUsuario.show();
     }
 
@@ -403,7 +403,6 @@ class Admin {
         event.preventDefault();
         this.deleteEntity = " ";
         this.deleteEntity = cedula;
-        console.log(cedula);
         this.modalConfirmarPass.show();
     }
 
@@ -423,7 +422,7 @@ class Admin {
                         <p id="mensaje" style="font-size: 25px;" class="text-center"></p>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-success btn-block" id="dismissButton" data-dismiss="modal">Regresar</button>
+                        <button class="btn btn-success btn-block" data-bs-dismiss="modal" id="dismissButton" data-dismiss="modal">Regresar</button>
                     </div>
                 </div>
             </div>
@@ -446,7 +445,7 @@ class Admin {
                     <p id="mensajes" style="font-size: 25px;" class="text-center"></p>
                 </div>
                 <div class="modal-footer">
-            <button class="btn btn-success btn-block" id="sucessbuton" data-dismiss="modal">OK</button>
+            <button class="btn btn-success btn-block" data-bs-dismiss="modal" id="sucessbuton" data-dismiss="modal">OK</button>
                 </div>
             </div>
             </div>
@@ -475,7 +474,6 @@ class Admin {
                 this.showModalExitoGenerico("Se ha eliminado al usuario exitosamente.");
 
             } else {
-
                 this.showModalErrorGenerico("No se pudo eliminar el usuario");
             }
         } catch (error) {
@@ -519,7 +517,6 @@ class Admin {
         var primerApellido = document.getElementById('primerApellido').value;
         var segundoApellido = document.getElementById('segundoApellido').value;
         var correo = document.getElementById('correo').value;
-        var constrasena = document.getElementById('passwordAgregar').value;
         var rol = document.getElementById('rol').value;
         var departamento = document.getElementById('departamento').value;
 
@@ -529,14 +526,13 @@ class Admin {
             primerApellido: primerApellido,
             segundoApellido: segundoApellido,
             email: correo,
-            contrasena: constrasena,
             rol: {
                 id: rol,
-                descripcion: 'Rol' // Puedes dejarlo vacío o asignarle un valor si lo tienes disponible
+                descripcion: 'Rol'
             },
             departamento: {
                 id: departamento,
-                nombre: 'Departamento' // Puedes dejarlo vacío o asignarle un valor si lo tienes disponible
+                nombre: 'Departamento'
             }
         };
 
@@ -626,7 +622,8 @@ class Admin {
             const response = await fetch(request);
             if (response.ok) {
                 this.modalEditarUsuario.hide();
-;                this.showModalExitoGenerico("Usuario modificado con exito");
+                this.showModalExitoGenerico("Usuario modificado con exito");
+                this.cargarUsuarios();
             } else {
                 this.modalEditarUsuario.hide();
                 this.showModalErrorGenerico("No se ha podido modificar el usuario");
@@ -640,8 +637,6 @@ class Admin {
 
 
     }
-
-
 
     addUser = async () => {
         event.preventDefault();
@@ -659,6 +654,7 @@ class Admin {
             if (response.ok) {
                 this.modalAgregarUsuario.hide();
                 this.showModalExitoGenerico("Usuario creado con exito");
+                this.cargarUsuarios();
             } else {
                 this.modalAgregarUsuario.hide();
                 this.showModalErrorGenerico("No se ha podido crear el usuario");
@@ -674,29 +670,30 @@ class Admin {
     }
 
 
-   restablecerPassword = async () => {
-      event.preventDefault();
-      const entityId = this.deleteEntity;
+    restablecerPassword = async () => {
+        event.preventDefault();
+        const entityId = this.deleteEntity;
 
-      const request = new Request(`${backend}/usuarios/restablecerpassword/${entityId}`, {
-           method: 'PUT',
-           headers: {
-               'Content-Type': 'application/json'
-           },
-       });
-       try {
-           const response = await fetch(request);
-           if (response.ok) {
-               this.modalConfirmarPass.hide();
-               this.showModalExitoGenerico("La Contraseña ha sido restablecida con exito");
-           } else {
-               this.modalConfirmarPass.hide();
-               this.showModalErrorGenerico("No se pudo restablecer la contrasena");
-           }
-       } catch (error) {
-           console.error("Error al cambiar la contrasena:", error);
-       }
-  }
+        const request = new Request(`${backend}/usuarios/restablecerpassword/${entityId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        try {
+            const response = await fetch(request);
+            if (response.ok) {
+                this.modalConfirmarPass.hide();
+                this.showModalExitoGenerico("La Contraseña ha sido restablecida con exito");
+                this.cargarUsuarios();
+            } else {
+                this.modalConfirmarPass.hide();
+                this.showModalErrorGenerico("No se pudo restablecer la contrasena");
+            }
+        } catch (error) {
+            console.error("Error al cambiar la contrasena:", error);
+        }
+    }
 
 
 
