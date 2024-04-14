@@ -243,36 +243,36 @@ class Admin {
             <div class="modal-body">
                 <form id="formAgregarUsuario">
                     <div class="mb-3">
-                        <legend id="cedulaLabel" class="form-label" style="font-size: 15px;">Cédula</legend>
-                        <input type="text" class="form-control" id="cedula" name="cedula" autocomplete="chrome-off">
+                    <legend id="cedulaLabel"  style="font-size: 15px; color:black;font-family: Verdana">Cédula</legend>                     
+                    <input type="text" class="form-control" id="cedula" name="cedula" autocomplete="off">
                     </div>
                     <div class="row mb-3">
                         <div class="col">
-                            <legend id="nombreLabel" class="form-label" style="font-size: 15px;">Nombre</legend>
+                            <legend id="nombreLabel" style="font-size: 15px; color:black;font-family: Verdana">Nombre</legend>
                             <input type="text" class="form-control" id="nombre" autocomplete="chrome-off">
                         </div>
                         <div class="col">
-                            <legend id="primerApellidoLabel" class="form-label" style="font-size: 15px;">Primer Apellido</legend>
+                            <legend id="primerApellidoLabel" style="font-size: 15px; color:black;font-family: Verdana">Primer Apellido</legend>
                             <input type="text" class="form-control" id="primerApellido" autocomplete="chrome-off">
                         </div>
                         <div class="col">
-                            <legend id="segundoApellidoLabel" class="form-label" style="font-size: 15px;">Segundo Apellido</legend>
+                            <legend id="segundoApellidoLabel" style="font-size: 15px; color:black;font-family: Verdana">Segundo Apellido</legend>
                             <input type="text" class="form-control" id="segundoApellido" autocomplete="chrome-off">
                         </div>
                     </div>
                     <div class="mb-3">
-                        <legend id="correoLabel" class="form-label" style="font-size: 15px;">Email</legend>
-                        <input class="form-control" id="correo" autocomplete="chrome-off">
+                        <legend id="correoLabel" style="font-size: 15px; color:black;font-family: Verdana">Email</legend>
+                        <input class="form-control" id="correo" autocomplete="off">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Rol</label>
+                        <legend " style="font-size: 15px; color:black;font-family: Verdana">Rol</legend>
                         <select class="form-select" id="rol">
                             <option value="1">Analista</option>
                             <option value="2">Administrador</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Departamento</label>
+                        <legend style="font-size: 15px; color:black;font-family: Verdana">Departamento</legend>
                         <select class="form-select" id="departamento">
                             <option value="1">Departamento de Comunicación</option>
                             <option value="2">Departamento de TI</option>
@@ -555,7 +555,7 @@ class Admin {
         const segundoApellidoLabel = document.getElementById("segundoApellidoLabel");
         const correoLabel = document.getElementById("correoLabel");
         const regexEmail = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
-        cedulaLabel.style.color = 'red';
+        cedulaLabel.style.color = 'black';
         cedulaLabel.style.textDecoration = 'none';
         nombreLabel.style.color = 'black';
         nombreLabel.style.textDecoration = 'none';
@@ -568,27 +568,27 @@ class Admin {
         if(cedula.trim() === ''){
             cedulaLabel.style.color = 'red';
             cedulaLabel.style.textDecoration = 'underline';
-            cedulaLabel.style.title = 'Debes ingresar una cedula valida';
+            cedulaLabel.title = 'Debes ingresar una cedula valida';
         }
         if(nombre.trim() === ''){
             nombreLabel.style.color = 'red';
             nombreLabel.style.textDecoration = 'underline';
-            nombreLabel.style.title = 'Debes ingresar una nombre valido';
+            nombreLabel.title = 'Debes ingresar una nombre valido';
         }
         if(primerApellido.trim() === ''){
             primerApellidoLabel.style.color = 'red';
             primerApellidoLabel.style.textDecoration = 'underline';
-            primerApellidoLabel.style.title = 'Debes ingresar un apellido valido';
+            primerApellidoLabel.title = 'Debes ingresar un apellido valido';
         }
         if(segundoApellido.trim() === ''){
             segundoApellidoLabel.style.color = 'red';
             segundoApellidoLabel.style.textDecoration = 'underline';
-            segundoApellidoLabel.style.title = 'Debes ingresar un apellido valido';
+            segundoApellidoLabel.title = 'Debes ingresar un apellido valido';
         }
         if(!regexEmail.test(correo)){
             correoLabel.style.color = 'red';
             correoLabel.style.textDecoration = 'underline';
-            correoLabel.style.title = 'Debes ingresar un correo valido';
+            correoLabel.title = 'Ingresa un correo electrónico válido (por ejemplo, ejemplo@dominio.com)';
         }
 
         if(
@@ -648,23 +648,23 @@ class Admin {
             },
             body: JSON.stringify(this.entity)
         });
+        if(this.verificarCamposLlenados()){
+            try {
+                const response = await fetch(request);
+                if (response.ok) {
+                    this.modalAgregarUsuario.hide();
+                    this.showModalExitoGenerico("Usuario creado con exito");
+                    this.cargarUsuarios();
+                } else {
+                    this.modalAgregarUsuario.hide();
+                    this.showModalErrorGenerico("No se ha podido crear el usuario");
 
-        try {
-            const response = await fetch(request);
-            if (response.ok) {
-                this.modalAgregarUsuario.hide();
-                this.showModalExitoGenerico("Usuario creado con exito");
-                this.cargarUsuarios();
-            } else {
-                this.modalAgregarUsuario.hide();
-                this.showModalErrorGenerico("No se ha podido crear el usuario");
-
+                }
             }
-        }
-        catch (error) {
-            console.error("Error al agregar la entidad", error);
-        }
-
+            catch (error) {
+                console.error("Error al agregar la entidad", error);
+            }
+        } else{}
 
 
     }

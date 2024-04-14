@@ -23,8 +23,8 @@ public class Database {
             String port = "1433"; // Puerto de SQL Server
             String user = "usersql";
             String password = "root1";
-            String database = "SIDNA_MINAEDB";
-            //String database = "SIDNA_MINAE_DATABASE";
+            //String database = "SIDNA_MINAEDB";
+            String database = "SIDNA_MINAEDBPRUEBA";
 
             String URL_conexion = "jdbc:sqlserver://" + server + ":" + port + ";databaseName=" + database + ";user=" + user + ";password=" + password + ";encrypt=true;trustServerCertificate=true;";
             Class.forName(driver);
