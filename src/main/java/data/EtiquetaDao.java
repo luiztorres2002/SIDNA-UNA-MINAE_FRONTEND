@@ -177,7 +177,7 @@ public class EtiquetaDao {
         }
     }
 
-    }
+
     public void updateEtiqueta(Etiqueta etiqueta) throws SQLException {
         String sql = "update Etiqueta set Descripcion=? where PK_EtiquetaId=?";
         PreparedStatement stm = db.prepareStatement(sql);
