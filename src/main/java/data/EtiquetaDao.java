@@ -44,7 +44,6 @@ public class EtiquetaDao {
             statement.setInt(2, etiquetaId);
             statement.executeUpdate();
         } catch (SQLException e) {
-
             e.printStackTrace();
 
         }
@@ -109,7 +108,63 @@ public class EtiquetaDao {
         return new Etiqueta(etiquetaId, descripcion, usuarioCedula, estado);
     }
 
-    public void addEtiqueta(Etiqueta etiqueta) throws SQLException {
+    public void addEtiqueta(Etiqueta etiqueta) throws Exception {
+
+
+        /* Este es el metodo para la nueva base de datos, lo dejo comentado para evitar errores con la nueva base de datos.
+
+        String cedula = "4-0258-0085";
+        String sql1 = "SELECT * FROM ETIQUETA WHERE Descripcion = ?";
+        PreparedStatement stm = db.prepareStatement(sql1);
+        stm.setString(1, etiqueta.getDescripcion());
+
+        ResultSet rs = stm.executeQuery();
+
+        if (!rs.next()) {
+            String sql2 = "INSERT INTO ETIQUETA (Descripcion, Estado) VALUES (?, ?)";
+            PreparedStatement stm2 = db.prepareStatement(sql2);
+            stm2.setString(1, etiqueta.getDescripcion());
+            stm2.setBoolean(2, etiqueta.getEstado());
+            int count2 = db.executeUpdate(stm2);
+            if (count2 == 0) {
+                throw new Exception("No se creó");
+            } else {
+                String sql3 = "SELECT PK_EtiquetaId FROM ETIQUETA WHERE Descripcion = ?";
+                PreparedStatement stm3 = db.prepareStatement(sql3);
+                stm3.setString(1, etiqueta.getDescripcion());
+                ResultSet rs2 = stm3.executeQuery();
+                int etiquetaId = -1;
+                if (rs2.next()) {
+                    etiquetaId = rs2.getInt("PK_EtiquetaId");
+                }
+                String sql4 = "INSERT INTO Usuario_Etiqueta (Fk_UsuarioEtiqueta_UsuarioId, Fk_UsuarioEtiqueta_EtiquetaId) VALUES (?, ?)";
+                PreparedStatement stm4 = db.prepareStatement(sql4);
+                stm4.setString(1, cedula);
+                stm4.setInt(2, etiquetaId);
+                int count3 = db.executeUpdate(stm4);
+                if (count3 == 0) {
+                    throw new Exception("No se creó");
+                } else {
+                    System.out.println("La etiqueta se creó correctamente con el ID: " + etiquetaId);
+                }
+            }
+        } else {
+            // SI LA ETIQUETA YA EXISTE EN LA BASE DE DATOS
+            int etiquetaId = rs.getInt("PK_EtiquetaId");
+            String sql4 = "INSERT INTO Usuario_Etiqueta (Fk_UsuarioEtiqueta_UsuarioId, Fk_UsuarioEtiqueta_EtiquetaId) VALUES (?, ?)";
+            PreparedStatement stm4 = db.prepareStatement(sql4);
+            stm4.setString(1, cedula);
+            stm4.setInt(2, etiquetaId);
+            int count4 = stm4.executeUpdate();
+            if (count4 == 0) {
+                throw new Exception("No se creó la relación Usuario-Etiqueta");
+            } else {
+                System.out.println("La etiqueta se creó correctamente con el ID: " + etiquetaId);
+            }
+        }
+
+*/
+
         String sql = "INSERT INTO ETIQUETA (Descripcion,FK_Etiqueta_UsuarioCedula,Estado) VALUES (?,?,?)";
         try (PreparedStatement statement = db.prepareStatement(sql)) {
             statement.setString(1, etiqueta.getDescripcion());
@@ -122,6 +177,7 @@ public class EtiquetaDao {
         }
     }
 
+    }
     public void updateEtiqueta(Etiqueta etiqueta) throws SQLException {
         String sql = "update Etiqueta set Descripcion=? where PK_EtiquetaId=?";
         PreparedStatement stm = db.prepareStatement(sql);
@@ -149,5 +205,17 @@ public class EtiquetaDao {
         int noticiaId = resultSet.getInt("FK_NOTICIAMARCADAETIQUETA_NOTICIAMARCADAID");
         int etiquetaId = resultSet.getInt("FKETIQUETA");
         return new NoticiasAsociadas(noticiaId, etiquetaId);
+    }
+
+    public static void main(String[] args) throws Exception {
+        try{
+            Database db = new Database();
+            // Crea una instancia de RolDao
+            EtiquetaDao etiquetaDao = new EtiquetaDao(db);
+            Etiqueta etiqueta = new Etiqueta(1, "Arbol de fuego", "4-0258-1111", true);
+            etiquetaDao.addEtiqueta(etiqueta);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
