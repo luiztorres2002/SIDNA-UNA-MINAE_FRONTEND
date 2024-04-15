@@ -132,7 +132,7 @@ class Admin {
                 const nombreInput = document.querySelector('#nombreEditar');
                 const primerApellidoInput = document.querySelector('#primerApellidoEditar');
                 const segundoApellidoInput = document.querySelector('#segundoApellidoEditar');
-                const emailInput = document.querySelector('#correoEditar');
+                const emailInput = document.querySelector('#emailEditar');
                 const rolSelect = document.querySelector('#rolEditar');
                 const departamentoSelect = document.querySelector('#departamentoEditar');
                 const cedulaInput = this.dom.querySelector('#cedulaEditar');
@@ -185,36 +185,36 @@ class Admin {
                     <div class="modal-body">
                         <form id="formEditarUsuario" autocomplete="em33">
                     <div class="mb-3">
-                        <label class="form-label">Cédula</label>
+                        <legend id="cedulaEditarLabel" style="font-size: 15px; color:black;font-family: Verdana">Cédula</legend>
                         <input type="text" class="form-control" id="cedulaEditar" disabled>
                     </div>
                     <div class="row mb-3">
                         <div class="col">
-                            <label class="form-label">Nombre</label>
+                            <legend id="nombreEditarLabel" style="font-size: 15px; color:black;font-family: Verdana">Nombre</legend>
                             <input type="text" class="form-control" id="nombreEditar" autocomplete="em33">
                         </div>
                         <div class="col">
-                            <label class="form-label">Primer Apellido</label>
+                            <legend id="primerApellidoEditarLabel" style="font-size: 15px; color:black;font-family: Verdana">Primer Apellido</legend>
                             <input type="text" class="form-control" id="primerApellidoEditar" autocomplete="em33">
                         </div>
                         <div class="col">
-                            <label class="form-label">Segundo Apellido</label>
+                            <legend id="segundoApellidoEditarLabel" style="font-size: 15px; color:black;font-family: Verdana">Segundo Apellido</legend>
                             <input type="text" class="form-control" id="segundoApellidoEditar" autocomplete="em33">
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input class="form-control" id="correoEditar" autocomplete="em33">
+                        <legend id="emailEditarLabel" style="font-size: 15px; color:black;font-family: Verdana">Email</legend>
+                        <input class="form-control" id="emailEditar" autocomplete="em33">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Rol</label>
+                        <legend style="font-size: 15px; color:black;font-family: Verdana">Rol</legend>
                         <select class="form-select" id="rolEditar">
                             <option value="1">Analista</option>
                             <option value="2">Administrador</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Departamento</label>
+                        <legend style="font-size: 15px; color:black;font-family: Verdana">Departamento</legend>
                         <select class="form-select" id="departamentoEditar">
                             <option value="1">Departamento de Comunicación</option>
                             <option value="2">Departamento de TI</option>
@@ -486,7 +486,7 @@ class Admin {
         var nombre = document.getElementById('nombreEditar').value;
         var primerApellido = document.getElementById('primerApellidoEditar').value;
         var segundoApellido = document.getElementById('segundoApellidoEditar').value;
-        var correo = document.getElementById('correoEditar').value;
+        var correo = document.getElementById('emailEditar').value;
         var rol = document.getElementById('rolEditar').value;
         var departamento = document.getElementById('departamentoEditar').value;
 
@@ -603,6 +603,70 @@ class Admin {
         return true;
     }
 
+    verificarCamposLlenados2 = () => {
+
+        const cedulaEditar = document.getElementById('cedulaEditar').value;
+        const nombreEditar = document.getElementById('nombreEditar').value;
+        const primerApellidoEditar = document.getElementById('primerApellidoEditar').value;
+        const segundoApellidoEditar = document.getElementById('segundoApellidoEditar').value;
+        const correoEditar = document.getElementById('emailEditar').value;
+        const rolEditar = document.getElementById('rolEditar').value;
+        const departamentoEditar = document.getElementById('departamentoEditar').value;
+        const cedulaLabelEditar = document.getElementById("cedulaEditarLabel");
+        const nombreLabelEditar = document.getElementById("nombreEditarLabel");
+        const primerApellidoLabelEditar = document.getElementById("primerApellidoEditarLabel");
+        const segundoApellidoLabelEditar = document.getElementById("segundoApellidoEditarLabel");
+        const correoLabelEditar = document.getElementById("emailEditarLabel");
+        const regexEmail = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
+        cedulaLabelEditar.style.color = 'black';
+        cedulaLabelEditar.style.textDecoration = 'none';
+        nombreLabelEditar.style.color = 'black';
+        nombreLabelEditar.style.textDecoration = 'none';
+        primerApellidoLabelEditar.style.color = 'black';
+        primerApellidoLabelEditar.style.textDecoration = 'none';
+        segundoApellidoLabelEditar.style.color = 'black';
+        segundoApellidoLabelEditar.style.textDecoration = 'none';
+        correoLabelEditar.style.color = 'black';
+        correoLabelEditar.style.textDecoration = 'none';
+        if(cedulaEditar.trim() === ''){
+            cedulaLabelEditar.style.color = 'red';
+            cedulaLabelEditar.style.textDecoration = 'underline';
+            cedulaLabelEditar.title = 'Debes ingresar una cedula valida';
+        }
+        if(nombreEditar.trim() === ''){
+            nombreLabelEditar.style.color = 'red';
+            nombreLabelEditar.style.textDecoration = 'underline';
+            nombreLabelEditar.title = 'Debes ingresar una nombre valido';
+        }
+        if(primerApellidoEditar.trim() === ''){
+            primerApellidoLabelEditar.style.color = 'red';
+            primerApellidoLabelEditar.style.textDecoration = 'underline';
+            primerApellidoLabelEditar.title = 'Debes ingresar un apellido valido';
+        }
+        if(segundoApellidoEditar.trim() === ''){
+            segundoApellidoLabelEditar.style.color = 'red';
+            segundoApellidoLabelEditar.style.textDecoration = 'underline';
+            segundoApellidoLabelEditar.title = 'Debes ingresar un apellido valido';
+        }
+        if(!regexEmail.test(correo)){
+            correoLabelEditar.style.color = 'red';
+            correoLabelEditar.style.textDecoration = 'underline';
+            correoLabelEditar.title = 'Ingresa un correo electrónico válido (por ejemplo, ejemplo@dominio.com)';
+        }
+
+        if(
+            nombreEditar.trim() === '' ||
+            cedulaEditar.trim() === '' ||
+            primerApellidoEditar.trim() === '' ||
+            segundoApellidoEditar.trim() === '' ||
+            !regexEmail.test(correoEditar)
+        ) {
+            return false;
+        }
+        return true;
+    }
+
+
 
 
 
@@ -618,21 +682,26 @@ class Admin {
             body: JSON.stringify(this.entity)
         });
 
-        try {
-            const response = await fetch(request);
-            if (response.ok) {
-                this.modalEditarUsuario.hide();
-                this.showModalExitoGenerico("Usuario modificado con exito");
-                this.cargarUsuarios();
-            } else {
-                this.modalEditarUsuario.hide();
-                this.showModalErrorGenerico("No se ha podido modificar el usuario");
+       if(this.verificarCamposLlenados2()){
+            try {
+                const response = await fetch(request);
+                if (response.ok) {
+                    this.modalEditarUsuario.hide();
+                    this.showModalExitoGenerico("Usuario modificado con exito");
+                    this.cargarUsuarios();
+                } else {
+                    this.modalEditarUsuario.hide();
+                    this.showModalErrorGenerico("No se ha podido modificar el usuario");
 
+                }
             }
-        }
-        catch (error) {
-            console.error("Error al agregar la entidad", error);
-        }
+            catch (error) {
+                console.error("Error al agregar la entidad", error);
+            }
+
+      }else{
+
+       }
 
 
 
