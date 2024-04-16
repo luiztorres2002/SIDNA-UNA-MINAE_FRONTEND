@@ -90,6 +90,8 @@ public class Etiquetas {
             return Response.ok().build();
         } catch (SQLException ex) {
             throw new InternalServerErrorException(ex);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -1,5 +1,6 @@
 let exportando = false;
 let cambio = false;
+var checkboxesMarcados = [];
 class Biblioteca {
     dom;
     modal;
@@ -13,6 +14,8 @@ class Biblioteca {
         this.state = {'entities': new Array(), 'entity': this.emptyEntity(), 'mode': 'A', noticias: []};
         this.dom = this.render();
         this.entidad = {};
+        exportando = false;
+        checkboxesMarcados = [];
         this.deleteEntity = " ";
         const self = this;
         this.modal = new bootstrap.Modal(this.dom.querySelector('#modal'));
@@ -205,10 +208,12 @@ class Biblioteca {
             marcarBtn.style.display = "none";
             desmarcarBtn.style.display = "block";
             const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
-            const checkboxesMarcados = [];
-            checkboxes.forEach((checkbox, index) => {
+            checkboxes.forEach(checkbox => {
                 checkbox.checked = true;
-                checkboxesMarcados.push(index);
+                const idNoticia = parseInt(checkbox.id.split('-')[1]);
+                if (!checkboxesMarcados.includes(idNoticia)) {
+                    checkboxesMarcados.push(idNoticia);
+                }
             });
         });
         desmarcarBtn.addEventListener('click', (event) => {
@@ -218,6 +223,7 @@ class Biblioteca {
             const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
             checkboxes.forEach((checkbox, index) => {
                 checkbox.checked = false;
+                checkboxesMarcados = [];
             });
         });
         generarBtn.addEventListener('click', (event) => {
@@ -242,22 +248,6 @@ class Biblioteca {
             this.cancelarExportar();
         });
         this.dom.querySelector("#generarBtn2").addEventListener('click', () => {
-            const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
-            const checkboxesMarcados = [];
-            checkboxes.forEach((checkbox, index) => {
-                if (checkbox.checked) {
-                    checkboxesMarcados.push(index);
-                }
-            });
-        });
-        this.dom.querySelector("#generarBtn2").addEventListener('click', () => {
-            const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
-            const checkboxesMarcados = [];
-            checkboxes.forEach((checkbox, index) => {
-                if (checkbox.checked) {
-                    checkboxesMarcados.push(index);
-                }
-            });
             if (checkboxesMarcados.length === 0) {
                 this.dom.querySelector("#mensaje").textContent = "Por favor, selecciona al menos una noticia.";
                 this.modalErrorMensaje.show();
@@ -266,26 +256,16 @@ class Biblioteca {
             }
         });
         this.dom.querySelector("#exportarPDF").addEventListener('click', () => {
-            const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
-            const checkboxesMarcados = [];
-            checkboxes.forEach((checkbox, index) => {
-                if (checkbox.checked) {
-                    checkboxesMarcados.push(index);
-                }
-            });
             this.exportarAPDF(checkboxesMarcados);
+            checkboxesMarcados = [];
+            exportando = false;
         });
         this.dom.querySelector("#exportarExcel").addEventListener('click', () => {
-            const checkboxes = document.querySelectorAll('[id^="noticiaCheckbox-"]');
-            const checkboxesMarcados = [];
-            checkboxes.forEach((checkbox, index) => {
-                if (checkbox.checked) {
-                    checkboxesMarcados.push(index);
-                }
-            });
             this.exportarAXLSX(checkboxesMarcados);
             this.cancelarExportar();
             this.hideModalExportar();
+            exportando = false;
+            checkboxesMarcados = [];
         });
     }
 
@@ -930,7 +910,9 @@ class Biblioteca {
 
             elementoNoticiaCoincidente.innerHTML = `
             <div class="card bg-dark-subtle mt-4" style="border: 2px solid ${colorBorde};" data-link="${enlace}">
-                <img src="${imagen}" class="card-img-top card-img-custom" alt="Imagen Previo" onerror="this.onerror=null; this.src='${imagen}'; this.classList.add('card-img-top', 'card-img-custom');">
+                <img src="${imagen}" class="card-img-top card-img-custom" alt="" 
+                data-alternative="${imagen},images/default.png" 
+                onerror="loadAlternative(this, this.getAttribute('data-alternative').split(/,/)); this.classList.add('card-img-top', 'card-img-custom');">
                
                 <div class="card-body">
                     <div class="text-section-Biblioteca">
@@ -941,8 +923,8 @@ class Biblioteca {
                     <div class="check-container">
                     <div class="checkbox-wrapper-18">
                         <div class="round">
-                            <input type="checkbox" id="noticiaCheckbox-${index}" />
-                            <label for="noticiaCheckbox-${index}"></label>
+                            <input type="checkbox" id="noticiaCheckbox-${idNoticia}" />
+                            <label for="noticiaCheckbox-${idNoticia}"></label>
                         </div>
                     </div>
                 </div>
@@ -966,15 +948,41 @@ class Biblioteca {
                 </div>
             </div>
         `;
+            const checkbox = elementoNoticiaCoincidente.querySelector(`#noticiaCheckbox-${idNoticia}`);
+            if (checkboxesMarcados.includes(idNoticia)) {
+                checkbox.checked = true;
+            }
+            checkbox.addEventListener('change', (event) => {
+                if (event.target.checked) {
+                    checkboxesMarcados.push(id);
+                } else {
+                    const index = checkboxesMarcados.indexOf(id);
+                    if (index > -1) {
+                        checkboxesMarcados.splice(index, 1);
+                    }
+                }
+            });
+
             const borrar = elementoNoticiaCoincidente.querySelector('#borrarBtn');
             borrar.addEventListener('click', () => {
                 event.preventDefault();
                 this.showModalBorrar(id);
             });
             elementoNoticiaCoincidente.addEventListener('dblclick', (event) => {
-                const checkbox = document.querySelector(`#noticiaCheckbox-${index}`);
+                const checkbox = event.currentTarget.querySelector('input[type="checkbox"]');
                 if (checkbox) {
-                    checkbox.checked = true;
+                    if (checkbox.checked) {
+                        checkbox.checked = false;
+                        const index = checkboxesMarcados.indexOf(id);
+                        if (index > -1) {
+                            checkboxesMarcados.splice(index, 1);
+                        }
+                    } else {
+                        checkbox.checked = true;
+                        if (!checkboxesMarcados.includes(id)) {
+                            checkboxesMarcados.push(id);
+                        }
+                    }
                 }
             });
             //LOGICA PARA CAMBIAR PRIORIDAD DE UNA NOTICA
@@ -1111,9 +1119,7 @@ class Biblioteca {
     hideModalExportar = async () => {
         this.modalExportar.hide();
     }
-    hideModalErrorGenerico = async () => {
-        this.modalErrorMensaje.hide();
-    }
+
     hideModalExito = async () => {
         this.modalexito.hide();
         this.resetForm();
@@ -1449,7 +1455,7 @@ class Biblioteca {
     ordenarNoticias = (indicesSeleccionados, prioridadCheckbox, fechaCheckbox) => {
         let noticiasOrdenadas;
         if (prioridadCheckbox.checked) {
-            noticiasOrdenadas = indicesSeleccionados.map(index => this.state.noticias[index])
+            noticiasOrdenadas = this.state.noticias.filter(noticia => indicesSeleccionados.includes(noticia.id))
                 .sort((a, b) => {
                     if (a.prioridad === 'Alta') return -1;
                     if (a.prioridad === 'Baja') return 1;
@@ -1469,15 +1475,14 @@ class Biblioteca {
             }
         } else {
             if (fechaCheckbox.checked) {
-                noticiasOrdenadas = indicesSeleccionados
-                    .map(index => this.state.noticias[index])
+                noticiasOrdenadas = this.state.noticias.filter(noticia => indicesSeleccionados.includes(noticia.id))
                     .sort((a, b) => {
                         const fechaA = new Date(b.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
                         const fechaB = new Date(a.fecha.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3')).getTime();
                         return fechaA - fechaB;
                     });
             } else {
-                noticiasOrdenadas = indicesSeleccionados.map(index => this.state.noticias[index]);
+                noticiasOrdenadas = this.state.noticias.filter(noticia => indicesSeleccionados.includes(noticia.id));
             }
         }
         return noticiasOrdenadas;
@@ -1552,6 +1557,14 @@ class Biblioteca {
         noticiasOrdenadas.forEach(noticia => {
             fuenteCounts[noticia.fuente] = (fuenteCounts[noticia.fuente] || 0) + 1;
         });
+        const etiquetaCounts = {};
+        noticiasOrdenadas.forEach(noticia => {
+            noticia.etiquetas.forEach(etiqueta => {
+                if (etiqueta.descripcion !== 'Costa Rica') {
+                    etiquetaCounts[etiqueta.descripcion] = (etiquetaCounts[etiqueta.descripcion] || 0) + 1;
+                }
+            });
+        });
         const canvasPie = document.createElement('canvas');
         canvasPie.style.position = 'absolute';
         canvasPie.style.left = '-9999px';
@@ -1609,6 +1622,56 @@ class Biblioteca {
         const canvas = document.createElement('canvas');
         canvas.style.position = 'absolute';
         canvas.style.left = '-9999px';
+        const canvasBarEtiquetas = document.createElement('canvas');
+        canvasBarEtiquetas.style.position = 'absolute';
+        canvasBarEtiquetas.style.left = '-9999px';
+        const ctxBarEtiquetas = canvasBarEtiquetas.getContext('2d');
+        const myBarChartEtiquetas = new Chart(ctxBarEtiquetas, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(etiquetaCounts),
+                datasets: [{
+                    label: 'Frecuencia de Etiquetas',
+                    data: Object.values(etiquetaCounts),
+                    backgroundColor: 'rgb(72,74,89)',
+                    borderColor: 'rgb(213,178,117)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                animation: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            font: {
+                                size: 24,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                size: 24,
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                }
+            },
+            plugins: [{
+                beforeDraw(chart) {
+                    const {ctx, canvas} = chart;
+                    ctx.save();
+                    ctx.fillStyle = '#FFF';
+                    ctx.fillRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+                    ctx.restore();
+                },
+            }]
+        });
         const ctx = canvas.getContext('2d');
         const myChart = new Chart(ctx, {
             type: 'bar',
@@ -1627,6 +1690,16 @@ class Biblioteca {
                 responsive: true,
                 animation: false,
                 scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            font: {
+                                size: 24,
+                                weight: 'bold'
+                            }
+                        }
+                    },
                     x: {
                         beginAtZero: true,
                         ticks: {
@@ -1644,6 +1717,21 @@ class Biblioteca {
                     ctx.restore();
                 },
             }]
+        });
+        const chartContainerBarEtiquetas = document.createElement('div');
+        chartContainerBarEtiquetas.appendChild(canvasBarEtiquetas);
+        document.body.appendChild(chartContainerBarEtiquetas);
+
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        const imageBarEtiquetas = canvasBarEtiquetas.toDataURL("image/png").split(';base64,')[1];
+        const imageIdBarEtiquetas = workbook.addImage({
+            base64: imageBarEtiquetas,
+            extension: 'png',
+        });
+        worksheetCalculos.addImage(imageIdBarEtiquetas, {
+            tl: {col: 12, row: 30},
+            ext: {width: 800, height: 500}
         });
         const chartContainer = document.createElement('div');
         chartContainer.appendChild(canvas);
@@ -1667,6 +1755,7 @@ class Biblioteca {
             tl: {col: 21, row: 2},
             ext: {width: 500, height: 500}
         });
+        chartContainerBarEtiquetas.removeChild(canvasBarEtiquetas);
         chartContainer.removeChild(canvas);
         chartContainerPie.removeChild(canvasPie);
     };

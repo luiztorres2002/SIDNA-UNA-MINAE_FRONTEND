@@ -1,6 +1,7 @@
 package data;
 
 import logic.Departamento;
+import logic.NoticiaMarcada;
 import logic.Rol;
 import logic.Usuario;
 
@@ -147,7 +148,94 @@ public class UsuarioDao {
         }
     }
 
-    //listo
+    public Usuario login(String usuario, String contrasena) throws Exception {
+        String sql = "SELECT * FROM Usuario WHERE PK_UsuarioCedula = ? AND Contrasena = ?";
+        try (PreparedStatement stm = db.prepareStatement(sql)) {
+            stm.setString(1, usuario);
+            stm.setString(2, contrasena);
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    String cedula = rs.getString("PK_UsuarioCedula");
+                    return read(cedula);
+                } else {
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al autenticar usuario: " + e.getMessage());
+        }
+    }
+
+    public Usuario from(ResultSet rs) throws SQLException {
+        Usuario usuario = new Usuario();
+        usuario.setCedula(rs.getString("Pk_UsuarioCedula"));
+        usuario.setNombre(rs.getString("UsuarioName"));
+        usuario.setPrimerApellido(rs.getString("PrimerApellido"));
+        usuario.setSegundoApellido(rs.getString("SegundoApellido"));
+        usuario.setEmail(rs.getString("Email"));
+        usuario.setContrasena(rs.getString("Contrasena"));
+        return usuario;
+    }
+
+
+    public void createUsuario(Usuario usuario) throws Exception {
+        String sql = "INSERT INTO USUARIO(PK_UsuarioCedula, Nombre, PrimerApellido, SegundoApellido, Email, Contrasena, FK_Usuario_RolId, FK_Usuario_DepartamentoId) values (?,?,?,?,?,?,?,?)";
+        PreparedStatement stm = db.prepareStatement(sql);
+        stm.setString(1, usuario.getCedula());
+        stm.setString(2,usuario.getNombre());
+        stm.setString(3, usuario.getPrimerApellido());
+        stm.setString(4, usuario.getSegundoApellido());
+        stm.setString(5, usuario.getEmail());
+        stm.setString(6, "Minae");
+        stm.setInt(7, usuario.getRol().getId());
+        stm.setInt(8, usuario.getDepartamento().getId());
+        int count = db.executeUpdate(stm);
+        if (count == 0) {
+            throw new Exception("No se creo");
+        } else {
+            System.out.println("Usuario creado correctamente");
+        }
+    }
+
+    public void updateUsuario(Usuario usuario) throws Exception {
+        String sql = "UPDATE USUARIO\n" +
+                "SET Nombre = ?, PrimerApellido = ?, SegundoApellido = ?, Email = ?, FK_Usuario_RolId = ?, FK_Usuario_DepartamentoId = ?\n" +
+                "WHERE PK_UsuarioCedula = ?;";
+
+        PreparedStatement stm = db.prepareStatement(sql);
+        stm.setString(1, usuario.getNombre());
+        stm.setString(2, usuario.getPrimerApellido());
+        stm.setString(3, usuario.getSegundoApellido());
+        stm.setString(4, usuario.getEmail());
+        stm.setInt(5, usuario.getRol().getId());
+        stm.setInt(6, usuario.getDepartamento().getId());
+        stm.setString(7, usuario.getCedula());
+
+        int count = db.executeUpdate(stm);
+        if (count == 0) {
+            throw new Exception("No se modifico");
+        } else {
+            System.out.println("Usuario creado correctamente");
+        }
+    }
+
+    public void modificiarContrasenaUsuario(String cedula) throws Exception {
+
+        String nuevaContrasena = "Minae";
+        String sql = "UPDATE USUARIO\n" +
+                "SET Contrasena = ?\n" +
+                "WHERE PK_UsuarioCedula = ?;";
+
+        PreparedStatement stm = db.prepareStatement(sql);
+        stm.setString(1, nuevaContrasena);
+        stm.setString(2, cedula);
+
+        int count = db.executeUpdate(stm);
+        if (count == 0) {
+            throw new Exception("No se cambio");
+        }
+    }
+
     public void deleteUsuario(String Cedula) throws Exception {
         String cedulaUser = Cedula;
         String sql = "DELETE FROM Usuario\n" +
@@ -160,30 +248,19 @@ public class UsuarioDao {
         }
     }
 
-    public Usuario from(ResultSet rs) throws SQLException {
-        Usuario usuario = new Usuario();
-        usuario.setCedula(rs.getString("Pk_UsuarioCedula")); // Debe coincidir con el alias "Cedula" en la consulta SQL
-        usuario.setNombre(rs.getString("UsuarioName"));
-        usuario.setPrimerApellido(rs.getString("PrimerApellido"));
-        usuario.setSegundoApellido(rs.getString("SegundoApellido"));
-        usuario.setEmail(rs.getString("Email"));
-        usuario.setContrasena(rs.getString("Contrasena"));
-        return usuario;
-    }
 
-    public static void main(String[] args) {
-        try {
+    public static void main(String[] args) throws Exception {
+
+        try{
             Database db = new Database();
-            UsuarioDao usuarioDao = new UsuarioDao(db);
-            String cedula = "1";
-            usuarioDao.deleteUsuario(cedula);
-            System.out.println("Usuario eliminado exitosamente.");
+
+            // Crea una instancia de RolDao
+            UsuarioDao usuariDao = new UsuarioDao(db);
+            usuariDao.modificiarContrasenaUsuario("6");
+
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
 }

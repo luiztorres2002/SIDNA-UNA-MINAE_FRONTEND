@@ -9,67 +9,67 @@ class App {
     Biblioteca;
     Busqueda;
     Admin;
-   constructor() {
+    constructor() {
         this.state = {};
         this.dom = this.render();
         this.renderBodyFiller();
         this.dom.querySelector('#dropdwonUsuario').style.display = 'none';
         const loginButton = this.dom.querySelector('#loginButton');
-       loginButton.addEventListener('click', (event) => {
-           event.preventDefault();
-           const usuario = this.dom.querySelector('#loginTxt').value;
-           const spanUsuario = this.dom.querySelector('#usuarioTxt');
-           this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
-           spanUsuario.textContent = usuario;
-           localStorage.setItem('usuario', usuario);
+        loginButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            const usuario = this.dom.querySelector('#loginTxt').value;
+            const spanUsuario = this.dom.querySelector('#usuarioTxt');
+            this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
+            spanUsuario.textContent = usuario;
+            localStorage.setItem('usuario', usuario);
 
-           if (usuario === 'Admin') {
-               this.renderMenuItemsAdmin();
-               this.adminShow();
-           } else {
-               this.renderMenuItems();
-               this.busquedaShow();
-           }
+            if (usuario === 'Admin') {
+                this.renderMenuItemsAdmin();
+                this.adminShow();
+            } else {
+                this.renderMenuItems();
+                this.busquedaShow();
+            }
 
-           this.dom.querySelector('#menuItems').style.display = "flex";
-           login.style.display = 'none';
-           this.dom.querySelector('#loginTxt').value = "";
-           this.dom.querySelector('#passwordTxt').value = "";
-       });
-       const usuario = localStorage.getItem('usuario');
-       if (usuario) {
-           const spanUsuario = this.dom.querySelector('#usuarioTxt');
-           this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
-           spanUsuario.textContent = usuario;
+            this.dom.querySelector('#menuItems').style.display = "flex";
+            login.style.display = 'none';
+            this.dom.querySelector('#loginTxt').value = "";
+            this.dom.querySelector('#passwordTxt').value = "";
+        });
+        const usuario = localStorage.getItem('usuario');
+        if (usuario) {
+            const spanUsuario = this.dom.querySelector('#usuarioTxt');
+            this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
+            spanUsuario.textContent = usuario;
 
-           if (usuario === 'Admin') {
-               this.renderMenuItemsAdmin();
-               this.adminShow();
-           } else {
-               this.renderMenuItems();
-               this.busquedaShow();
-           }
+            if (usuario === 'Admin') {
+                this.renderMenuItemsAdmin();
+                this.adminShow();
+            } else {
+                this.renderMenuItems();
+                this.busquedaShow();
+            }
 
-       } else {
-           const login = this.dom.querySelector('#login');
-           login.style.display = 'flex';
-       }
-       this.dom.querySelector('#cerrarSesion').addEventListener('click', () => {
-           const login = this.dom.querySelector('#login');
-           this.renderBodyFiller();
-           this.dom.querySelector('#menuItems').style.display = "none";
-           this.dom.querySelector('#dropdwonUsuario').style.display = 'none';
-           login.style.display = 'flex';
-           console.log("Se cerró la sesión");
+        } else {
+            const login = this.dom.querySelector('#login');
+            login.style.display = 'flex';
+        }
+        this.dom.querySelector('#cerrarSesion').addEventListener('click', () => {
+            const login = this.dom.querySelector('#login');
+            this.renderBodyFiller();
+            this.dom.querySelector('#menuItems').style.display = "none";
+            this.dom.querySelector('#dropdwonUsuario').style.display = 'none';
+            login.style.display = 'flex';
+            console.log("Se cerró la sesión");
 
-           const usuario = localStorage.getItem('usuario');
-           if (usuario === 'Admin') {
-               this.Admin.dom.style.display = "none";
-           } else {
-               this.Busqueda.dom.style.display = "none";
-           }
-           localStorage.removeItem('usuario');
-       });
+            const usuario = localStorage.getItem('usuario');
+            if (usuario === 'Admin') {
+                this.Admin.dom.style.display = "none";
+            } else {
+                this.Busqueda.dom.style.display = "none";
+            }
+            localStorage.removeItem('usuario');
+        });
     }
     render = () => {
         const html = `
@@ -77,6 +77,8 @@ class App {
             ${this.renderBody()} 
             ${this.renderFooter()}
             ${this.renderModal()}
+            ${this.renderModalCambiarContrasena()}
+            ${this.renderModalErrorGenerico()}
             ${this.renderModal2()}
         `;
         var rootContent = document.createElement('div');
@@ -84,6 +86,72 @@ class App {
         rootContent.innerHTML = html;
         return rootContent;
     }
+
+    async  login(usuario, contrasena) {
+        try {
+            const response = await fetch(`${backend}/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    'usuario': usuario,
+                    'contrasena': contrasena
+                })
+            });
+            if (response.ok) {
+                const usuarioAutenticado = await response.json();
+                console.log('Usuario autenticado:', usuarioAutenticado);
+                return usuarioAutenticado;
+            } else {
+                const error = await response.text();
+                console.log('Error al autenticar:', error);
+                throw new Error('Credenciales inválidas');
+            }
+        } catch (error) {
+            console.error('Error al autenticar:', error);
+            throw error;
+        }
+    }
+
+    cerrarSesion(){
+        const login = this.dom.querySelector('#login');
+        this.renderBodyFiller();
+        this.dom.querySelector('#menuItems').style.display = "none";
+        this.dom.querySelector('#dropdwonUsuario').style.display = 'none';
+        login.style.display = 'flex';
+
+        const usuario = localStorage.getItem('usuario');
+        if (usuario === 'Admin') {
+            this.Admin.dom.style.display = "none";
+        } else {
+            this.Busqueda.dom.style.display = "none";
+        }
+        localStorage.removeItem('usuario');
+        localStorage.removeItem('usuarioNomb');
+    }
+
+    async  obtenerUsuario(cedula) {
+        const url = `${backend}/usuarios`;
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain'
+                },
+                body: cedula
+            });
+            if (!response.ok) {
+                throw new Error('Error en la solicitud al servidor');
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error al autenticar usuario:', error);
+            throw error;
+        }
+    }
+
 
     renderMenu = () => {
         return `
@@ -151,6 +219,33 @@ class App {
 
     }
 
+    renderModalErrorGenerico = () => {
+        return `
+        <div id="modalErrorMensaje" class="modal fade">
+            <div class="modal-dialog modal-error">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="icon-box">
+                            <i class="fa-solid fa-exclamation"></i>
+                        </div>
+                        <h4 class="modal-title w-100">¡Ooops!</h4>\t
+                    </div>
+                    <div class="modal-body">
+                        <p id="mensaje" style="font-size: 25px;" class="text-center"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success btn-block" id="dismissButton" data-dismiss="modal">Regresar</button>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    hideModalMensaje = async () => {
+        this.modalErrorMensaje.hide();
+    }
+
+
     renderModal = () => {
         return `
     <div id="login" class="containerLogin" style="display: none">
@@ -170,11 +265,6 @@ class App {
                     <i class="button__icon fas fa-chevron-right"></i> 
                 </button>                
             </form>
-            <div class="social-login">
-            <div class="social-icons">
-            <a href="#" class="social-login__icon">Has olvidado tu contraseña?</a>
-            </div>
-            </div>
         </div>
         <div class="screen__background">
             <span class="screen__background__shape screen__background__shape4"></span>
@@ -185,6 +275,37 @@ class App {
     </div>
 </div>
         
+    `;
+    }
+    renderModalCambiarContrasena = () => {
+        return `
+        <div id="cambiarContrasena" class="containerLogin" style="display: none">
+            <div class="screen">
+                <div class="screen__content">
+                    <form class="login">
+                    <span id="errorConfPassword" class="error-message" style="display: none;">Las contraseñas no coinciden</span>
+                        <div class="login__field">
+                            <i class="login__icon fas fa-lock"></i>
+                            <input id="passwordTxt2" type="password" class="login__input" placeholder="Nueva Contraseña">
+                        </div>
+                        <div class="login__field">
+                            <i class="login__icon fas fa-check"></i> 
+                            <input id="confpasswordTxt" type="password" class="login__input" placeholder="Confirme Contraseña">
+                        </div>
+                        <button id="cambiarButton" class="button login__submit">
+                            <span class="button__text">Restablecer Contraseña</span>
+                            <i class="button__icon fas fa-chevron-right"></i> 
+                        </button>                
+                    </form>
+                </div>
+                <div class="screen__background">
+                    <span class="screen__background__shape screen__background__shape4"></span>
+                    <span class="screen__background__shape screen__background__shape3"></span>        
+                    <span class="screen__background__shape screen__background__shape2"></span>
+                    <span class="screen__background__shape screen__background__shape1"></span>
+                </div>      
+            </div>
+        </div>
     `;
     }
 
