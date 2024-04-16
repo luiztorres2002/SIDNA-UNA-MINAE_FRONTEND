@@ -125,6 +125,44 @@ public class NoticiaMarcadaDao {
     }
 
     public void createexterna(NoticiaMarcada noticiaMarcada) throws Exception {
+
+
+        /*
+            //Trabajando versión con nueva BD(SIDNA_DATABASE)
+            String sql = "INSERT INTO NOTICIA (Titulo, Descripcion, Fecha, Fuente, Enlace, Imagen) VALUES (?, ?, ?, ?, ?, ?)";
+            PreparedStatement stm = db.prepareStatement(sql);
+            stm.setString(1, noticiaMarcada.getTitulo());
+            stm.setString(2, noticiaMarcada.getDescripcion());
+            stm.setString(3, noticiaMarcada.getFecha());
+            stm.setString(4, noticiaMarcada.getFuente());
+            stm.setString(5, noticiaMarcada.getEnlace());
+            stm.setString(6, noticiaMarcada.getImagen());
+
+            int affectedRows = stm.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Error al ingresar noticia, ho hubo cambios en filas.");
+            }
+
+            try (ResultSet generatedKeys = stm.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int noticiaId = generatedKeys.getInt(1);
+                    String insertUsuarioNoticiaSql = "INSERT INTO Usuario_Noticia (Fk_UsuarioNoticia_UsuarioId, Fk_UsuarioNoticia_NoticiaId, FechaGuardado, Prioridad) VALUES (?, ?, SYSDATETIME(), ?)";
+                    PreparedStatement stmUsuarioNoticia = db.prepareStatement(insertUsuarioNoticiaSql);
+                    stmUsuarioNoticia.setString(1, noticiaMarcada.getUsuarioCedula());
+                    stmUsuarioNoticia.setInt(2, noticiaId);
+                    stmUsuarioNoticia.setString(3, noticiaMarcada.getPrioridad());
+                    int count = stmUsuarioNoticia.executeUpdate();
+                    if (count == 0) {
+                        throw new SQLException("Error al crear la relación usuario-noticias, no hay filas afectadas.");
+                    }
+                } else {
+                    throw new SQLException("Error al crear noticias, no se obtuvo identificación.");
+                }
+            }
+        */
+
+
+        //Versión con BD vieja
         String sql = "insert into NOTICIA_MARCADA(Titulo,Descripcion,Fecha,Prioridad,Fuente,Enlace,Imagen,Fechaguardado,FK_NoticiaMarcada_UsuarioCedula) values (?,?,?,?,?,?,?,SYSDATETIME(),?)";
         PreparedStatement stm = db.prepareStatement(sql);
         stm.setString(1, noticiaMarcada.getTitulo());
@@ -143,6 +181,8 @@ public class NoticiaMarcadaDao {
         } else {
             this.registrarNoticiaEtiqueta(noticiaMarcada.getTitulo(), "Noticia Externa", noticiaMarcada.getUsuarioCedula());
         }
+
+
     }
 
 

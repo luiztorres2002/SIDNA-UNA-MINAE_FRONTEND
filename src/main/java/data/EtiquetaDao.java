@@ -38,6 +38,20 @@ public class EtiquetaDao {
     }
 
     public void actualizarEstadoEtiqueta(int etiquetaId, boolean nuevoEstado) throws SQLException {
+
+        /*
+        //Versión con nueva BD (SIDNA_BATABASE)
+            String sql = "UPDATE ETIQUETA SET Estado = ? WHERE PK_EtiquetaId = ?";
+            try (PreparedStatement statement = db.prepareStatement(sql)) {
+                statement.setBoolean(1, nuevoEstado);
+                statement.setInt(2, etiquetaId);
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+
+            }*/
+
+        //Versión con BD vieja
         String sql = "UPDATE ETIQUETA SET Estado = ? WHERE PK_EtiquetaId = ?";
         try (PreparedStatement statement = db.prepareStatement(sql)) {
             statement.setBoolean(1, nuevoEstado);
@@ -47,6 +61,7 @@ public class EtiquetaDao {
             e.printStackTrace();
 
         }
+
     }
 
     public Etiqueta getEtiquetaById(int etiquetaId) throws SQLException {
