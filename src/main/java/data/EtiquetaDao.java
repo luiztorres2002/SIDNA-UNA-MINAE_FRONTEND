@@ -193,7 +193,7 @@ public class EtiquetaDao {
     }
 
 
-    public void updateEtiqueta(Etiqueta etiqueta) throws SQLException {
+    public void updateEtiqueta(Etiqueta etiqueta /*, String cedula */) throws SQLException {
         /*
         Base de Datos Nueva
 
@@ -213,7 +213,25 @@ public class EtiquetaDao {
         db.executeUpdate(stm);
     }
 
-    public List<NoticiasAsociadas> getNoticiasAsociadas(int etiquetaId) throws SQLException {
+    public List<NoticiasAsociadas> getNoticiasAsociadas(int etiquetaId /*, String cedula */) throws SQLException {
+        /*
+        Base de Datos Nueva
+
+        List<NoticiasAsociadas> noticiasAsociadas = new ArrayList<>();
+        String sql = "select * from Usuario_Etiqueta where Fk_UsuarioEtiqueta_EtiquetaId=? and Fk_UsuarioEtiqueta_UsuarioId=?";
+        try (PreparedStatement statement = db.prepareStatement(sql)) {
+            statement.setInt(1, etiquetaId);
+            statement.setString(2, cedula);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    NoticiasAsociadas noticia = fromAsociadas(resultSet);
+                    noticiasAsociadas.add(noticia);
+                }
+            }
+        }
+        return noticiasAsociadas;
+         */
+
         List<NoticiasAsociadas> noticiasAsociadas = new ArrayList<>();
         String sql = "select * from NOTICIAMARCADA_ETIQUETA where FKETIQUETA=?";
         try (PreparedStatement statement = db.prepareStatement(sql)) {
@@ -229,6 +247,15 @@ public class EtiquetaDao {
     }
 
     private NoticiasAsociadas fromAsociadas(ResultSet resultSet) throws SQLException {
+        /*
+        Base Datos Nueva
+
+        int noticiaId = resultSet.getInt("FK_NOTICIAETIQUETA_NOTICIAID");
+        int etiquetaId = resultSet.getInt("FK_NOTICIAETIQUETA_ETIQUETAID");
+        return new NoticiasAsociadas(noticiaId, etiquetaId);
+
+         */
+
         int noticiaId = resultSet.getInt("FK_NOTICIAMARCADAETIQUETA_NOTICIAMARCADAID");
         int etiquetaId = resultSet.getInt("FKETIQUETA");
         return new NoticiasAsociadas(noticiaId, etiquetaId);
