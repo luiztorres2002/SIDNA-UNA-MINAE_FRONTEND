@@ -194,6 +194,18 @@ public class EtiquetaDao {
 
 
     public void updateEtiqueta(Etiqueta etiqueta) throws SQLException {
+        /*
+        Base de Datos Nueva
+
+        String sql = "update ETIQUETA set Descripcion=? from Usuario_Etiqueta where Fk_UsuarioEtiqueta_UsuarioId=? and Fk_UsuarioEtiqueta_EtiquetaId=?";
+        PreparedStatement stm = db.prepareStatement(sql);
+        stm.setString(1, etiqueta.getDescripcion());
+        stm.setInt(2, etiqueta.getEtiquetaId());
+        stm.setString(3, cedula);
+        db.executeUpdate(stm);
+
+         */
+
         String sql = "update Etiqueta set Descripcion=? where PK_EtiquetaId=?";
         PreparedStatement stm = db.prepareStatement(sql);
         stm.setString(1, etiqueta.getDescripcion());
