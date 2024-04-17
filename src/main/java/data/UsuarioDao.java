@@ -19,7 +19,7 @@ public class UsuarioDao {
 
     RolDao rolDao;
 
-    public UsuarioDao(Database db){
+    public UsuarioDao(Database db) {
         this.db = db;
         departamentoDao = new DepartamentoDao(db);
         rolDao = new RolDao(db);
@@ -73,17 +73,17 @@ public class UsuarioDao {
         return usuarios;
     }
 
-    public void create(Usuario usuario) throws Exception{
+    public void create(Usuario usuario) throws Exception {
         String sql = "insert into Usuario(PK_UsuarioCedula,Nombre,PrimerApellido,SegundoApellido,Email,Contrasena,Fk_Usuario_RoLId,FK_Usuario_DepartamentoId) values(?,?,?,?,?,?,?,?);";
         PreparedStatement stm = db.prepareStatement(sql);
-        stm.setString(1,usuario.getCedula());
-        stm.setString(2,usuario.getNombre());
-        stm.setString(3,usuario.getPrimerApellido());
-        stm.setString(4,usuario.getSegundoApellido());
-        stm.setString(5,usuario.getEmail());
-        stm.setString(6,usuario.getContrasena());
-        stm.setInt(7,usuario.getRol().getId());
-        stm.setInt(8,usuario.getDepartamento().getId());
+        stm.setString(1, usuario.getCedula());
+        stm.setString(2, usuario.getNombre());
+        stm.setString(3, usuario.getPrimerApellido());
+        stm.setString(4, usuario.getSegundoApellido());
+        stm.setString(5, usuario.getEmail());
+        stm.setString(6, usuario.getContrasena());
+        stm.setInt(7, usuario.getRol().getId());
+        stm.setInt(8, usuario.getDepartamento().getId());
         int count = db.executeUpdate(stm);
         if (count == 0) {
             throw new Exception("No se creo");
@@ -182,7 +182,7 @@ public class UsuarioDao {
         String sql = "INSERT INTO USUARIO(PK_UsuarioCedula, Nombre, PrimerApellido, SegundoApellido, Email, Contrasena, FK_Usuario_RolId, FK_Usuario_DepartamentoId) values (?,?,?,?,?,?,?,?)";
         PreparedStatement stm = db.prepareStatement(sql);
         stm.setString(1, usuario.getCedula());
-        stm.setString(2,usuario.getNombre());
+        stm.setString(2, usuario.getNombre());
         stm.setString(3, usuario.getPrimerApellido());
         stm.setString(4, usuario.getSegundoApellido());
         stm.setString(5, usuario.getEmail());
@@ -201,7 +201,6 @@ public class UsuarioDao {
         String sql = "UPDATE USUARIO\n" +
                 "SET Nombre = ?, PrimerApellido = ?, SegundoApellido = ?, Email = ?, FK_Usuario_RolId = ?, FK_Usuario_DepartamentoId = ?\n" +
                 "WHERE PK_UsuarioCedula = ?;";
-
         PreparedStatement stm = db.prepareStatement(sql);
         stm.setString(1, usuario.getNombre());
         stm.setString(2, usuario.getPrimerApellido());
@@ -218,7 +217,6 @@ public class UsuarioDao {
             System.out.println("Usuario creado correctamente");
         }
     }
-
     public void modificiarContrasenaUsuario(String cedula) throws Exception {
 
         String nuevaContrasena = "Minae";
@@ -235,32 +233,72 @@ public class UsuarioDao {
             throw new Exception("No se cambio");
         }
     }
-
     public void deleteUsuario(String Cedula) throws Exception {
-        String cedulaUser = Cedula;
-        String sql = "DELETE FROM Usuario\n" +
-                "WHERE PK_UsuarioCedula = ? \n";
-        PreparedStatement stm = db.prepareStatement(sql);
-        stm.setString(1, cedulaUser);
-        int count = db.executeUpdate(stm);
-        if (count == 0) {
+
+        if(eliminarNoticiasMarcadasEtiquetaPorUsuario(Cedula) && borrarNoticiasUsuario(Cedula) && borrarEtiquetasUsuario(Cedula)){
+            String cedulaUser = Cedula;
+            String sql = "DELETE FROM Usuario\n" +
+                    "WHERE PK_UsuarioCedula = ? \n";
+            PreparedStatement stm = db.prepareStatement(sql);
+            stm.setString(1, cedulaUser);
+            int count = db.executeUpdate(stm);
+            if (count == 0) {
+                throw new Exception("No se elimino");
+            } else {
+
+            }
+        }
+        else{
             throw new Exception("No se elimino");
         }
+
     }
-
-
+    public boolean eliminarNoticiasMarcadasEtiquetaPorUsuario(String cedula) {
+        String sqlQuery = "DELETE FROM NOTICIAMARCADA_ETIQUETA\n" +
+                "WHERE FK_NOTICIAMARCADAETIQUETA_NOTICIAMARCADAID IN (\n" +
+                "    SELECT PK_NoticiaMarcada_Id\n" +
+                "    FROM NOTICIA_MARCADA\n" +
+                "    WHERE Fk_NoticiaMarcada_UsuarioCedula = ?\n" +
+                ");";
+        try (PreparedStatement stm = db.prepareStatement(sqlQuery)) {
+            stm.setString(1, cedula);
+            int filasEliminadas = stm.executeUpdate();
+            return filasEliminadas >= 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean borrarNoticiasUsuario(String cedula){
+        String sqlQuery = "DELETE FROM NOTICIA_MARCADA where Fk_NoticiaMarcada_UsuarioCedula = ?";
+        try (PreparedStatement stm = db.prepareStatement(sqlQuery)) {
+            stm.setString(1, cedula);
+            int filasEliminadas = stm.executeUpdate();
+            return filasEliminadas >= 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean borrarEtiquetasUsuario(String cedula){
+        String sqlQuery = "DELETE FROM ETIQUETA where FK_Etiqueta_UsuarioCedula = ?";
+        try (PreparedStatement stm = db.prepareStatement(sqlQuery)) {
+            stm.setString(1, cedula);
+            int filasEliminadas = stm.executeUpdate();
+            return filasEliminadas >= 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     public static void main(String[] args) throws Exception {
-
-        try{
+        try {
             Database db = new Database();
-
             // Crea una instancia de RolDao
             UsuarioDao usuariDao = new UsuarioDao(db);
             usuariDao.modificiarContrasenaUsuario("6");
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
 }
