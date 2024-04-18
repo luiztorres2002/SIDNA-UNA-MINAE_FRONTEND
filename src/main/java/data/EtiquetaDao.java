@@ -126,8 +126,8 @@ public class EtiquetaDao {
     public void addEtiqueta(Etiqueta etiqueta) throws Exception {
 
 
-        /* Este es el metodo para la nueva base de datos, lo dejo comentado para evitar errores con la nueva base de datos.
-
+         //Nueva Base de datos
+        /*
         String cedula = "4-0258-0085";
         String sql1 = "SELECT * FROM ETIQUETA WHERE Descripcion = ?";
         PreparedStatement stm = db.prepareStatement(sql1);
@@ -136,10 +136,9 @@ public class EtiquetaDao {
         ResultSet rs = stm.executeQuery();
 
         if (!rs.next()) {
-            String sql2 = "INSERT INTO ETIQUETA (Descripcion, Estado) VALUES (?, ?)";
+            String sql2 = "INSERT INTO ETIQUETA (Descripcion) VALUES (?)";
             PreparedStatement stm2 = db.prepareStatement(sql2);
             stm2.setString(1, etiqueta.getDescripcion());
-            stm2.setBoolean(2, etiqueta.getEstado());
             int count2 = db.executeUpdate(stm2);
             if (count2 == 0) {
                 throw new Exception("No se creó");
@@ -152,10 +151,11 @@ public class EtiquetaDao {
                 if (rs2.next()) {
                     etiquetaId = rs2.getInt("PK_EtiquetaId");
                 }
-                String sql4 = "INSERT INTO Usuario_Etiqueta (Fk_UsuarioEtiqueta_UsuarioId, Fk_UsuarioEtiqueta_EtiquetaId) VALUES (?, ?)";
+                String sql4 = "INSERT INTO Usuario_Etiqueta (Fk_UsuarioEtiqueta_UsuarioId, Fk_UsuarioEtiqueta_EtiquetaId, Estado) VALUES (?, ?, ?)";
                 PreparedStatement stm4 = db.prepareStatement(sql4);
                 stm4.setString(1, cedula);
                 stm4.setInt(2, etiquetaId);
+                stm4.setBoolean(3, etiqueta.getEstado());
                 int count3 = db.executeUpdate(stm4);
                 if (count3 == 0) {
                     throw new Exception("No se creó");
@@ -166,10 +166,11 @@ public class EtiquetaDao {
         } else {
             // SI LA ETIQUETA YA EXISTE EN LA BASE DE DATOS
             int etiquetaId = rs.getInt("PK_EtiquetaId");
-            String sql4 = "INSERT INTO Usuario_Etiqueta (Fk_UsuarioEtiqueta_UsuarioId, Fk_UsuarioEtiqueta_EtiquetaId) VALUES (?, ?)";
+            String sql4 = "INSERT INTO Usuario_Etiqueta (Fk_UsuarioEtiqueta_UsuarioId, Fk_UsuarioEtiqueta_EtiquetaId, Estado) VALUES (?, ?, ?)";
             PreparedStatement stm4 = db.prepareStatement(sql4);
             stm4.setString(1, cedula);
             stm4.setInt(2, etiquetaId);
+            stm4.setBoolean(3, etiqueta.getEstado());
             int count4 = stm4.executeUpdate();
             if (count4 == 0) {
                 throw new Exception("No se creó la relación Usuario-Etiqueta");
@@ -178,8 +179,8 @@ public class EtiquetaDao {
             }
         }
 
-*/
 
+*/
         String sql = "INSERT INTO ETIQUETA (Descripcion,FK_Etiqueta_UsuarioCedula,Estado) VALUES (?,?,?)";
         try (PreparedStatement statement = db.prepareStatement(sql)) {
             statement.setString(1, etiqueta.getDescripcion());
@@ -190,6 +191,8 @@ public class EtiquetaDao {
 
             e.printStackTrace();
         }
+
+
     }
 
 
