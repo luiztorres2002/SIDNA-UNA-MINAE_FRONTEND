@@ -554,7 +554,7 @@ class Admin {
         const primerApellidoLabel = document.getElementById("primerApellidoLabel");
         const segundoApellidoLabel = document.getElementById("segundoApellidoLabel");
         const correoLabel = document.getElementById("correoLabel");
-        const regexEmail = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
+        const regexEmail = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z\d\.-]+$/;
         cedulaLabel.style.color = 'black';
         cedulaLabel.style.textDecoration = 'none';
         nombreLabel.style.color = 'black';
@@ -617,7 +617,7 @@ class Admin {
         const primerApellidoLabelEditar = document.getElementById("primerApellidoEditarLabel");
         const segundoApellidoLabelEditar = document.getElementById("segundoApellidoEditarLabel");
         const correoLabelEditar = document.getElementById("emailEditarLabel");
-        const regexEmail = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
+        const regexEmail = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z\d\.-]+$/;
         cedulaLabelEditar.style.color = 'black';
         cedulaLabelEditar.style.textDecoration = 'none';
         nombreLabelEditar.style.color = 'black';
