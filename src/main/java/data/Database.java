@@ -27,6 +27,7 @@ public class Database {
             //String database = "SIDNA_MINAEDBPRUEBA";
 
             String URL_conexion = "jdbc:sqlserver://" + server + ":" + port + ";databaseName=" + database + ";user=" + user + ";password=" + password + ";encrypt=true;trustServerCertificate=true;";
+            //String URL_conexion = "jdbc:sqlserver://sidnaminae.database.windows.net:1433;database=SIDNA_MINAEDB;user=usersql@sidnaminae;password={K3!3KgeM87c7jD7};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
             Class.forName(driver);
             return DriverManager.getConnection(URL_conexion);
         } catch (Exception e) {

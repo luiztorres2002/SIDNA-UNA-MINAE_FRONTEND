@@ -29,13 +29,15 @@ public class LoginResource {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@FormParam("usuario") String usuario, @FormParam("contrasena") String contrasena) {
+        String password = cifrarCedula(contrasena);
+        System.out.println("Contraseña cifrada: " + password);
         try {
-            Usuario usuarioAutenticado = usuarioDao.login(usuario, contrasena);
+            Usuario usuarioAutenticado = usuarioDao.login(usuario, password);
             if (usuarioAutenticado != null) {
                 String cedulaCifrada = cifrarCedula(usuarioAutenticado.getCedula());
                 if (cedulaCifrada != null) {
                     usuarioAutenticado.setCedula(cedulaCifrada);
-                    if (usuarioAutenticado.getContrasena().equals("MINAE")) {
+                    if (usuarioAutenticado.getContrasena().equals("STjWyF9ZXspiMnYdY/ijDA==")) {
                         usuarioAutenticado.setContrasena("debeCambiar");
                     } else {
                         usuarioAutenticado.setContrasena("");
@@ -68,4 +70,5 @@ public class LoginResource {
             return null;
         }
     }
+
 }

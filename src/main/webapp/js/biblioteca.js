@@ -1,6 +1,8 @@
 let exportando = false;
 let cambio = false;
 var checkboxesMarcados = [];
+let startDate = '';
+let endDate = '';
 class Biblioteca {
     dom;
     modal;
@@ -75,15 +77,15 @@ class Biblioteca {
             if (opcionFecha) {
                 switch (opcionFecha) {
                     case "ultimoDia":
-                        console.log(fechaActual);
+
                         const ultimoDia = new Date(fechaActual);
                         ultimoDia.setHours(0, 0, 0, 0);
                         ultimoDia.setDate(ultimoDia.getDate() - 1);
-                        console.log(ultimoDia);
+
                         noticiasFiltradas = noticiasFiltradas.filter(noticia => {
                             const [dia, mes, ano] = noticia.fecha.split('/');
                             const fechaNoticia = new Date(`${mes}/${dia}/${ano}`);
-                            console.log('Fecha de la noticia:', fechaNoticia);
+
                             return fechaNoticia >= ultimoDia && fechaNoticia <= fechaActual;
                         });
                         break;
@@ -105,8 +107,14 @@ class Biblioteca {
                             return fechaNoticia >= ultimoMes && fechaNoticia <= fechaActual;
                         });
                         break;
+                    case "customRange":
+                        noticiasFiltradas = noticiasFiltradas.filter(noticia => {
+                            const [dia, mes, ano] = noticia.fecha.split('/');
+                            const fechaNoticia = new Date(`${mes}/${dia}/${ano}`);
+                            return fechaNoticia >= new Date(startDate) && fechaNoticia <= new Date(endDate);
+                        });
+                        break;
                     default:
-
                         break;
                 }
             }
@@ -171,7 +179,38 @@ class Biblioteca {
                     fechaSelect.insertBefore(limpiarFiltroFechaOption, fechaSelect.options[1]);
                 }
             }
-            filtrarNoticias();
+
+            if (fechaSelect.value === "customRange") {
+                initializeDatepicker();
+            } else {
+                filtrarNoticias();
+                $('#tiempoSeleccionado3').data('daterangepicker').remove();
+            }
+            function initializeDatepicker() {
+                $('#tiempoSeleccionado3').daterangepicker({
+                    opens: 'left',
+                    locale: {
+                        format: 'DD-MM-YYYY',
+                        applyLabel: 'Aplicar',
+                        cancelLabel: 'Cancelar',
+                        fromLabel: 'Desde',
+                        toLabel: 'Hasta',
+                        customRangeLabel: 'Rango Personalizado'
+                    },
+                    autoUpdateInput: false
+                });
+
+                $('#tiempoSeleccionado3').on('apply.daterangepicker', function(ev, picker) {
+                    startDate = picker.startDate.format('YYYY-MM-DD');
+                    endDate = picker.endDate.format('YYYY-MM-DD');
+                   filtrarNoticias();
+                    $('#tiempoSeleccionado3').data('daterangepicker').hide();
+                });
+
+                $('#tiempoSeleccionado3').on('cancel.daterangepicker', function(ev, picker) {
+                    $('#tiempoSeleccionado3').data('daterangepicker').remove();
+                });
+            }
         });
 
         buscador.addEventListener('input', () => {
@@ -366,7 +405,7 @@ class Biblioteca {
                     <option value="ultimoDia">Último Día</option>
                     <option value="ultimaSemana">Última Semana</option>
                     <option value="ultimoMes">Último Mes</option>
-                    <option value="ultimoAno">Último Año</option>
+                    <option value="customRange">Rango Fecha</option>
                 </select>
                 </div>
                    <input class="form-control me-2 fontAwesome" id="buscadorEtiqueta" autocomplete="off" type="text" style="width: 100px; margin-left: 200px; height: 38px; border-radius: 5px; border: 1px solid #1c2858;" placeholder="&#xf002; Buscar..."> 
@@ -407,6 +446,7 @@ class Biblioteca {
         
         `;
         $(document).ready(function () {
+
             $('select#tiempoSeleccionado3').change(function () {
                 var text = $(this).find('option:selected').text();
                 var $aux = $('<select/>').append($('<option/>').text(text));
@@ -1160,8 +1200,7 @@ class Biblioteca {
         for (let [key, value] of formData.entries()) {
             this.entity[key] = value;
         }
-        // Imprime los datos en la consola
-        console.log(this.entity);
+
     }
     createNew = () => {
         cambio = true;
@@ -1297,7 +1336,7 @@ class Biblioteca {
                 },
                 body: JSON.stringify(this.entidad)
             });
-            console.log(this.entidad);
+
             try {
                 const response = await fetch(request2);
                 if (!response.ok) {
