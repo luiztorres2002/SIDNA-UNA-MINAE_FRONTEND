@@ -280,6 +280,70 @@ public class UsuarioDao {
         }
 
     }
+
+    public void deleteUsuarioNB(String cedula) throws Exception {
+
+        if (eliminarNoticiasMarcadasEtiquetaPorUsuarioNV(cedula) && borrarNoticiasUsuarioNV(cedula) && borrarEtiquetasUsuarioNV(cedula)) {
+            String sql = "DELETE FROM Usuario\n" +
+                    "WHERE PK_UsuarioCedula = ? \n";
+            PreparedStatement stm = db.prepareStatement(sql);
+            stm.setString(1, cedula);
+            int count = db.executeUpdate(stm);
+            if (count == 0) {
+                throw new Exception("No se elimino");
+            } else {
+
+            }
+        }
+        else{
+            throw new Exception("No se elimino");
+        }
+    }
+
+
+
+
+
+    //NUEVA BASE DE DATOS LISTO
+    public boolean borrarNoticiasUsuarioNV(String cedula){
+        String sqlQuery = "DELETE FROM Usuario_Noticia WHERE FK_UsuarioNoticia_UsuarioId = ?;";
+        try (PreparedStatement statement = db.prepareStatement(sqlQuery)) {
+            statement.setString(1, cedula);
+            int filasEliminadas = statement.executeUpdate();
+            return filasEliminadas >= 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean borrarEtiquetasUsuarioNV(String cedula){
+        String sqlQuery = "DELETE FROM Usuario_Etiqueta WHERE Fk_UsuarioEtiqueta_UsuarioId = ?;";
+        try (PreparedStatement statement = db.prepareStatement(sqlQuery)) {
+            statement.setString(1, cedula);
+            int filasEliminadas = statement.executeUpdate();
+            return filasEliminadas >= 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public boolean eliminarNoticiasMarcadasEtiquetaPorUsuarioNV(String cedula){
+
+        String sqlQuery = "DELETE FROM NOTICIA_ETIQUETA WHERE FK_UsuarioCedula = ?;";
+        try (PreparedStatement statement = db.prepareStatement(sqlQuery)) {
+            statement.setString(1, cedula);
+            int filasEliminadas = statement.executeUpdate();
+            return filasEliminadas >= 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
+
+    // Vieja base de datos /////
     public boolean eliminarNoticiasMarcadasEtiquetaPorUsuario(String cedula) {
         String sqlQuery = "DELETE FROM NOTICIAMARCADA_ETIQUETA\n" +
                 "WHERE FK_NOTICIAMARCADAETIQUETA_NOTICIAMARCADAID IN (\n" +
@@ -319,13 +383,9 @@ public class UsuarioDao {
         }
     }
     public static void main(String[] args) throws Exception {
-        try {
-            Database db = new Database();
-            // Crea una instancia de RolDao
-            UsuarioDao usuariDao = new UsuarioDao(db);
-            usuariDao.modificiarContrasenaUsuario("6");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        Database db = new Database();
+        // Crea una instancia de RolDao
+        UsuarioDao usuariDao = new UsuarioDao(db);
+        usuariDao.deleteUsuarioNB("1111");
     }
 }
