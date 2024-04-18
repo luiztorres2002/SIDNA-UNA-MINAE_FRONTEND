@@ -259,7 +259,7 @@ public class UsuarioDao {
         }
     }
 
-
+    //Version vieja base de datos
     public void deleteUsuario(String Cedula) throws Exception {
 
         if(eliminarNoticiasMarcadasEtiquetaPorUsuario(Cedula) && borrarNoticiasUsuario(Cedula) && borrarEtiquetasUsuario(Cedula)){
@@ -280,6 +280,27 @@ public class UsuarioDao {
         }
 
     }
+
+
+    //Listo
+    public boolean borrarNoticiasUsuarioNV(String cedula){
+
+        String sqlQuery = "DELETE FROM Usuario_Noticia WHERE FK_UsuarioNoticia_UsuarioId = ?;";
+        try (PreparedStatement stm = db.prepareStatement(sqlQuery)) {
+            stm.setString(1, cedula);
+            int filasEliminadas = stm.executeUpdate();
+            return filasEliminadas >= 0;
+        }catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    //---------------------
+    //--------------------
+    //VERSION VIEJA BASE DE DATOS
+    //Version vieja base de datos
     public boolean eliminarNoticiasMarcadasEtiquetaPorUsuario(String cedula) {
         String sqlQuery = "DELETE FROM NOTICIAMARCADA_ETIQUETA\n" +
                 "WHERE FK_NOTICIAMARCADAETIQUETA_NOTICIAMARCADAID IN (\n" +
@@ -296,6 +317,8 @@ public class UsuarioDao {
             return false;
         }
     }
+
+    //Version vieja base de datos
     public boolean borrarNoticiasUsuario(String cedula){
         String sqlQuery = "DELETE FROM NOTICIA_MARCADA where Fk_NoticiaMarcada_UsuarioCedula = ?";
         try (PreparedStatement stm = db.prepareStatement(sqlQuery)) {
@@ -307,6 +330,8 @@ public class UsuarioDao {
             return false;
         }
     }
+
+    //Version vieja base de datos
     public boolean borrarEtiquetasUsuario(String cedula){
         String sqlQuery = "DELETE FROM ETIQUETA where FK_Etiqueta_UsuarioCedula = ?";
         try (PreparedStatement stm = db.prepareStatement(sqlQuery)) {
@@ -318,14 +343,12 @@ public class UsuarioDao {
             return false;
         }
     }
+
+
     public static void main(String[] args) throws Exception {
-        try {
-            Database db = new Database();
-            // Crea una instancia de RolDao
-            UsuarioDao usuariDao = new UsuarioDao(db);
-            usuariDao.modificiarContrasenaUsuario("6");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        Database db = new Database();
+        // Crea una instancia de RolDao
+        UsuarioDao usuariDao = new UsuarioDao(db);
+        usuariDao.borrarNoticiasUsuarioNV("4-0258-0085");
     }
 }
