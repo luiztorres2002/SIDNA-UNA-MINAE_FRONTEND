@@ -13,63 +13,104 @@ class App {
         this.state = {};
         this.dom = this.render();
         this.renderBodyFiller();
+        this.modalErrorMensaje = new bootstrap.Modal(this.dom.querySelector('#modalErrorMensaje'));
+        this.dom.querySelector("#app #modalErrorMensaje #dismissButton").addEventListener('click', this.hideModalMensaje);
         this.dom.querySelector('#dropdwonUsuario').style.display = 'none';
         const loginButton = this.dom.querySelector('#loginButton');
-        loginButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            const usuario = this.dom.querySelector('#loginTxt').value;
-            const spanUsuario = this.dom.querySelector('#usuarioTxt');
-            this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
-            spanUsuario.textContent = usuario;
-            localStorage.setItem('usuario', usuario);
+       loginButton.addEventListener('click', async (event) => {
+           event.preventDefault();
+           try {
+               const usuario = this.dom.querySelector('#loginTxt').value;
+               const contrasena = this.dom.querySelector('#passwordTxt').value;
 
-            if (usuario === 'Admin') {
-                this.renderMenuItemsAdmin();
-                this.adminShow();
-            } else {
-                this.renderMenuItems();
-                this.busquedaShow();
-            }
+               const usuarioAutenticado = await this.login(usuario, contrasena);
 
-            this.dom.querySelector('#menuItems').style.display = "flex";
-            login.style.display = 'none';
-            this.dom.querySelector('#loginTxt').value = "";
-            this.dom.querySelector('#passwordTxt').value = "";
-        });
-        const usuario = localStorage.getItem('usuario');
-        if (usuario) {
-            const spanUsuario = this.dom.querySelector('#usuarioTxt');
-            this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
-            spanUsuario.textContent = usuario;
+               if (usuarioAutenticado.contrasena === 'debeCambiar') {
+                   login.style.display = 'none';
+                   const cambiarContrasena = this.dom.querySelector('#cambiarContrasena');
+                   cambiarContrasena.style.display = 'flex';
+                   const passwordTxt2 = this.dom.querySelector('#passwordTxt2');
+                   const confpasswordTxt = this.dom.querySelector('#confpasswordTxt');
+                   const cambiarButton = this.dom.querySelector('#cambiarButton');
+                   const errorConfPassword = this.dom.querySelector('#errorConfPassword');
 
-            if (usuario === 'Admin') {
-                this.renderMenuItemsAdmin();
-                this.adminShow();
-            } else {
-                this.renderMenuItems();
-                this.busquedaShow();
-            }
+                   confpasswordTxt.addEventListener('input', () => {
+                       if (!passwordTxt2.value && !confpasswordTxt.value) {
+                           errorConfPassword.style.display = 'none';
+                           cambiarButton.style.display = 'block';
+                       }else{
+                           if (passwordTxt2.value === confpasswordTxt.value) {
+                               cambiarButton.style.display = 'block';
+                               errorConfPassword.style.display = 'none';
+                           } else {
+                               cambiarButton.style.display = 'none';
+                               errorConfPassword.style.color = 'red';
+                               errorConfPassword.style.fontWeight = 'bold';
+                               errorConfPassword.style.display = 'block';
+                           }
+                       }
+                   });
 
-        } else {
-            const login = this.dom.querySelector('#login');
-            login.style.display = 'flex';
-        }
-        this.dom.querySelector('#cerrarSesion').addEventListener('click', () => {
-            const login = this.dom.querySelector('#login');
-            this.renderBodyFiller();
-            this.dom.querySelector('#menuItems').style.display = "none";
-            this.dom.querySelector('#dropdwonUsuario').style.display = 'none';
-            login.style.display = 'flex';
-            console.log("Se cerró la sesión");
+               } else {
 
-            const usuario = localStorage.getItem('usuario');
-            if (usuario === 'Admin') {
-                this.Admin.dom.style.display = "none";
-            } else {
-                this.Busqueda.dom.style.display = "none";
-            }
-            localStorage.removeItem('usuario');
-        });
+                   const spanUsuario = this.dom.querySelector('#usuarioTxt');
+                   this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
+                   spanUsuario.textContent = usuarioAutenticado.nombre;
+                   localStorage.setItem('usuario', usuarioAutenticado.cedula);
+                   localStorage.setItem('usuarioNomb', usuarioAutenticado.nombre);
+
+                   if (usuarioAutenticado.rol.descripcion === 'Administrador') {
+                       this.renderMenuItemsAdmin();
+                       this.adminShow();
+                   } else {
+                       this.renderMenuItems();
+                       this.busquedaShow();
+                   }
+                   this.dom.querySelector('#menuItems').style.display = "flex";
+                   login.style.display = 'none';
+                   this.dom.querySelector('#loginTxt').value = "";
+                   this.dom.querySelector('#passwordTxt').value = "";
+               }
+           } catch (error) {
+               console.error('Ocurrió un error:', error);
+               this.dom.querySelector("#mensaje").textContent = "Credenciales inválidas.";
+               this.modalErrorMensaje.show();
+           }
+       });
+       (async () => {
+           const cedulaCifrada = localStorage.getItem('usuario');
+           if (cedulaCifrada) {
+               try {
+                   const usuarioAutenticado = await this.obtenerUsuario(cedulaCifrada);
+
+                   const spanUsuario = this.dom.querySelector('#usuarioTxt');
+                   this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
+                   spanUsuario.textContent = usuarioAutenticado.nombre;
+
+                   if (usuarioAutenticado.contrasena === 'debeCambiar') {
+                       this.cerrarSesion();
+                       const login = this.dom.querySelector('#login');
+                       login.style.display = 'flex';
+                   } else {
+                       if (usuarioAutenticado.rol.descripcion === 'Administrador') {
+                           this.renderMenuItemsAdmin();
+                           this.adminShow();
+                       } else {
+                           this.renderMenuItems();
+                           this.busquedaShow();
+                       }
+                   }
+               } catch (error) {
+                   console.error('Error al autenticar usuario:', error);
+               }
+           } else {
+               const login = this.dom.querySelector('#login');
+               login.style.display = 'flex';
+           }
+       })();
+       this.dom.querySelector('#cerrarSesion').addEventListener('click', () => {
+           this.cerrarSesion();
+       });
     }
     render = () => {
         const html = `
@@ -101,7 +142,6 @@ class App {
             });
             if (response.ok) {
                 const usuarioAutenticado = await response.json();
-                console.log('Usuario autenticado:', usuarioAutenticado);
                 return usuarioAutenticado;
             } else {
                 const error = await response.text();
@@ -114,19 +154,19 @@ class App {
         }
     }
 
-    cerrarSesion(){
+    cerrarSesion() {
         const login = this.dom.querySelector('#login');
         this.renderBodyFiller();
         this.dom.querySelector('#menuItems').style.display = "none";
         this.dom.querySelector('#dropdwonUsuario').style.display = 'none';
         login.style.display = 'flex';
-
-        const usuario = localStorage.getItem('usuario');
-        if (usuario === 'Admin') {
+        if (this.Admin && this.Admin.dom && this.Admin.dom.style.display !== "none") {
             this.Admin.dom.style.display = "none";
-        } else {
+        }
+        if (this.Busqueda && this.Busqueda.dom && this.Busqueda.dom.style.display !== "none") {
             this.Busqueda.dom.style.display = "none";
         }
+
         localStorage.removeItem('usuario');
         localStorage.removeItem('usuarioNomb');
     }

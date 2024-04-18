@@ -105,9 +105,9 @@ class Admin {
         const tbody = table.querySelector('tbody');
         tbody.innerHTML = '';
         this.state.usuarios.forEach((usuario) => {
-            const { cedula, nombre, primerApellido, segundoApellido, email, rol,departamento } = usuario;
-            const row = document.createElement('tr');
-            row.innerHTML = `
+                const { cedula, nombre, primerApellido, segundoApellido, email, rol,departamento } = usuario;
+                const row = document.createElement('tr');
+                row.innerHTML = `
             <td style="text-align: center; vertical-align: middle;">${cedula}</td>
             <td style="text-align: center; vertical-align: middle;">${nombre} ${primerApellido} ${segundoApellido}</td>
             <td style="text-align: center; vertical-align: middle;">${email}</td>
@@ -126,42 +126,51 @@ class Admin {
             </td>
         `;
 
-            const editarBtn = row.querySelector('.editarUsuarioBtn');
-            editarBtn.addEventListener('click', () => {
-                this.modalEditarUsuario.show();
-                const nombreInput = document.querySelector('#nombreEditar');
-                const primerApellidoInput = document.querySelector('#primerApellidoEditar');
-                const segundoApellidoInput = document.querySelector('#segundoApellidoEditar');
-                const emailInput = document.querySelector('#emailEditar');
-                const rolSelect = document.querySelector('#rolEditar');
-                const departamentoSelect = document.querySelector('#departamentoEditar');
-                const cedulaInput = this.dom.querySelector('#cedulaEditar');
-                cedulaInput.value = cedula;
-                nombreInput.value = nombre;
-                primerApellidoInput.value = primerApellido;
-                segundoApellidoInput.value = segundoApellido;
-                emailInput.value = email;
-                const rolID = rol.id.toString();
-                const departamentoID = departamento.id.toString();
-                for (let i = 0; i < rolSelect.options.length; i++) {
-                    if (rolSelect.options[i].value === rolID) {
-                        rolSelect.options[i].selected = true;
-                        break;
+                const editarBtn = row.querySelector('.editarUsuarioBtn');
+                editarBtn.addEventListener('click', () => {
+                    this.modalEditarUsuario.show();
+                    const nombreInput = document.querySelector('#nombreEditar');
+                    const primerApellidoInput = document.querySelector('#primerApellidoEditar');
+                    const segundoApellidoInput = document.querySelector('#segundoApellidoEditar');
+                    const emailInput = document.querySelector('#correoEditar');
+                    const rolSelect = document.querySelector('#rolEditar');
+                    const departamentoSelect = document.querySelector('#departamentoEditar');
+                    const cedulaInput = this.dom.querySelector('#cedulaEditar');
+                    cedulaInput.value = cedula;
+                    nombreInput.value = nombre;
+                    primerApellidoInput.value = primerApellido;
+                    segundoApellidoInput.value = segundoApellido;
+                    emailInput.value = email;
+                    const rolID = rol.id.toString();
+                    const departamentoID = departamento.id.toString();
+                    for (let i = 0; i < rolSelect.options.length; i++) {
+                        if (rolSelect.options[i].value === rolID) {
+                            rolSelect.options[i].selected = true;
+                            break;
+                        }
                     }
-                }
-                for (let i = 0; i < departamentoSelect.options.length; i++) {
-                    if (departamentoSelect.options[i].value === departamentoID) {
-                        departamentoSelect.options[i].selected = true;
-                        break;
+                    for (let i = 0; i < departamentoSelect.options.length; i++) {
+                        if (departamentoSelect.options[i].value === departamentoID) {
+                            departamentoSelect.options[i].selected = true;
+                            break;
+                        }
                     }
-                }
-            });
+                });
 
-            const eliminarBtn = row.querySelector('.eliminarUsuarioBtn');
-            eliminarBtn.addEventListener('click', () => {
-                document.getElementById('modalConfirmarMensaje').innerHTML = `¿Estás seguro de que deseas eliminar a este usuario?<br>${nombre} ${primerApellido} ${segundoApellido}`;
-                this.showModalBorrar(cedula);
-            });
+                const eliminarBtn = row.querySelector('.eliminarUsuarioBtn');
+                eliminarBtn.addEventListener('click', () => {
+                    document.getElementById('modalConfirmarMensaje').innerHTML = `¿Estás seguro de que deseas eliminar a este usuario?<br>${nombre} ${primerApellido} ${segundoApellido}`;
+                    const usuario = localStorage.getItem('usuarioNomb');
+                    const nomb = `${nombre}`;
+                    if(usuario === nomb ){
+                        var mensaje = document.getElementById("mensaje");
+                        mensaje.textContent = "No puedes eliminar al usuario que está actualmente activo.";
+                        this.modalErrorGenerico.show();
+                    }else{
+                        this.showModalBorrar(cedula);
+                    }
+
+                });
 
             const restablecerBtn = row.querySelector('.restablecerUsuarioBtn');
             restablecerBtn.addEventListener('click', () => {

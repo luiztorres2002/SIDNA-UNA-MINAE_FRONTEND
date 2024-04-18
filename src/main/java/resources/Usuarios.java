@@ -80,8 +80,7 @@ public class Usuarios {
             if (usuario != null) {
                 String cedulaCifrada = cifrarCedula(usuario.getCedula());
                 usuario.setCedula(cedulaCifrada);
-
-                if (usuario.getContrasena().equals("MINAE")) {
+                if (usuario.getContrasena().equals("STjWyF9ZXspiMnYdY/ijDA==")) {
                     usuario.setContrasena("debeCambiar");
                 } else {
                     usuario.setContrasena("");
