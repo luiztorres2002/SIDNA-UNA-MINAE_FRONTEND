@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -222,6 +223,75 @@ public class UsuarioDao {
         }
     }
 
+    public void createEtiquetasPrestablecidasUsuarioNB(String cedula) {
+        int idEtiqueta1 = 0;
+        int idEtiqueta2 = 0;
+        int idEtiqueta3 = 0;
+
+        String sqlQuery1 = "SELECT PK_ETIQUETAID\n" +
+                "FROM ETIQUETA\n" +
+                "WHERE Descripcion = 'Costa Rica';";
+
+        String sqlQuery2 = "SELECT PK_ETIQUETAID\n" +
+                "FROM ETIQUETA\n" +
+                "WHERE Descripcion = 'Noticia Externa';";
+
+        String sqlQuery3 = "SELECT PK_ETIQUETAID\n" +
+                "FROM ETIQUETA\n" +
+                "WHERE Descripcion = 'Medio Ambiente';";
+
+        try {
+            PreparedStatement statement = db.prepareStatement(sqlQuery1);
+            ResultSet rs = statement.executeQuery();
+
+            if(rs.next()){
+                idEtiqueta1 = rs.getInt("PK_ETIQUETAID");
+            }
+
+            String sqlQuery4 = "INSERT INTO Usuario_Etiqueta(Fk_UsuarioEtiqueta_UsuarioId, Fk_UsuarioEtiqueta_EtiquetaId, Estado)\n" +
+                    "VALUES (?,?,?);";
+            PreparedStatement statement2 = db.prepareStatement(sqlQuery4);
+            statement2.setString(1, cedula);
+            statement2.setInt(2, idEtiqueta1);
+            statement2.setBoolean(3, true);
+            statement2.executeUpdate();
+
+            PreparedStatement statement3 = db.prepareStatement(sqlQuery2);
+            ResultSet rs2 = statement3.executeQuery();
+
+            if(rs2.next()){
+                idEtiqueta2 = rs2.getInt("PK_ETIQUETAID");
+            }
+
+            String sqlQuery5 = "INSERT INTO Usuario_Etiqueta (Fk_UsuarioEtiqueta_UsuarioId, Fk_UsuarioEtiqueta_EtiquetaId, Estado)\n" +
+                    "VALUES (?,?,?);";
+            PreparedStatement statement4 = db.prepareStatement(sqlQuery5);
+            statement4.setString(1, cedula);
+            statement4.setInt(2, idEtiqueta2);
+            statement4.setBoolean(3, true);
+            statement4.executeUpdate();
+
+            PreparedStatement statement5 = db.prepareStatement(sqlQuery3);
+            ResultSet rs3 = statement5.executeQuery();
+
+            if(rs3.next()){
+                idEtiqueta3 = rs3.getInt("PK_ETIQUETAID");
+            }
+
+            String sqlQuery6 = "INSERT INTO Usuario_Etiqueta (Fk_UsuarioEtiqueta_UsuarioId, Fk_UsuarioEtiqueta_EtiquetaId, Estado)\n" +
+                    "VALUES (?,?,?);";
+            PreparedStatement statement6 = db.prepareStatement(sqlQuery6);
+            statement6.setString(1, cedula);
+            statement6.setInt(2, idEtiqueta3);
+            statement6.setBoolean(3, true);
+            statement6.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     public void updateUsuario(Usuario usuario) throws Exception {
         String sql = "UPDATE USUARIO\n" +
                 "SET Nombre = ?, PrimerApellido = ?, SegundoApellido = ?, Email = ?, FK_Usuario_RolId = ?, FK_Usuario_DepartamentoId = ?\n" +
@@ -386,6 +456,6 @@ public class UsuarioDao {
         Database db = new Database();
         // Crea una instancia de RolDao
         UsuarioDao usuariDao = new UsuarioDao(db);
-        usuariDao.deleteUsuarioNB("1111");
+        usuariDao.createEtiquetasPrestablecidasUsuarioNB("4-111-111");
     }
 }
