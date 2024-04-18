@@ -193,7 +193,32 @@ public class UsuarioDao {
         if (count == 0) {
             throw new Exception("No se creo");
         } else {
-            System.out.println("Usuario creado correctamente");
+            createEtiquetasPrestablecidasUsuario(usuario.getCedula());
+        }
+    }
+
+    public boolean createEtiquetasPrestablecidasUsuario(String cedula) {
+        String sql = "INSERT INTO ETIQUETA (Descripcion, FK_Etiqueta_UsuarioCedula, ESTADO) VALUES (?,?,?)";
+        try {
+            PreparedStatement statement = db.prepareStatement(sql);
+            statement.setString(1, "Costa Rica");
+            statement.setString(2, cedula);
+            statement.setBoolean(3, true);
+            statement.addBatch();
+            statement.setString(1, "Medio Ambiente");
+            statement.setString(2, cedula);
+            statement.setBoolean(3, true);
+            statement.addBatch();
+            statement.setString(1, "Noticia Externa");
+            statement.setString(2, cedula);
+            statement.setBoolean(3, true);
+            statement.addBatch();
+            statement.executeBatch();
+            statement.close();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -233,6 +258,8 @@ public class UsuarioDao {
             throw new Exception("No se cambio");
         }
     }
+
+
     public void deleteUsuario(String Cedula) throws Exception {
 
         if(eliminarNoticiasMarcadasEtiquetaPorUsuario(Cedula) && borrarNoticiasUsuario(Cedula) && borrarEtiquetasUsuario(Cedula)){

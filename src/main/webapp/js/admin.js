@@ -689,10 +689,11 @@ class Admin {
                     this.modalEditarUsuario.hide();
                     this.showModalExitoGenerico("Usuario modificado con exito");
                     this.cargarUsuarios();
+                    this.limpiarModalEditar();
                 } else {
                     this.modalEditarUsuario.hide();
                     this.showModalErrorGenerico("No se ha podido modificar el usuario");
-
+                    this.limpiarModalEditar();
                 }
             }
             catch (error) {
@@ -702,10 +703,26 @@ class Admin {
       }else{
 
        }
-
-
-
     }
+
+
+    limpiarModalAgregar = async () =>{
+        document.getElementById('cedula').value ="";
+        document.getElementById('nombre').value = "";
+        document.getElementById('primerApellido').value = "";
+        document.getElementById('segundoApellido').value = "";
+        document.getElementById('correo').value = "";
+    }
+
+
+    limpiarModalEditar = async () =>{
+        document.getElementById('cedulaEditar').value = "";
+        document.getElementById('nombreEditar').value = "";
+        document.getElementById('primerApellidoEditar').value ="";
+        document.getElementById('segundoApellidoEditar').value = "";
+        document.getElementById('emailEditar').value = "";
+    }
+
 
     addUser = async () => {
         event.preventDefault();
@@ -724,10 +741,11 @@ class Admin {
                     this.modalAgregarUsuario.hide();
                     this.showModalExitoGenerico("Usuario creado con exito");
                     this.cargarUsuarios();
+                    this.limpiarModalAgregar();
                 } else {
                     this.modalAgregarUsuario.hide();
                     this.showModalErrorGenerico("No se ha podido crear el usuario");
-
+                    this.limpiarModalAgregar();
                 }
             }
             catch (error) {
