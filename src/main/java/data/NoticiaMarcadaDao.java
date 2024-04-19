@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Date;
 
@@ -26,11 +27,9 @@ public class NoticiaMarcadaDao {
     public void create(NoticiaMarcada noticiaMarcada) throws Exception {
 
 
-
-
         //VERSION CON NUEVA BASE DE DATOS
-        /*
-        String cedula = "4-0258-1111";
+
+
         String sql1 = "SELECT * FROM NOTICIA WHERE Enlace = ?";
         PreparedStatement stm = db.prepareStatement(sql1);
         stm.setString(1, noticiaMarcada.getEnlace());
@@ -38,15 +37,14 @@ public class NoticiaMarcadaDao {
         ResultSet rs = stm.executeQuery();
         if (!rs.next()) {
             // SI NO EXISTE EN LA BASE DE DATOS.
-            String sql2 = "INSERT INTO NOTICIA(Titulo, Descripcion, Fecha, Prioridad, Fuente, Enlace, Imagen, Fechaguardado) VALUES (?,?,?,?,?,?,?,SYSDATETIME())";
+            String sql2 = "INSERT INTO NOTICIA(Titulo, Descripcion, Fecha, Fuente, Enlace, Imagen) VALUES (?,?,?,?,?,?)";
             PreparedStatement stm2 = db.prepareStatement(sql2);
             stm2.setString(1, noticiaMarcada.getTitulo());
             stm2.setString(2, noticiaMarcada.getDescripcion());
             stm2.setString(3, noticiaMarcada.getFecha());
-            stm2.setString(4, noticiaMarcada.getPrioridad());
-            stm2.setString(5, noticiaMarcada.getFuente());
-            stm2.setString(6, noticiaMarcada.getEnlace());
-            stm2.setString(7, noticiaMarcada.getImagen());
+            stm2.setString(4, noticiaMarcada.getFuente());
+            stm2.setString(5, noticiaMarcada.getEnlace());
+            stm2.setString(6, noticiaMarcada.getImagen());
             int count2 = db.executeUpdate(stm2);
             if (count2 == 0) {
                 throw new Exception("No se creó");
@@ -59,15 +57,21 @@ public class NoticiaMarcadaDao {
                 if(rs2.next()){
                     idNoticia = rs2.getInt("PK_Noticia_Id");
                 }
-                String sql4 = "INSERT INTO Usuario_Noticia (Fk_UsuarioNoticia_UsuarioId, Fk_UsuarioNoticia_NoticiaId) VALUES (?,?)";
+                String sql4 = "INSERT INTO Usuario_Noticia (Fk_UsuarioNoticia_UsuarioId, Fk_UsuarioNoticia_NoticiaId, FechaGuardado, Prioridad) VALUES (?,?,CURRENT_TIMESTAMP,?)";
                 PreparedStatement stm4 = db.prepareStatement(sql4);
-                stm4.setString(1,cedula);
-                stm4.setInt(2,idNoticia);
-                int count3 = db.executeUpdate(stm4);
+                stm4.setString(1,noticiaMarcada.getUsuarioCedula());
+                stm4.setInt(2, idNoticia);
+                stm4.setString(3, noticiaMarcada.getPrioridad());
+                int count3 = stm4.executeUpdate();
                 if (count3 == 0) {
                     throw new Exception("No se creó");
                 } else {
-                    System.out.println("La noticia no se creo");
+                    List<Etiqueta> etiquetas = noticiaMarcada.getEtiquetas();
+                    for (Etiqueta etiqueta : etiquetas) {
+                        String descripcion = etiqueta.getDescripcion();
+                        this.registrarNoticiaEtiquetaNB(noticiaMarcada.getEnlace(), descripcion, noticiaMarcada.getUsuarioCedula());
+                    }
+                    System.out.println("Se creó correctamente la relación Usuario-Noticia");
                 }
             }
         }else {
@@ -78,25 +82,31 @@ public class NoticiaMarcadaDao {
             ResultSet rs2 = stm4.executeQuery();
             if (rs2.next()) { // Mover el cursor al primer resultado
                 int noticiaId = rs2.getInt("PK_Noticia_Id");
-                String sql5 = "INSERT INTO Usuario_Noticia (Fk_UsuarioNoticia_UsuarioId, Fk_UsuarioNoticia_NoticiaId) VALUES (?,?)";
+                String sql5 = "INSERT INTO Usuario_Noticia (Fk_UsuarioNoticia_UsuarioId, Fk_UsuarioNoticia_NoticiaId, FechaGuardado, Prioridad) VALUES (?,?,CURRENT_TIMESTAMP,?)";
                 PreparedStatement stm5 = db.prepareStatement(sql5);
-                stm5.setString(1, cedula);
+                stm5.setString(1, noticiaMarcada.getUsuarioCedula());
                 stm5.setInt(2, noticiaId);
+                stm5.setString(3, noticiaMarcada.getPrioridad());
                 int count4 = stm5.executeUpdate();
                 if (count4 == 0) {
                     throw new Exception("No se creó la relación Usuario-Noticia");
                 } else {
+                    List<Etiqueta> etiquetas = noticiaMarcada.getEtiquetas();
+                    for (Etiqueta etiqueta : etiquetas) {
+                        String descripcion = etiqueta.getDescripcion();
+                        this.registrarNoticiaEtiquetaNB(noticiaMarcada.getEnlace(), descripcion, noticiaMarcada.getUsuarioCedula());
+                    }
                     System.out.println("Se creó correctamente la relación Usuario-Noticia");
                 }
             } else {
                 throw new Exception("La noticia no existe en la base de datos");
             }
         }
-        */
+
 
 
         //VERSION CON LA BASE DE DATOS VIEJA.
-
+/*
         String sql = "insert into NOTICIA_MARCADA(Titulo,Descripcion,Fecha,Prioridad,Fuente,Enlace,Imagen,Fechaguardado,FK_NoticiaMarcada_UsuarioCedula) values (?,?,?,?,?,?,?,SYSDATETIME(),?)";
         PreparedStatement stm = db.prepareStatement(sql);
         stm.setString(1, noticiaMarcada.getTitulo());
@@ -120,7 +130,7 @@ public class NoticiaMarcadaDao {
                 this.registrarNoticiaEtiqueta(noticiaMarcada.getTitulo(), descripcion, noticiaMarcada.getUsuarioCedula());
             }
         }
-
+*/
 
     }
 
@@ -225,15 +235,21 @@ public class NoticiaMarcadaDao {
         Database db = new Database();
         NoticiaMarcadaDao dao = new NoticiaMarcadaDao(db);
         try {
-            Date fechaActual = new Date();
 
             // Formatear la fecha actual en el formato deseado (dd-MM-yyyy)
-            SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MM-yyyy");
-            String fechaActualFormateada = formatoFecha.format(fechaActual);
-            NoticiaMarcada noticiaMarcada = new NoticiaMarcada(1,"TituloNoticia2", "Descripcion","04-04-2024", "Baja", "Diario Digital Nuestro Pais", "enlace_noticia2", "ImagenNoticia",fechaActual,"3333");
+            Etiqueta etiqueta = new Etiqueta(1, "Costa Rica", "4-0258-0085", true);
+
+            // Formatear la fecha en el formato deseado (dd-MM-yyyy)
+            long currentTimeMillis = System.currentTimeMillis();
+            Date fechaActual = new Date(currentTimeMillis);
+            List<Etiqueta> listEtiqueta = new LinkedList<Etiqueta>();
+            listEtiqueta.add(etiqueta);
+
+            NoticiaMarcada noticiaMarcada = new NoticiaMarcada(1, "Defensoria de los habitantes", "Def", "04-04-2024",  "Alta", "La nacion", "def.com", "image", fechaActual, "4-0258-0085");
+            noticiaMarcada.setEtiquetas(listEtiqueta);
             dao.create(noticiaMarcada);
         }   catch (Exception e) {
-            System.err.println("Error al eliminar la noticia marcada: " + e.getMessage());
+            System.err.println("Error al creaer la noticia marcada: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -345,6 +361,62 @@ public class NoticiaMarcadaDao {
             if (count == 0) {
                 throw new Exception("No se creo");
             }
+        }
+    }
+
+    public void registrarNoticiaEtiquetaNB(String noticiaEnlace, String EtiquetaDescripcion, String cedula) throws Exception {
+        if (EtiquetaDescripcion == null || EtiquetaDescripcion.isEmpty()) {
+            throw new IllegalArgumentException("La descripción de la etiqueta no puede ser nula o vacía.");
+        }
+
+        int noticiaId = 0;
+        int etiquetaId = 0;
+        String sql = "Select PK_Noticia_Id FROM NOTICIA WHERE ENLACE = ?;";
+        try (PreparedStatement statement = db.prepareStatement(sql)) {
+
+            statement.setString(1, noticiaEnlace);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                if (resultSet.next()) {
+                    noticiaId = resultSet.getInt("PK_Noticia_Id");
+                }
+                else{
+                    throw new NotFoundException("No se encontró una noticia con el título proporcionado y la cédula especificada");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener el valor de noticiaId: " + e.getMessage());
+        }
+
+        String sql2 =  "SELECT PK_EtiquetaId FROM ETIQUETA WHERE Descripcion = ?";
+        try (PreparedStatement statement2 = db.prepareStatement(sql2)) {
+            statement2.setString(1, EtiquetaDescripcion);
+            try (ResultSet resultSet2 = statement2.executeQuery()) {
+                if (resultSet2.next()) {
+                    etiquetaId = resultSet2.getInt("PK_EtiquetaId");
+                    System.out.println(etiquetaId);
+                }
+                else{
+                    throw new NotFoundException("No se encontró la etiqueta");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener el valor de noticiaId: " + e.getMessage());
+
+        }
+
+        if (noticiaId != 0 && etiquetaId != 0) {
+            String sql3 = "INSERT INTO NOTICIA_ETIQUETA(FK_NOTICIAETIQUETA_NOTICIAID, FK_NOTICIAETIQUETA_ETIQUETAID, FK_UsuarioCedula) values (?,?,?);";
+            PreparedStatement stm3 = db.prepareStatement(sql3);
+            stm3.setInt(1, noticiaId);
+            stm3.setInt(2, etiquetaId);
+            stm3.setString(3, cedula);
+            int count = db.executeUpdate(stm3);
+            if(count == 0){
+                throw new Exception("No se creo");
+            }
+
         }
     }
 
