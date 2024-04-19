@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -186,7 +187,7 @@ public class UsuarioDao {
         stm.setString(3, usuario.getPrimerApellido());
         stm.setString(4, usuario.getSegundoApellido());
         stm.setString(5, usuario.getEmail());
-        stm.setString(6, "STjWyF9ZXspiMnYdY/ijDA==");
+        stm.setString(6, "Minae");
         stm.setInt(7, usuario.getRol().getId());
         stm.setInt(8, usuario.getDepartamento().getId());
         int count = db.executeUpdate(stm);
@@ -222,6 +223,75 @@ public class UsuarioDao {
         }
     }
 
+    public void createEtiquetasPrestablecidasUsuarioNB(String cedula) {
+        int idEtiqueta1 = 0;
+        int idEtiqueta2 = 0;
+        int idEtiqueta3 = 0;
+
+        String sqlQuery1 = "SELECT PK_ETIQUETAID\n" +
+                "FROM ETIQUETA\n" +
+                "WHERE Descripcion = 'Costa Rica';";
+
+        String sqlQuery2 = "SELECT PK_ETIQUETAID\n" +
+                "FROM ETIQUETA\n" +
+                "WHERE Descripcion = 'Noticia Externa';";
+
+        String sqlQuery3 = "SELECT PK_ETIQUETAID\n" +
+                "FROM ETIQUETA\n" +
+                "WHERE Descripcion = 'Medio Ambiente';";
+
+        try {
+            PreparedStatement statement = db.prepareStatement(sqlQuery1);
+            ResultSet rs = statement.executeQuery();
+
+            if(rs.next()){
+                idEtiqueta1 = rs.getInt("PK_ETIQUETAID");
+            }
+
+            String sqlQuery4 = "INSERT INTO Usuario_Etiqueta(Fk_UsuarioEtiqueta_UsuarioId, Fk_UsuarioEtiqueta_EtiquetaId, Estado)\n" +
+                    "VALUES (?,?,?);";
+            PreparedStatement statement2 = db.prepareStatement(sqlQuery4);
+            statement2.setString(1, cedula);
+            statement2.setInt(2, idEtiqueta1);
+            statement2.setBoolean(3, true);
+            statement2.executeUpdate();
+
+            PreparedStatement statement3 = db.prepareStatement(sqlQuery2);
+            ResultSet rs2 = statement3.executeQuery();
+
+            if(rs2.next()){
+                idEtiqueta2 = rs2.getInt("PK_ETIQUETAID");
+            }
+
+            String sqlQuery5 = "INSERT INTO Usuario_Etiqueta (Fk_UsuarioEtiqueta_UsuarioId, Fk_UsuarioEtiqueta_EtiquetaId, Estado)\n" +
+                    "VALUES (?,?,?);";
+            PreparedStatement statement4 = db.prepareStatement(sqlQuery5);
+            statement4.setString(1, cedula);
+            statement4.setInt(2, idEtiqueta2);
+            statement4.setBoolean(3, true);
+            statement4.executeUpdate();
+
+            PreparedStatement statement5 = db.prepareStatement(sqlQuery3);
+            ResultSet rs3 = statement5.executeQuery();
+
+            if(rs3.next()){
+                idEtiqueta3 = rs3.getInt("PK_ETIQUETAID");
+            }
+
+            String sqlQuery6 = "INSERT INTO Usuario_Etiqueta (Fk_UsuarioEtiqueta_UsuarioId, Fk_UsuarioEtiqueta_EtiquetaId, Estado)\n" +
+                    "VALUES (?,?,?);";
+            PreparedStatement statement6 = db.prepareStatement(sqlQuery6);
+            statement6.setString(1, cedula);
+            statement6.setInt(2, idEtiqueta3);
+            statement6.setBoolean(3, true);
+            statement6.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     public void updateUsuario(Usuario usuario) throws Exception {
         String sql = "UPDATE USUARIO\n" +
                 "SET Nombre = ?, PrimerApellido = ?, SegundoApellido = ?, Email = ?, FK_Usuario_RolId = ?, FK_Usuario_DepartamentoId = ?\n" +
@@ -244,7 +314,7 @@ public class UsuarioDao {
     }
     public void modificiarContrasenaUsuario(String cedula) throws Exception {
 
-        String nuevaContrasena = "STjWyF9ZXspiMnYdY/ijDA==";
+        String nuevaContrasena = "Minae";
         String sql = "UPDATE USUARIO\n" +
                 "SET Contrasena = ?\n" +
                 "WHERE PK_UsuarioCedula = ?;";
@@ -280,6 +350,70 @@ public class UsuarioDao {
         }
 
     }
+
+    public void deleteUsuarioNB(String cedula) throws Exception {
+
+        if (eliminarNoticiasMarcadasEtiquetaPorUsuarioNV(cedula) && borrarNoticiasUsuarioNV(cedula) && borrarEtiquetasUsuarioNV(cedula)) {
+            String sql = "DELETE FROM Usuario\n" +
+                    "WHERE PK_UsuarioCedula = ? \n";
+            PreparedStatement stm = db.prepareStatement(sql);
+            stm.setString(1, cedula);
+            int count = db.executeUpdate(stm);
+            if (count == 0) {
+                throw new Exception("No se elimino");
+            } else {
+
+            }
+        }
+        else{
+            throw new Exception("No se elimino");
+        }
+    }
+
+
+
+
+
+    //NUEVA BASE DE DATOS LISTO
+    public boolean borrarNoticiasUsuarioNV(String cedula){
+        String sqlQuery = "DELETE FROM Usuario_Noticia WHERE FK_UsuarioNoticia_UsuarioId = ?;";
+        try (PreparedStatement statement = db.prepareStatement(sqlQuery)) {
+            statement.setString(1, cedula);
+            int filasEliminadas = statement.executeUpdate();
+            return filasEliminadas >= 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean borrarEtiquetasUsuarioNV(String cedula){
+        String sqlQuery = "DELETE FROM Usuario_Etiqueta WHERE Fk_UsuarioEtiqueta_UsuarioId = ?;";
+        try (PreparedStatement statement = db.prepareStatement(sqlQuery)) {
+            statement.setString(1, cedula);
+            int filasEliminadas = statement.executeUpdate();
+            return filasEliminadas >= 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public boolean eliminarNoticiasMarcadasEtiquetaPorUsuarioNV(String cedula){
+
+        String sqlQuery = "DELETE FROM NOTICIA_ETIQUETA WHERE FK_UsuarioCedula = ?;";
+        try (PreparedStatement statement = db.prepareStatement(sqlQuery)) {
+            statement.setString(1, cedula);
+            int filasEliminadas = statement.executeUpdate();
+            return filasEliminadas >= 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
+
+    // Vieja base de datos /////
     public boolean eliminarNoticiasMarcadasEtiquetaPorUsuario(String cedula) {
         String sqlQuery = "DELETE FROM NOTICIAMARCADA_ETIQUETA\n" +
                 "WHERE FK_NOTICIAMARCADAETIQUETA_NOTICIAMARCADAID IN (\n" +
@@ -319,16 +453,9 @@ public class UsuarioDao {
         }
     }
     public static void main(String[] args) throws Exception {
-        try {
-            Database db = new Database();
-
-            // Crea una instancia de RolDao
-            UsuarioDao usuariDao = new UsuarioDao(db);
-            usuariDao.modificiarContrasenaUsuario("6");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        Database db = new Database();
+        // Crea una instancia de RolDao
+        UsuarioDao usuariDao = new UsuarioDao(db);
+        usuariDao.createEtiquetasPrestablecidasUsuarioNB("4-111-111");
     }
-
 }
