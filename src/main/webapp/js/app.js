@@ -326,11 +326,11 @@ class App {
                     <span id="errorConfPassword" class="error-message" style="display: none;">Las contraseñas no coinciden</span>
                         <div class="login__field">
                             <i class="login__icon fas fa-lock"></i>
-                            <input id="passwordTxt2" type="password" class="login__input" placeholder="Nueva Contraseña">
+                            <input id="passwordTxt2" type="password" class="login__input" placeholder="Nueva Contraseña" pattern="(?=.*[A-Z])(?=.*[0-9]).{5,}" title="La contraseña debe tener al menos 5 caracteres, incluyendo al menos una letra mayúscula y un número" required>
                         </div>
                         <div class="login__field">
                             <i class="login__icon fas fa-check"></i> 
-                            <input id="confpasswordTxt" type="password" class="login__input" placeholder="Confirme Contraseña">
+                            <input id="confpasswordTxt" type="password" class="login__input" placeholder="Confirme Contraseña" pattern="(?=.*[A-Z])(?=.*[0-9]).{5,}" title="La contraseña debe tener al menos 5 caracteres, incluyendo al menos una letra mayúscula y un número" required>
                         </div>
                         <button id="cambiarButton" class="button login__submit">
                             <span class="button__text">Restablecer Contraseña</span>
