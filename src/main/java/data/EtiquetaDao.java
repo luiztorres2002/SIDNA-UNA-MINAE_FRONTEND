@@ -255,7 +255,8 @@ public class EtiquetaDao {
 
         int noticiaId = resultSet.getInt("FK_NOTICIAETIQUETA_NOTICIAID");
         int etiquetaId = resultSet.getInt("FK_NOTICIAETIQUETA_ETIQUETAID");
-        return new NoticiasAsociadas(noticiaId, etiquetaId);
+        String usuarioId = resultSet.getString("FK_UsuarioCedula");
+        return new NoticiasAsociadas(noticiaId, etiquetaId, usuarioId); // CAMBIAR NOTICIAS ASOCIADAS PARA QUE COINCIDA CON ESTO
 
          */
 
