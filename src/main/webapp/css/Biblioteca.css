@@ -89,6 +89,7 @@
     background-color: #ffffff;
     width: 42px;
     height: 25px;
+    z-index: 6;
     margin-bottom: 55px;
     margin-right: 8px;
     border-radius: 100px;
@@ -381,7 +382,7 @@ select {; /* Ancho personalizado */
     }
 
     #buscar{
-            width: 40px !important;
+        width: 40px !important;
     }
 
     #desmarcarTodo{

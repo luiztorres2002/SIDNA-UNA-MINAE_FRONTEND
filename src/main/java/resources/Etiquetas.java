@@ -45,27 +45,25 @@ public class Etiquetas {
     }
 
     @PUT
-    @Path("/cambiarEstado/{etiquetaId}/{nuevoEstado}")
+    @Path("/cambiarEstado/{etiquetaId}/{nuevoEstado}/{usuario}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response cambiarEstadoEtiqueta(
             @PathParam("etiquetaId") int etiquetaId,
-            @PathParam("nuevoEstado") boolean nuevoEstado) {
+            @PathParam("nuevoEstado") boolean nuevoEstado,
+            @PathParam("usuario") String usuario){
         try {
             Database db = new Database();
             EtiquetaDao etiquetaDao = new EtiquetaDao(db);
 
-            Etiqueta etiqueta = etiquetaDao.getEtiquetaById(etiquetaId);
-            if (etiqueta == null) {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
-
-            etiquetaDao.actualizarEstadoEtiqueta(etiquetaId, nuevoEstado);
+            etiquetaDao.actualizarEstadoEtiqueta(etiquetaId, nuevoEstado,usuario);
 
             return Response.ok().build();
         } catch (SQLException e) {
             throw new InternalServerErrorException(e);
         }
     }
+
+
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -86,7 +84,7 @@ public class Etiquetas {
             if (descripcion.isEmpty() || cedula.isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
-            etiquetaDao.addEtiqueta(etiqueta);
+            etiquetaDao.addEtiqueta(etiqueta, etiqueta.getUsuarioCedula());
             return Response.ok().build();
         } catch (SQLException ex) {
             throw new InternalServerErrorException(ex);
@@ -98,41 +96,30 @@ public class Etiquetas {
     @PUT
     @Path("/editar/{etiquetaId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response editarEtiqueta(@PathParam("etiquetaId") int etiquetaID, @QueryParam("input") String descripcion) {
+    public Response editarEtiqueta(@PathParam("etiquetaId") int etiquetaID, @QueryParam("input") String descripcion, @QueryParam("cedula") String cedula) {
         try {
             Database database = new Database();
             EtiquetaDao etiquetaDao = new EtiquetaDao(database);
-            Etiqueta etiqueta = etiquetaDao.getEtiquetaById(etiquetaID);
+            Etiqueta etiqueta = etiquetaDao.getEtiquetaById(etiquetaID,cedula);
 
-            List<Etiqueta> etiquetas = getAllEtiquetasByUsuario(etiqueta.getUsuarioCedula());
+            List<Etiqueta> etiquetas = getAllEtiquetasByUsuario(cedula);
             for (Etiqueta value : etiquetas) {
                 if (Objects.equals(value.getDescripcion().toLowerCase(), descripcion.toLowerCase())) {
-                    return Response.status(Response.Status.NOT_FOUND).build();
+                    return Response.status(Response.Status.CONFLICT).build();
                 }
             }
 
             if (descripcion.isEmpty()) {
-                return Response.status(Response.Status.NOT_FOUND).build();
+                return Response.status(Response.Status.BAD_REQUEST).build();
             }
 
             etiqueta.setDescripcion(descripcion);
-            etiquetaDao.updateEtiqueta(etiqueta);
+            etiquetaDao.updateEtiqueta(etiqueta, cedula);
             return Response.ok().build();
         } catch (SQLException ex) {
             throw new InternalServerErrorException(ex);
         }
     }
 
-    @GET
-    @Path("/contarNoticias/{etiquetaID}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<NoticiasAsociadas> getAllEtiquetasByUsuario(@PathParam("etiquetaID") int etiquetaID) {
-        try {
-            Database db = new Database();
-            EtiquetaDao etiquetaDao = new EtiquetaDao(db);
-            return etiquetaDao.getNoticiasAsociadas(etiquetaID);
-        } catch (SQLException e) {
-            throw new InternalServerErrorException(e);
-        }
-    }
+
 }

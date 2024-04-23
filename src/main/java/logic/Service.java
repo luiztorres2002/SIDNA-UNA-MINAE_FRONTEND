@@ -2,6 +2,9 @@ package logic;
 
 import data.*;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,6 +30,7 @@ public class Service {
 
     UsuarioDao usuarioDao;
 
+
     private Service() {
         database = new Database();
 
@@ -42,20 +46,13 @@ public class Service {
 
     }
 
+
     public void noticiaMarcadaAdd(NoticiaMarcada noticiaMarcada) throws Exception {
         noticiaMarcada.setId(1);
         noticiaMarcadaDao.create(noticiaMarcada);
     }
 
-    public void noticiaMarcadaEtiquetasDelete(String id)  throws Exception {
-
-        noticiaMarcadaDao.deleteEtiquetasNoticia(id);
-    }
 
 
-    public void noticiaMarcadaAdd2(NoticiaMarcada noticiaMarcada) throws Exception {
-        noticiaMarcada.setId(1);
-        noticiaMarcadaDao.createexterna(noticiaMarcada);
-    }
 
 }

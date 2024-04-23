@@ -37,7 +37,7 @@ public class LoginResource {
                 String cedulaCifrada = cifrarCedula(usuarioAutenticado.getCedula());
                 if (cedulaCifrada != null) {
                     usuarioAutenticado.setCedula(cedulaCifrada);
-                    if (usuarioAutenticado.getContrasena().equals("STjWyF9ZXspiMnYdY/ijDA==")) {
+                    if (usuarioAutenticado.getContrasena().equals("STjWyF9ZXspiMnYdY-ijDA==")) {
                         usuarioAutenticado.setContrasena("debeCambiar");
                     } else {
                         usuarioAutenticado.setContrasena("");
@@ -54,7 +54,7 @@ public class LoginResource {
         }
     }
 
-    private String cifrarCedula(String cedula) {
+    public String cifrarCedula(String cedula) {
         try {
             byte[] claveBytes = CLAVE_SECRETA.getBytes("UTF-8");
             SecretKeySpec claveSecreta = new SecretKeySpec(claveBytes, "AES");
@@ -64,7 +64,11 @@ public class LoginResource {
 
             byte[] cedulaCifradaBytes = cifrador.doFinal(cedula.getBytes("UTF-8"));
 
-            return Base64.getEncoder().encodeToString(cedulaCifradaBytes);
+            String cedulaCifrada = Base64.getEncoder().encodeToString(cedulaCifradaBytes);
+
+            cedulaCifrada = cedulaCifrada.replace('/', '-');
+
+            return cedulaCifrada;
         } catch (Exception e) {
             e.printStackTrace();
             return null;

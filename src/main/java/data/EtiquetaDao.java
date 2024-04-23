@@ -18,57 +18,51 @@ public class EtiquetaDao {
         this.db = db;
 
     }
-
     public List<Etiqueta> getAllEtiquetasByUsuario(String usuarioCedula) throws SQLException {
-        String sql = "SELECT * FROM ETIQUETA WHERE FK_Etiqueta_UsuarioCedula = ?";
+        String cedulaDes = db.descifrarCedula(usuarioCedula);
+        String sql = "SELECT e.PK_EtiquetaId, e.Descripcion, ue.Estado " +
+                "FROM ETIQUETA e " +
+                "JOIN Usuario_Etiqueta ue ON e.PK_EtiquetaId = ue.Fk_UsuarioEtiqueta_EtiquetaId " +
+                "WHERE ue.Fk_UsuarioEtiqueta_UsuarioId = ?";
         List<Etiqueta> etiquetas = new ArrayList<>();
         try (PreparedStatement statement = db.prepareStatement(sql)) {
-            statement.setString(1, usuarioCedula);
+            statement.setString(1, cedulaDes);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     Etiqueta etiqueta = mapResultSetToEtiqueta(resultSet);
-                    int etiquetaId = etiqueta.getEtiquetaId();
-                    List<NoticiasAsociadas> noticiasAsociadas = getNoticiasAsociadas(etiquetaId);
-                    etiqueta.setNoticiasAsociadas(noticiasAsociadas.size());
+                    int numNoticiasAsociadas = getNumNoticiasAsociadas(etiqueta.getEtiquetaId(), cedulaDes);
+                    etiqueta.setNoticiasAsociadas(numNoticiasAsociadas);
+                    etiqueta.setUsuarioCedula(cedulaDes);
                     etiquetas.add(etiqueta);
                 }
-                return etiquetas;
             }
         }
+        return etiquetas;
     }
 
-    public void actualizarEstadoEtiqueta(int etiquetaId, boolean nuevoEstado) throws SQLException {
-
-
-        //Versión con nueva BD (SIDNA_BATABASE)
-        String sql = "UPDATE ETIQUETA SET Estado = ? WHERE PK_EtiquetaId = ?";
+    public void actualizarEstadoEtiqueta(int etiquetaId, boolean nuevoEstado, String usuarioCedula) throws SQLException {
+        String cedulaDes = db.descifrarCedula(usuarioCedula);
+        String sql = "UPDATE Usuario_Etiqueta SET Estado = ? WHERE Fk_UsuarioEtiqueta_EtiquetaId = ? AND Fk_UsuarioEtiqueta_UsuarioId = ?";
         try (PreparedStatement statement = db.prepareStatement(sql)) {
             statement.setBoolean(1, nuevoEstado);
             statement.setInt(2, etiquetaId);
+            statement.setString(3, cedulaDes);
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        /*
-        //Versión con BD vieja
-        String sql = "UPDATE ETIQUETA SET Estado = ? WHERE PK_EtiquetaId = ?";
-        try (PreparedStatement statement = db.prepareStatement(sql)) {
-            statement.setBoolean(1, nuevoEstado);
-            statement.setInt(2, etiquetaId);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-
-        }*/
-
     }
 
-    public Etiqueta getEtiquetaById(int etiquetaId) throws SQLException {
-        String sql = "SELECT * FROM ETIQUETA WHERE PK_EtiquetaId = ?";
+    public Etiqueta getEtiquetaById(int etiquetaId, String usuarioCedula) throws SQLException {
+        String cedulaDes = db.descifrarCedula(usuarioCedula);
+        String sql = "SELECT e.PK_EtiquetaId, e.Descripcion, ue.Estado " +
+                "FROM ETIQUETA e " +
+                "JOIN Usuario_Etiqueta ue ON e.PK_EtiquetaId = ue.Fk_UsuarioEtiqueta_EtiquetaId " +
+                "WHERE e.PK_EtiquetaId = ? AND ue.Fk_UsuarioEtiqueta_UsuarioId = ?";
 
         try (PreparedStatement statement = db.prepareStatement(sql)) {
             statement.setInt(1, etiquetaId);
+            statement.setString(2, cedulaDes);
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -80,199 +74,214 @@ public class EtiquetaDao {
         return null;
     }
 
-    public List<Etiqueta> getEtiquetasByNoticiaMarcadaId(int noticiaMarcadaId) throws SQLException {
+    public List<Etiqueta> getEtiquetasByNoticiaMarcadaId(int noticiaId, String usuarioCedula) throws SQLException {
         List<Etiqueta> etiquetas = new ArrayList<>();
-        String sql = "SELECT E.* FROM ETIQUETA E " +
-                "INNER JOIN NOTICIAMARCADA_ETIQUETA NE ON E.PK_EtiquetaId = NE.FKETIQUETA " +
-                "WHERE NE.FK_NOTICIAMARCADAETIQUETA_NOTICIAMARCADAID = ?";
-
+        String sql = "SELECT DISTINCT ET.PK_EtiquetaId, ET.Descripcion, UE.Estado " +
+                "FROM NOTICIA_ETIQUETA NE " +
+                "JOIN ETIQUETA ET ON NE.FK_NOTICIAETIQUETA_ETIQUETAID = ET.PK_EtiquetaId " +
+                "JOIN Usuario_Etiqueta UE ON NE.FK_NOTICIAETIQUETA_ETIQUETAID = UE.Fk_UsuarioEtiqueta_EtiquetaId " +
+                "WHERE NE.FK_NOTICIAETIQUETA_NOTICIAID = ?"+
+                "AND NE.FK_UsuarioCedula = ?";
         try (PreparedStatement statement = db.prepareStatement(sql)) {
-            statement.setInt(1, noticiaMarcadaId);
-
+            statement.setInt(1, noticiaId);
+            statement.setString(2, usuarioCedula);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    Etiqueta etiqueta = mapResultSetToEtiqueta(resultSet);
+                    int etiquetaId = resultSet.getInt("PK_EtiquetaId");
+                    String descripcion = resultSet.getString("Descripcion");
+                    boolean estado = resultSet.getBoolean("Estado");
+
+                    Etiqueta etiqueta = new Etiqueta(etiquetaId, descripcion, estado);
                     etiquetas.add(etiqueta);
                 }
             }
+        } catch (SQLException e) {
+            System.err.println("Error al ejecutar la consulta SQL: " + e.getMessage());
+            throw e;
         }
-
         return etiquetas;
     }
 
     public List<Etiqueta> getEtiquetasHabilitadas(String cedula) throws SQLException {
-        String sql = "SELECT * FROM ETIQUETA WHERE FK_Etiqueta_UsuarioCedula = ? AND Estado = ?";
+        String cedulaDes = db.descifrarCedula(cedula);
+        String sql = "SELECT e.PK_EtiquetaId, e.Descripcion " +
+                "FROM ETIQUETA e " +
+                "JOIN Usuario_Etiqueta ue ON e.PK_EtiquetaId = ue.Fk_UsuarioEtiqueta_EtiquetaId " +
+                "WHERE ue.Fk_UsuarioEtiqueta_UsuarioId = ? AND ue.Estado = 1";
         List<Etiqueta> etiquetas = new ArrayList<>();
         try (PreparedStatement statement = db.prepareStatement(sql)) {
-            statement.setString(1, cedula);
-            statement.setBoolean(2, true);
+            statement.setString(1, cedulaDes);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    etiquetas.add(mapResultSetToEtiqueta(resultSet));
+                    int etiquetaId = resultSet.getInt("PK_EtiquetaId");
+                    String descripcion = resultSet.getString("Descripcion");
+
+                    Etiqueta etiqueta = new Etiqueta(etiquetaId, descripcion, true);
+
+                    etiqueta.setUsuarioCedula(cedulaDes);
+                    etiquetas.add(etiqueta);
                 }
-                return etiquetas;
             }
         }
+        return etiquetas;
     }
 
     private Etiqueta mapResultSetToEtiqueta(ResultSet resultSet) throws SQLException {
         int etiquetaId = resultSet.getInt("PK_EtiquetaId");
         String descripcion = resultSet.getString("Descripcion");
-        String usuarioCedula = resultSet.getString("FK_Etiqueta_UsuarioCedula");
         boolean estado = resultSet.getBoolean("Estado");
-        return new Etiqueta(etiquetaId, descripcion, usuarioCedula, estado);
+        return new Etiqueta(etiquetaId, descripcion, estado);
     }
 
-    public void addEtiqueta(Etiqueta etiqueta) throws Exception {
+    public void addEtiqueta(Etiqueta etiqueta, String cedula) throws SQLException {
+        String cedulaDes = db.descifrarCedula(cedula);
+        String sql1 = "SELECT PK_EtiquetaId FROM ETIQUETA WHERE Descripcion = ?";
+        try (PreparedStatement stm1 = db.prepareStatement(sql1)) {
+            stm1.setString(1, etiqueta.getDescripcion());
+            try (ResultSet rs = stm1.executeQuery()) {
+                if (rs.next()) {
 
+                    int etiquetaId = rs.getInt("PK_EtiquetaId");
 
-         //Nueva Base de datos
-        /*
-        String cedula = "4-0258-0085";
-        String sql1 = "SELECT * FROM ETIQUETA WHERE Descripcion = ?";
-        PreparedStatement stm = db.prepareStatement(sql1);
-        stm.setString(1, etiqueta.getDescripcion());
-
-        ResultSet rs = stm.executeQuery();
-
-        if (!rs.next()) {
-            String sql2 = "INSERT INTO ETIQUETA (Descripcion) VALUES (?)";
-            PreparedStatement stm2 = db.prepareStatement(sql2);
-            stm2.setString(1, etiqueta.getDescripcion());
-            int count2 = db.executeUpdate(stm2);
-            if (count2 == 0) {
-                throw new Exception("No se creó");
-            } else {
-                String sql3 = "SELECT PK_EtiquetaId FROM ETIQUETA WHERE Descripcion = ?";
-                PreparedStatement stm3 = db.prepareStatement(sql3);
-                stm3.setString(1, etiqueta.getDescripcion());
-                ResultSet rs2 = stm3.executeQuery();
-                int etiquetaId = -1;
-                if (rs2.next()) {
-                    etiquetaId = rs2.getInt("PK_EtiquetaId");
-                }
-                String sql4 = "INSERT INTO Usuario_Etiqueta (Fk_UsuarioEtiqueta_UsuarioId, Fk_UsuarioEtiqueta_EtiquetaId, Estado) VALUES (?, ?, ?)";
-                PreparedStatement stm4 = db.prepareStatement(sql4);
-                stm4.setString(1, cedula);
-                stm4.setInt(2, etiquetaId);
-                stm4.setBoolean(3, etiqueta.getEstado());
-                int count3 = db.executeUpdate(stm4);
-                if (count3 == 0) {
-                    throw new Exception("No se creó");
+                    insertUsuarioEtiqueta(cedulaDes, etiquetaId, etiqueta.getEstado());
+                    System.out.println("La etiqueta se asoció correctamente con el ID: " + etiquetaId);
                 } else {
+
+                    int etiquetaId = insertEtiqueta(etiqueta);
+                    insertUsuarioEtiqueta(cedulaDes, etiquetaId, etiqueta.getEstado());
                     System.out.println("La etiqueta se creó correctamente con el ID: " + etiquetaId);
                 }
             }
-        } else {
-            // SI LA ETIQUETA YA EXISTE EN LA BASE DE DATOS
-            int etiquetaId = rs.getInt("PK_EtiquetaId");
-            String sql4 = "INSERT INTO Usuario_Etiqueta (Fk_UsuarioEtiqueta_UsuarioId, Fk_UsuarioEtiqueta_EtiquetaId, Estado) VALUES (?, ?, ?)";
-            PreparedStatement stm4 = db.prepareStatement(sql4);
-            stm4.setString(1, cedula);
-            stm4.setInt(2, etiquetaId);
-            stm4.setBoolean(3, etiqueta.getEstado());
-            int count4 = stm4.executeUpdate();
-            if (count4 == 0) {
-                throw new Exception("No se creó la relación Usuario-Etiqueta");
+        }
+    }
+
+    private int insertEtiqueta(Etiqueta etiqueta) throws SQLException {
+        String sql = "INSERT INTO ETIQUETA (Descripcion) VALUES (?)";
+        int etiquetaId = -1;
+        try (PreparedStatement stm = db.prepareStatement(sql)) {
+            stm.setString(1, etiqueta.getDescripcion());
+            int affectedRows = stm.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("No se pudo insertar la etiqueta");
+            }
+        }
+
+        String selectIdSql = "SELECT TOP 1 PK_EtiquetaId FROM ETIQUETA ORDER BY PK_EtiquetaId DESC";
+        try (PreparedStatement selectStm = db.prepareStatement(selectIdSql);
+             ResultSet rs = selectStm.executeQuery()) {
+            if (rs.next()) {
+                etiquetaId = rs.getInt("PK_EtiquetaId");
             } else {
-                System.out.println("La etiqueta se creó correctamente con el ID: " + etiquetaId);
+                throw new SQLException("No se pudo obtener el ID de la etiqueta insertada");
             }
         }
+        return etiquetaId;
+    }
 
 
-*/
-        String sql = "INSERT INTO ETIQUETA (Descripcion,FK_Etiqueta_UsuarioCedula,Estado) VALUES (?,?,?)";
+    private void insertUsuarioEtiqueta(String cedula, int etiquetaId, boolean estado) throws SQLException {
+        String sql = "INSERT INTO Usuario_Etiqueta (Fk_UsuarioEtiqueta_UsuarioId, Fk_UsuarioEtiqueta_EtiquetaId, Estado) VALUES (?, ?, ?)";
+        try (PreparedStatement stm = db.prepareStatement(sql)) {
+            stm.setString(1, cedula);
+            stm.setInt(2, etiquetaId);
+            stm.setBoolean(3, estado);
+            int affectedRows = stm.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("No se pudo insertar la relación Usuario-Etiqueta");
+            }
+        }
+    }
+
+    public void limpiarEtiquetasHuerfanas() throws SQLException {
+        String sql = "DELETE FROM ETIQUETA WHERE PK_EtiquetaId NOT IN (SELECT Fk_UsuarioEtiqueta_EtiquetaId FROM Usuario_Etiqueta)";
         try (PreparedStatement statement = db.prepareStatement(sql)) {
-            statement.setString(1, etiqueta.getDescripcion());
-            statement.setString(2, etiqueta.getUsuarioCedula());
-            statement.setBoolean(3, etiqueta.getEstado());
             statement.executeUpdate();
-        } catch (SQLException e) {
-
-            e.printStackTrace();
         }
-
-
     }
 
 
-    public void updateEtiqueta(Etiqueta etiqueta /*, String cedula */) throws SQLException {
-        /*
-        Base de Datos Nueva
+    public void updateEtiqueta(Etiqueta etiqueta, String cedula) throws SQLException {
+        String cedulaDes = db.descifrarCedula(cedula);
+        int etiquetaId = -1;
 
-        String sql = "update ETIQUETA set Descripcion=? from Usuario_Etiqueta where Fk_UsuarioEtiqueta_UsuarioId=? and Fk_UsuarioEtiqueta_EtiquetaId=?";
-        PreparedStatement stm = db.prepareStatement(sql);
-        stm.setString(1, etiqueta.getDescripcion());
-        stm.setInt(2, etiqueta.getEtiquetaId());
-        stm.setString(3, cedula);
-        db.executeUpdate(stm);
-
-         */
-
-        String sql = "update Etiqueta set Descripcion=? where PK_EtiquetaId=?";
-        PreparedStatement stm = db.prepareStatement(sql);
-        stm.setString(1, etiqueta.getDescripcion());
-        stm.setInt(2, etiqueta.getEtiquetaId());
-        db.executeUpdate(stm);
-    }
-
-    public List<NoticiasAsociadas> getNoticiasAsociadas(int etiquetaId /*, String cedula */) throws SQLException {
-        /*
-        Base de Datos Nueva
-
-        List<NoticiasAsociadas> noticiasAsociadas = new ArrayList<>();
-        String sql = "select * from Usuario_Etiqueta where Fk_UsuarioEtiqueta_EtiquetaId=? and Fk_UsuarioEtiqueta_UsuarioId=?";
-        try (PreparedStatement statement = db.prepareStatement(sql)) {
-            statement.setInt(1, etiquetaId);
-            statement.setString(2, cedula);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    NoticiasAsociadas noticia = fromAsociadas(resultSet);
-                    noticiasAsociadas.add(noticia);
+        String sqlSelectEtiquetaId = "SELECT PK_EtiquetaId FROM ETIQUETA WHERE Descripcion = ?";
+        try (PreparedStatement stmSelectEtiquetaId = db.prepareStatement(sqlSelectEtiquetaId)) {
+            stmSelectEtiquetaId.setString(1, etiqueta.getDescripcion());
+            try (ResultSet rs = stmSelectEtiquetaId.executeQuery()) {
+                if (rs.next()) {
+                    etiquetaId = rs.getInt("PK_EtiquetaId");
                 }
             }
         }
-        return noticiasAsociadas;
-         */
 
-        List<NoticiasAsociadas> noticiasAsociadas = new ArrayList<>();
-        String sql = "select * from NOTICIAMARCADA_ETIQUETA where FKETIQUETA=?";
+        if (etiquetaId != -1) {
+            String sqlCheckUsuarioAsociado = "SELECT COUNT(*) AS NumUsuarios FROM Usuario_Etiqueta WHERE Fk_UsuarioEtiqueta_EtiquetaId = ?";
+            try (PreparedStatement stmCheckUsuarioAsociado = db.prepareStatement(sqlCheckUsuarioAsociado)) {
+                stmCheckUsuarioAsociado.setInt(1, etiquetaId);
+                try (ResultSet rs = stmCheckUsuarioAsociado.executeQuery()) {
+                    rs.next();
+                    int numUsuarios = rs.getInt("NumUsuarios");
+                    if (numUsuarios > 1) {
+
+                        etiquetaId = insertEtiqueta(etiqueta);
+                    }
+                }
+            }
+        } else {
+
+            etiquetaId = insertEtiqueta(etiqueta);
+        }
+
+        if (etiquetaId != -1) {
+            String sqlUpdateUsuarioEtiqueta = "UPDATE Usuario_Etiqueta SET Fk_UsuarioEtiqueta_EtiquetaId = ? WHERE Fk_UsuarioEtiqueta_UsuarioId = ? AND Fk_UsuarioEtiqueta_EtiquetaId = ?";
+            try (PreparedStatement stmUpdateUsuarioEtiqueta = db.prepareStatement(sqlUpdateUsuarioEtiqueta)) {
+                stmUpdateUsuarioEtiqueta.setInt(1, etiquetaId);
+                stmUpdateUsuarioEtiqueta.setString(2, cedulaDes);
+                stmUpdateUsuarioEtiqueta.setInt(3, etiqueta.getEtiquetaId());
+                stmUpdateUsuarioEtiqueta.executeUpdate();
+            }
+
+            String sqlDeleteOldUsuarioEtiqueta = "DELETE FROM Usuario_Etiqueta WHERE Fk_UsuarioEtiqueta_UsuarioId = ? AND Fk_UsuarioEtiqueta_EtiquetaId = ?";
+            try (PreparedStatement stmDeleteOldUsuarioEtiqueta = db.prepareStatement(sqlDeleteOldUsuarioEtiqueta)) {
+                stmDeleteOldUsuarioEtiqueta.setString(1, cedulaDes);
+                stmDeleteOldUsuarioEtiqueta.setInt(2, etiqueta.getEtiquetaId());
+                stmDeleteOldUsuarioEtiqueta.executeUpdate();
+            }
+        }
+        limpiarEtiquetasHuerfanas();
+    }
+
+    public int getNumNoticiasAsociadas(int etiquetaId, String usuarioCedula) throws SQLException {
+        int numNoticias = 0;
+        String sql = "SELECT COUNT(*) AS NumNoticias FROM Usuario_Noticia " +
+                "WHERE Fk_UsuarioNoticia_NoticiaId IN " +
+                "(SELECT FK_NOTICIAETIQUETA_NOTICIAID FROM NOTICIA_ETIQUETA " +
+                "WHERE FK_NOTICIAETIQUETA_ETIQUETAID = ?) " +
+                "AND Fk_UsuarioNoticia_UsuarioId = ?";
         try (PreparedStatement statement = db.prepareStatement(sql)) {
             statement.setInt(1, etiquetaId);
+            statement.setString(2, usuarioCedula);
             try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    NoticiasAsociadas noticia = fromAsociadas(resultSet);
-                    noticiasAsociadas.add(noticia);
+                if (resultSet.next()) {
+                    numNoticias = resultSet.getInt("NumNoticias");
                 }
             }
         }
-        return noticiasAsociadas;
+        return numNoticias;
     }
 
-    private NoticiasAsociadas fromAsociadas(ResultSet resultSet) throws SQLException {
-        /*
-        Base Datos Nueva
-
-        int noticiaId = resultSet.getInt("FK_NOTICIAETIQUETA_NOTICIAID");
-        int etiquetaId = resultSet.getInt("FK_NOTICIAETIQUETA_ETIQUETAID");
-        String usuarioId = resultSet.getString("FK_UsuarioCedula");
-        return new NoticiasAsociadas(noticiaId, etiquetaId, usuarioId); // CAMBIAR NOTICIAS ASOCIADAS PARA QUE COINCIDA CON ESTO
-
-         */
-
-        int noticiaId = resultSet.getInt("FK_NOTICIAMARCADAETIQUETA_NOTICIAMARCADAID");
-        int etiquetaId = resultSet.getInt("FKETIQUETA");
-        return new NoticiasAsociadas(noticiaId, etiquetaId);
-    }
-
-    public static void main(String[] args) throws Exception {
-        try{
+    public static void main(String[] args) {
+        try {
             Database db = new Database();
-            // Crea una instancia de RolDao
             EtiquetaDao etiquetaDao = new EtiquetaDao(db);
-            Etiqueta etiqueta = new Etiqueta(1, "Arbol de fuego", "4-0258-1111", true);
-            etiquetaDao.addEtiqueta(etiqueta);
-        } catch (SQLException e) {
+
+            int etiquetaId = 4;
+            boolean nuevoEstado = true;
+            String usuarioCedula = "BEkVW3uNlIl5ouB2d59KCQ==";
+
+            etiquetaDao.actualizarEstadoEtiqueta(etiquetaId, nuevoEstado, usuarioCedula);
+            System.out.println("Estado de la etiqueta actualizado correctamente.");
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

@@ -25,25 +25,13 @@ public class NoticiasMarcadas {
     }
 
     @POST
-    @Path("/Externa")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public void createExterna(NoticiaMarcada noticiaMarcada) {
-        try {
-            Service service = Service.instance();
-            service.noticiaMarcadaAdd2(noticiaMarcada);
-        } catch (Exception ex) {
-            throw new NotAcceptableException();
-        }
-    }
-
-    @POST
     @Path("/ExternaDelete/{id}/{cedula}")
     @Consumes(MediaType.APPLICATION_JSON)
     public void eliminarExterna(@PathParam("id") String id, @PathParam("cedula") String cedula) {
         try {
             Database db = new Database();
             NoticiaMarcadaDao noticiaMarcadaDao = new NoticiaMarcadaDao(db);
-            noticiaMarcadaDao.deleteNoticiaMarcada(id, cedula);
+            noticiaMarcadaDao.deleteNoticia(id, cedula);
         } catch (SQLException e) {
             throw new InternalServerErrorException(e);
         } catch (Exception e) {
@@ -51,30 +39,6 @@ public class NoticiasMarcadas {
         }
     }
 
-    @POST
-    @Path("/ObtenerPorPrioridad/{id}/{prioridad}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public List<NoticiaMarcada> getAllNoticiasMarcadas(@PathParam("id") String id, @PathParam("prioridad") String prioridad) {
-        Database db = new Database();
-        NoticiaMarcadaDao noticiaMarcadaDao = new NoticiaMarcadaDao(db);
-        return noticiaMarcadaDao.getNoticiaXPrioridad(prioridad, id);
-    }
-
-        
-    @POST
-    @Path("/EtiquetasExternaDelete/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public void eliminarExternaEtiquetas(@PathParam("id") String id) {
-        try {
-            Database db = new Database();
-            NoticiaMarcadaDao noticiaMarcadaDao = new NoticiaMarcadaDao(db);
-            noticiaMarcadaDao.deleteEtiquetasNoticia(id);
-        } catch (SQLException e) {
-            throw new InternalServerErrorException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @GET
     @Path("/{usuarioCedula}")
@@ -96,10 +60,9 @@ public class NoticiasMarcadas {
         try {
             Database database = new Database();
             NoticiaMarcadaDao noticiaMarcadaDao = new NoticiaMarcadaDao(database);
-            NoticiaMarcada noticiaCoincidiente = noticiaMarcadaDao.noticiaPorIDyUsuario(usuarioCedula, noticiaId);
 
-            noticiaCoincidiente.setPrioridad(nuevaPrioridad);
-            noticiaMarcadaDao.actualizarPrioridad(noticiaCoincidiente);
+            noticiaMarcadaDao.actualizarPrioridad(usuarioCedula, noticiaId, nuevaPrioridad);
+
             return Response.ok().build();
         } catch (Exception ex) {
             throw new InternalServerErrorException(ex);

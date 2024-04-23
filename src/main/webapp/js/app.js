@@ -14,103 +14,8 @@ class App {
         this.dom = this.render();
         this.renderBodyFiller();
         this.modalErrorMensaje = new bootstrap.Modal(this.dom.querySelector('#modalErrorMensaje'));
-        this.dom.querySelector("#app #modalErrorMensaje #dismissButton").addEventListener('click', this.hideModalMensaje);
         this.dom.querySelector('#dropdwonUsuario').style.display = 'none';
-        const loginButton = this.dom.querySelector('#loginButton');
-       loginButton.addEventListener('click', async (event) => {
-           event.preventDefault();
-           try {
-               const usuario = this.dom.querySelector('#loginTxt').value;
-               const contrasena = this.dom.querySelector('#passwordTxt').value;
-
-               const usuarioAutenticado = await this.login(usuario, contrasena);
-
-               if (usuarioAutenticado.contrasena === 'debeCambiar') {
-                   login.style.display = 'none';
-                   const cambiarContrasena = this.dom.querySelector('#cambiarContrasena');
-                   cambiarContrasena.style.display = 'flex';
-                   const passwordTxt2 = this.dom.querySelector('#passwordTxt2');
-                   const confpasswordTxt = this.dom.querySelector('#confpasswordTxt');
-                   const cambiarButton = this.dom.querySelector('#cambiarButton');
-                   const errorConfPassword = this.dom.querySelector('#errorConfPassword');
-
-                   confpasswordTxt.addEventListener('input', () => {
-                       if (!passwordTxt2.value && !confpasswordTxt.value) {
-                           errorConfPassword.style.display = 'none';
-                           cambiarButton.style.display = 'block';
-                       }else{
-                           if (passwordTxt2.value === confpasswordTxt.value) {
-                               cambiarButton.style.display = 'block';
-                               errorConfPassword.style.display = 'none';
-                           } else {
-                               cambiarButton.style.display = 'none';
-                               errorConfPassword.style.color = 'red';
-                               errorConfPassword.style.fontWeight = 'bold';
-                               errorConfPassword.style.display = 'block';
-                           }
-                       }
-                   });
-
-               } else {
-
-                   const spanUsuario = this.dom.querySelector('#usuarioTxt');
-                   this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
-                   spanUsuario.textContent = usuarioAutenticado.nombre;
-                   localStorage.setItem('usuario', usuarioAutenticado.cedula);
-                   localStorage.setItem('usuarioNomb', usuarioAutenticado.nombre);
-
-                   if (usuarioAutenticado.rol.descripcion === 'Administrador') {
-                       this.renderMenuItemsAdmin();
-                       this.adminShow();
-                   } else {
-                       this.renderMenuItems();
-                       this.busquedaShow();
-                   }
-                   this.dom.querySelector('#menuItems').style.display = "flex";
-                   login.style.display = 'none';
-                   this.dom.querySelector('#loginTxt').value = "";
-                   this.dom.querySelector('#passwordTxt').value = "";
-               }
-           } catch (error) {
-               console.error('Ocurrió un error:', error);
-               this.dom.querySelector("#mensaje").textContent = "Credenciales inválidas.";
-               this.modalErrorMensaje.show();
-           }
-       });
-       (async () => {
-           const cedulaCifrada = localStorage.getItem('usuario');
-           if (cedulaCifrada) {
-               try {
-                   const usuarioAutenticado = await this.obtenerUsuario(cedulaCifrada);
-
-                   const spanUsuario = this.dom.querySelector('#usuarioTxt');
-                   this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
-                   spanUsuario.textContent = usuarioAutenticado.nombre;
-
-                   if (usuarioAutenticado.contrasena === 'debeCambiar') {
-                       this.cerrarSesion();
-                       const login = this.dom.querySelector('#login');
-                       login.style.display = 'flex';
-                   } else {
-                       if (usuarioAutenticado.rol.descripcion === 'Administrador') {
-                           this.renderMenuItemsAdmin();
-                           this.adminShow();
-                       } else {
-                           this.renderMenuItems();
-                           this.busquedaShow();
-                       }
-                   }
-               } catch (error) {
-                   console.error('Error al autenticar usuario:', error);
-               }
-           } else {
-               const login = this.dom.querySelector('#login');
-               login.style.display = 'flex';
-           }
-       })();
-       this.dom.querySelector('#cerrarSesion').addEventListener('click', () => {
-           this.cerrarSesion();
-       });
+        this.initEventListeners();
     }
     render = () => {
         const html = `
@@ -119,6 +24,8 @@ class App {
             ${this.renderFooter()}
             ${this.renderModal()}
             ${this.renderModalCambiarContrasena()}
+            ${this.renderModalCambiarContrasena2()}
+            ${this.renderModalCambiarContrasena3()}
             ${this.renderModalErrorGenerico()}
             ${this.renderModal2()}
         `;
@@ -126,6 +33,277 @@ class App {
         rootContent.id = 'app';
         rootContent.innerHTML = html;
         return rootContent;
+    }
+
+    initEventListeners() {
+        this.dom.querySelector("#app #modalErrorMensaje #dismissButton").addEventListener('click', this.hideModalMensaje);
+
+        const loginButton = this.dom.querySelector('#loginButton');
+        const cambiarPassword = this.dom.querySelector('.social-login__icon');
+        const siguientePassword = this.dom.querySelector('#siguienteButton2');
+        const confirmarCambio = this.dom.querySelector('#confirmarButton');
+        const cancelarCambio = this.dom.querySelector('#cancelarButton');
+        const cancelarCambio2 = this.dom.querySelector('#cancelarButton2');
+        const cancelarCambio3 = this.dom.querySelector('#cancelarButton3');
+        const cambiarButton = this.dom.querySelector('#cambiarButton');
+        const passwordTxt3 = this.dom.querySelector('#passwordTxt3');
+        const passwordTxt2 = this.dom.querySelector('#passwordTxt2');
+        const confpasswordTxt2 = this.dom.querySelector('#confpasswordTxt2');
+        const errorConfPassword2 = this.dom.querySelector('#errorConfPassword2');
+        const lengthRequirement = this.dom.querySelector('#lengthRequirement');
+        const uppercaseRequirement = this.dom.querySelector('#uppercaseRequirement');
+        const lowercaseRequirement = this.dom.querySelector('#lowercaseRequirement');
+        const digitRequirement = this.dom.querySelector('#digitRequirement');
+        const specialCharRequirement = this.dom.querySelector('#specialCharRequirement');
+        const lengthRequirement2 = this.dom.querySelector('#lengthRequirement2');
+        const uppercaseRequirement2 = this.dom.querySelector('#uppercaseRequirement2');
+        const lowercaseRequirement2 = this.dom.querySelector('#lowercaseRequirement2');
+        const digitRequirement2 = this.dom.querySelector('#digitRequirement2');
+        const specialCharRequirement2 = this.dom.querySelector('#specialCharRequirement2');
+        let usuarioID;
+
+        cambiarButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            const confpasswordTxt = this.dom.querySelector('#confpasswordTxt').value;
+            const cambiarContrasena = this.dom.querySelector('#cambiarContrasena');
+            cambiarContrasena.style.display = 'none';
+            this.cambiarPassword(usuarioID, confpasswordTxt);
+        });
+
+        cancelarCambio.addEventListener('click', (event) => {
+            event.preventDefault();
+            const login = this.dom.querySelector('#login');
+            login.style.display = 'flex';
+            const cambiarContrasena3 = this.dom.querySelector('#cambiarContrasena3');
+            cambiarContrasena3.style.display = 'none';
+            this.dom.querySelector('#loginTxt').value = '';
+            this.dom.querySelector('#passwordTxt').value = '';
+        });
+        cancelarCambio2.addEventListener('click', (event) => {
+            event.preventDefault();
+            const cambiarContrasena2 = this.dom.querySelector('#cambiarContrasena2');
+            const cambiarContrasena3 = this.dom.querySelector('#cambiarContrasena3');
+            cambiarContrasena2.style.display = 'none';
+            cambiarContrasena3.style.display = 'flex';
+            this.dom.querySelector('#loginTxt').value = '';
+            this.dom.querySelector('#passwordTxt').value = '';
+        });
+        cancelarCambio3.addEventListener('click', (event) => {
+            event.preventDefault();
+            const login = this.dom.querySelector('#login');
+            login.style.display = 'flex';
+            const cambiarContrasena = this.dom.querySelector('#cambiarContrasena');
+            cambiarContrasena.style.display = 'none';
+            this.dom.querySelector('#loginTxt').value = '';
+            this.dom.querySelector('#passwordTxt').value = '';
+        });
+
+        cambiarPassword.addEventListener('click', (event) => {
+            event.preventDefault();
+            const login = this.dom.querySelector('#login');
+            login.style.display = 'none';
+            const cambiarContrasena3 = this.dom.querySelector('#cambiarContrasena3');
+            cambiarContrasena3.style.display = 'flex';
+        });
+
+        siguientePassword.addEventListener('click', (event) => {
+            event.preventDefault();
+            const loginTxt2 = this.dom.querySelector('#loginTxt2').value;
+            if (!loginTxt2) {
+                this.dom.querySelector("#mensaje").textContent = "Debe digitar su identificacion.";
+                this.modalErrorMensaje.show();
+                return;
+            }
+
+            usuarioID = loginTxt2;
+            const cambiarContrasena2 = this.dom.querySelector('#cambiarContrasena2');
+            const cambiarContrasena3 = this.dom.querySelector('#cambiarContrasena3');
+            cambiarContrasena3.style.display = 'none';
+            cambiarContrasena2.style.display = 'flex';
+        });
+
+        confpasswordTxt2.addEventListener('input', () => {
+            if (!passwordTxt3.value && !confpasswordTxt2.value) {
+                errorConfPassword2.style.display = 'none';
+                confirmarCambio.style.display = 'block';
+            } else {
+                if (passwordTxt3.value === confpasswordTxt2.value) {
+                    confirmarCambio.style.display = 'block';
+                    errorConfPassword2.style.display = 'none';
+                } else {
+                    confirmarCambio.style.display = 'none';
+                    errorConfPassword2.style.color = 'red';
+                    errorConfPassword2.style.fontWeight = 'bold';
+                    errorConfPassword2.style.display = 'block';
+                }
+            }
+        });
+
+        passwordTxt2.addEventListener('input', () => {
+            const newPassword = passwordTxt2.value;
+            const isLengthValid = newPassword.length >= 12;
+            const isUppercaseValid = /[A-Z]/.test(newPassword);
+            const isLowercaseValid = /[a-z]/.test(newPassword);
+            const isDigitValid = /\d/.test(newPassword);
+            const isSpecialCharValid = /[!@#$%^&*]/.test(newPassword);
+
+            lengthRequirement2.innerHTML = `12 caracteres ${isLengthValid ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'}`;
+            uppercaseRequirement2.innerHTML = `Letra mayúscula ${isUppercaseValid ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'}`;
+            lowercaseRequirement2.innerHTML = `letra minúscula ${isLowercaseValid ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'}`;
+            digitRequirement2.innerHTML = `Dígito numérico ${isDigitValid ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'}`;
+            specialCharRequirement2.innerHTML = `Carácter especial ${isSpecialCharValid ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'}`;
+
+            if (isLengthValid && isUppercaseValid && isLowercaseValid && isDigitValid && isSpecialCharValid) {
+                passwordRequirements2.classList.remove('show');
+                passwordRequirements2.style.zIndex = '-1';
+            } else {
+                passwordRequirements2.classList.add('show');
+                passwordRequirements2.style.zIndex = '999';
+            }
+        });
+
+        passwordTxt3.addEventListener('input', () => {
+            const newPassword = passwordTxt3.value;
+            const isLengthValid = newPassword.length >= 12;
+            const isUppercaseValid = /[A-Z]/.test(newPassword);
+            const isLowercaseValid = /[a-z]/.test(newPassword);
+            const isDigitValid = /\d/.test(newPassword);
+            const isSpecialCharValid = /[!@#$%^&*]/.test(newPassword);
+
+            lengthRequirement.innerHTML = `12 caracteres ${isLengthValid ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'}`;
+            uppercaseRequirement.innerHTML = `Letra mayúscula ${isUppercaseValid ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'}`;
+            lowercaseRequirement.innerHTML = `letra minúscula ${isLowercaseValid ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'}`;
+            digitRequirement.innerHTML = `Dígito numérico ${isDigitValid ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'}`;
+            specialCharRequirement.innerHTML = `Carácter especial ${isSpecialCharValid ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'}`;
+
+            if (isLengthValid && isUppercaseValid && isLowercaseValid && isDigitValid && isSpecialCharValid) {
+                passwordRequirements.classList.remove('show');
+                passwordRequirements.style.zIndex = '-1';
+            } else {
+                passwordRequirements.classList.add('show');
+                passwordRequirements.style.zIndex = '999';
+            }
+        });
+
+        confirmarCambio.addEventListener('click', async (event) => {
+            event.preventDefault();
+            const cambiarContrasena2 = this.dom.querySelector('#cambiarContrasena2');
+            const contrasenaActual = this.dom.querySelector('#passwordActual').value;
+            const nuevaConfirmar = this.dom.querySelector('#confpasswordTxt2').value;
+
+            try {
+                const usuarioAutenticado = await this.login(usuarioID, contrasenaActual);
+
+                if (usuarioAutenticado) {
+                    cambiarContrasena2.style.display = 'none';
+                    this.cambiarPassword(usuarioID, nuevaConfirmar);
+                } else {
+                    this.dom.querySelector("#mensaje").textContent = "Credenciales Inválidas. Error al cambiar la contraseña.";
+                    this.modalErrorMensaje.show();
+                }
+            } catch (error) {
+                this.dom.querySelector("#mensaje").textContent = "Credenciales Inválidas. Error al cambiar la contraseña.";
+                this.modalErrorMensaje.show();
+            }
+        });
+
+        loginButton.addEventListener('click', async (event) => {
+            event.preventDefault();
+            try {
+                const usuario = this.dom.querySelector('#loginTxt').value;
+                const contrasena = this.dom.querySelector('#passwordTxt').value;
+
+                const usuarioAutenticado = await this.login(usuario, contrasena);
+
+                if (usuarioAutenticado.contrasena === 'debeCambiar') {
+                    login.style.display = 'none';
+                    usuarioID = usuario;
+                    const cambiarContrasena = this.dom.querySelector('#cambiarContrasena');
+                    cambiarContrasena.style.display = 'flex';
+                    const passwordTxt2 = this.dom.querySelector('#passwordTxt2');
+                    const confpasswordTxt = this.dom.querySelector('#confpasswordTxt');
+                    const cambiarButton = this.dom.querySelector('#cambiarButton');
+                    const errorConfPassword = this.dom.querySelector('#errorConfPassword');
+
+                    confpasswordTxt.addEventListener('input', () => {
+                        if (!passwordTxt2.value && !confpasswordTxt.value) {
+                            errorConfPassword.style.display = 'none';
+                            cambiarButton.style.display = 'block';
+                        } else {
+                            if (passwordTxt2.value === confpasswordTxt.value) {
+                                cambiarButton.style.display = 'block';
+                                errorConfPassword.style.display = 'none';
+                            } else {
+                                cambiarButton.style.display = 'none';
+                                errorConfPassword.style.color = 'red';
+                                errorConfPassword.style.fontWeight = 'bold';
+                                errorConfPassword.style.display = 'block';
+                            }
+                        }
+                    });
+
+                } else {
+
+                    const spanUsuario = this.dom.querySelector('#usuarioTxt');
+                    this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
+                    spanUsuario.textContent = usuarioAutenticado.nombre;
+                    localStorage.setItem('usuario', usuarioAutenticado.cedula);
+                    localStorage.setItem('usuarioNomb', usuarioAutenticado.nombre);
+
+                    if (usuarioAutenticado.rol.descripcion === 'Administrador') {
+                        this.renderMenuItemsAdmin();
+                        this.adminShow();
+                    } else {
+                        this.renderMenuItems();
+                        this.busquedaShow();
+                    }
+                    this.dom.querySelector('#menuItems').style.display = "flex";
+                    login.style.display = 'none';
+                    this.dom.querySelector('#loginTxt').value = "";
+                    this.dom.querySelector('#passwordTxt').value = "";
+                }
+            } catch (error) {
+                console.error('Ocurrió un error:', error);
+                this.dom.querySelector("#mensaje").textContent = "Credenciales inválidas.";
+                this.modalErrorMensaje.show();
+            }
+        });
+
+        (async () => {
+            const cedulaCifrada = localStorage.getItem('usuario');
+            if (cedulaCifrada) {
+                try {
+                    const usuarioAutenticado = await this.obtenerUsuario(cedulaCifrada);
+
+                    const spanUsuario = this.dom.querySelector('#usuarioTxt');
+                    this.dom.querySelector('#dropdwonUsuario').style.display = 'block';
+                    spanUsuario.textContent = usuarioAutenticado.nombre;
+
+                    if (usuarioAutenticado.contrasena === 'debeCambiar') {
+                        this.cerrarSesion();
+                        const login = this.dom.querySelector('#login');
+                        login.style.display = 'flex';
+                    } else {
+                        if (usuarioAutenticado.rol.descripcion === 'Administrador') {
+                            this.renderMenuItemsAdmin();
+                            this.adminShow();
+                        } else {
+                            this.renderMenuItems();
+                            this.busquedaShow();
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error al autenticar usuario:', error);
+                }
+            } else {
+                const login = this.dom.querySelector('#login');
+                login.style.display = 'flex';
+            }
+        })();
+
+        this.dom.querySelector('#cerrarSesion').addEventListener('click', () => {
+            this.cerrarSesion();
+        });
     }
 
     async  login(usuario, contrasena) {
@@ -192,6 +370,38 @@ class App {
         }
     }
 
+    cambiarPassword = async (idUsuario, nuevaContrasena) => {
+        const request = new Request(`${backend}/usuarios/cambiarcontrasena/${idUsuario}/${nuevaContrasena}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        try {
+            const response = await fetch(request);
+            if (response.ok) {
+                login.style.display = 'flex';
+                this.dom.querySelector('#loginTxt2').value = '';
+                this.dom.querySelector('#loginTxt').value = '';
+                this.dom.querySelector('#passwordTxt').value = "";
+                this.dom.querySelector('#passwordActual').value = '';
+                this.dom.querySelector('#confpasswordTxt2').value = '';
+                this.dom.querySelector('#passwordTxt3').value = '';
+                const banner = this.dom.querySelector('#successBanner');
+                banner.style.display = 'block';
+                setTimeout(function() {
+                    banner.style.display = 'none';
+                }, 2000);
+            } else {
+                this.dom.querySelector("#mensaje").textContent = "Error al cambiar la contrasena.";
+                this.modalErrorMensaje.show();
+            }
+        } catch (error) {
+            this.dom.querySelector("#mensaje").textContent = "Error al cambiar la contrasena.";
+            this.modalErrorMensaje.show();
+        }
+    }
+
 
     renderMenu = () => {
         return `
@@ -215,7 +425,6 @@ class App {
         return `
         <div id="body">  
     <div class="mt-20" style="color: white; display: inline-block; padding-left: 180px" >
-
      </div>
 </div>
        
@@ -289,12 +498,13 @@ class App {
     renderModal = () => {
         return `
     <div id="login" class="containerLogin" style="display: none">
+    <div id="successBanner" class="banner">Contraseña actualizada con éxito</div>
     <div class="screen">
         <div class="screen__content">
             <form class="login">
                 <div class="login__field">
                     <i class="login__icon fas fa-user"></i>
-                    <input id="loginTxt" type="text" class="login__input" placeholder="ID / Email">
+                    <input id="loginTxt" type="text" class="login__input" placeholder="Identificacion">
                 </div>
                 <div class="login__field">
                     <i class="login__icon fas fa-lock"></i>
@@ -305,6 +515,11 @@ class App {
                     <i class="button__icon fas fa-chevron-right"></i> 
                 </button>                
             </form>
+            <div class="social-login">
+            <div class="social-icons">
+            <a href="#" class="social-login__icon" style="font-size: 12px">Cambiar tu contraseña?</a>
+            </div>
+            </div>
         </div>
         <div class="screen__background">
             <span class="screen__background__shape screen__background__shape4"></span>
@@ -326,16 +541,30 @@ class App {
                     <span id="errorConfPassword" class="error-message" style="display: none;">Las contraseñas no coinciden</span>
                         <div class="login__field">
                             <i class="login__icon fas fa-lock"></i>
-                            <input id="passwordTxt2" type="password" class="login__input" placeholder="Nueva Contraseña" pattern="(?=.*[A-Z])(?=.*[0-9]).{5,}" title="La contraseña debe tener al menos 5 caracteres, incluyendo al menos una letra mayúscula y un número" required>
+                            <input id="passwordTxt2" type="password" class="login__input" placeholder="Nueva Contraseña">
                         </div>
                         <div class="login__field">
                             <i class="login__icon fas fa-check"></i> 
-                            <input id="confpasswordTxt" type="password" class="login__input" placeholder="Confirme Contraseña" pattern="(?=.*[A-Z])(?=.*[0-9]).{5,}" title="La contraseña debe tener al menos 5 caracteres, incluyendo al menos una letra mayúscula y un número" required>
+                            <input id="confpasswordTxt" type="password" class="login__input" placeholder="Confirme Contraseña">
                         </div>
+                        <div id="passwordRequirements2">
+                        <p>Requisitos de contraseña:</p>
+                        <ul>
+                            <li id="lengthRequirement2">12 caracteres <i class="fas fa-times" style="color: red;"></i></li>
+                            <li id="uppercaseRequirement2">Al menos una letra mayúscula <i class="fas fa-times" style="color: red;"></i></li>
+                            <li id="lowercaseRequirement2">Al menos una letra minúscula <i class="fas fa-times" style="color: red;"></i></li>
+                            <li id="digitRequirement2">Al menos 1 dígito numérico <i class="fas fa-times" style="color: red;"></i></li>
+                            <li id="specialCharRequirement2">Al menos un carácter especial (# % @ & * !) <i class="fas fa-times" style="color: red;"></i></li>
+                        </ul>
+                    </div>
                         <button id="cambiarButton" class="button login__submit">
-                            <span class="button__text">Restablecer Contraseña</span>
+                            <span class="button__text">Aceptar</span>
                             <i class="button__icon fas fa-chevron-right"></i> 
-                        </button>                
+                        </button>        
+                        <button id="cancelarButton3" class="button login__submit">
+                            <i class="button__icon2 fas fa-chevron-left"></i>
+                            <span class="button__text2">Cancelar</span>
+                        </button>                 
                     </form>
                 </div>
                 <div class="screen__background">
@@ -348,6 +577,90 @@ class App {
         </div>
     `;
     }
+
+    renderModalCambiarContrasena2 = () => {
+        return `
+    <div id="cambiarContrasena2" class="containerLogin" style="display: none">
+        <div class="screen">
+            <div class="screen__content">
+                <form class="login">
+                    <span id="errorConfPassword2" class="error-message" style="display: none;">Las contraseñas no coinciden</span>
+                    <div class="login__field">
+                        <i class="login__icon fas fa-lock"></i>
+                        <input id="passwordActual" type="password" class="login__input" placeholder="Contraseña Actual">
+                    </div>
+                    <div class="login__field">
+                        <i class="login__icon fas fa-lock"></i>
+                        <input id="passwordTxt3" type="password" class="login__input" placeholder="Nueva Contraseña">
+                    </div>
+                    <div class="login__field">
+                        <i class="login__icon fas fa-check" id="lengthIcon"></i>
+                        <input id="confpasswordTxt2" type="password" class="login__input" placeholder="Confirme Contraseña">
+                    </div>
+                    <div id="passwordRequirements">
+                        <p>Requisitos de contraseña:</p>
+                        <ul>
+                            <li id="lengthRequirement">12 caracteres <i class="fas fa-times" style="color: red;"></i></li>
+                            <li id="uppercaseRequirement">Al menos una letra mayúscula <i class="fas fa-times" style="color: red;"></i></li>
+                            <li id="lowercaseRequirement">Al menos una letra minúscula <i class="fas fa-times" style="color: red;"></i></li>
+                            <li id="digitRequirement">Al menos 1 dígito numérico <i class="fas fa-times" style="color: red;"></i></li>
+                            <li id="specialCharRequirement">Al menos un carácter especial (# % @ & * !) <i class="fas fa-times" style="color: red;"></i></li>
+                        </ul>
+                    </div>
+                    <button id="confirmarButton" class="button login__submit">
+                        <span class="button__text">Cambiar Contraseña</span>
+                        <i class="button__icon fas fa-chevron-right"></i>
+                    </button>
+                    <button id="cancelarButton2" class="button login__submit">
+                            <i class="button__icon2 fas fa-chevron-left"></i>
+                            <span class="button__text2">Volver</span>
+                        </button>         
+                </form>
+            </div>
+            <div class="screen__background">
+                <span class="screen__background__shape screen__background__shape4"></span>
+                <span class="screen__background__shape screen__background__shape3"></span>
+                <span class="screen__background__shape screen__background__shape2"></span>
+                <span class="screen__background__shape screen__background__shape5"></span>
+            </div>
+        </div>
+    </div>
+    `;
+    }
+
+    renderModalCambiarContrasena3 = () => {
+        return `
+        <div id="cambiarContrasena3" class="containerLogin" style="display: none">
+            <div class="screen">
+                <div class="screen__content">
+                    <form class="login">
+                    <span id="errorConfPassword3" class="error-message" style="display: none;">Las contraseñas no coinciden</span>
+                        <div class="login__field">
+                    <i class="login__icon fas fa-user"></i>
+                    <input id="loginTxt2" type="text" class="login__input" placeholder="ID / Email">
+                      </div>
+                        
+                        <button id="siguienteButton2" class="button login__submit">
+                            <span class="button__text">Siguiente</span>
+                            <i class="button__icon fas fa-chevron-right"></i> 
+                        </button>
+                        <button id="cancelarButton" class="button login__submit">
+                            <i class="button__icon2 fas fa-chevron-left"></i>
+                            <span class="button__text2">Cancelar</span>
+                        </button>                      
+                    </form>
+                </div>
+                <div class="screen__background">
+                    <span class="screen__background__shape screen__background__shape4"></span>
+                    <span class="screen__background__shape screen__background__shape3"></span>        
+                    <span class="screen__background__shape screen__background__shape2"></span>
+                    <span class="screen__background__shape screen__background__shape5"></span>
+                </div>      
+            </div>
+        </div>
+    `;
+    }
+
 
     renderModal2 = () => {
         return `

@@ -11,6 +11,7 @@ const apiKeys = [
 let apiKeyActual = 0;
 let busqueda = "";
 let etiquetas = [];
+let mensaje = "";
 sugerencias = [];
 let globalAbortController = new AbortController();
 class Busqueda {
@@ -47,8 +48,50 @@ class Busqueda {
         this.dom.querySelector("#busqueda  #sucessmodal #sucessbuton").addEventListener('click', this.hideModalExito);
         const searchInput = this.dom.querySelector("#search-input");
         const fechaSeleccionar = this.dom.querySelector("#tiempoSeleccionado");
+        const etiquetaAceptarBtn = this.dom.querySelector("#etiquetaAceptar");
+        const etiquetaCancelarBtn = this.dom.querySelector("#etiquetaCancelar");
+
         fechaSeleccionar.addEventListener('change',() =>{
             this.corresponderPalabraClaveEnNoticias();
+        });
+        etiquetaCancelarBtn.addEventListener("click", () => {
+            searchInput.textContent = "";
+        });
+        etiquetaAceptarBtn.addEventListener("click", () => {
+            event.preventDefault();
+            const usuario = localStorage.getItem('usuario');
+            const url = `${backend}/etiquetas/`;
+            const requestBody = {
+                descripcion: mensaje,
+                usuarioCedula: usuario,
+                estado: true
+            };
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            };
+
+            fetch(url, options)
+                .then(response => {
+                    if (!response.ok) {
+                        console.log('Error');
+                        this.dom.querySelector("#mensajeError").textContent = "Verifica si la etiqueta está duplicada o los datos son incorrectos.";
+                        this.showModalError();
+                        searchInput.textContent = "";
+                    } else {
+                        console.log('Etiqueta agregada con éxito');
+                        this.crearBurbuja(mensaje);
+                        searchInput.textContent = "";
+                        this.actualizarTexto();
+                        this.getSugerencias();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                });
         });
         searchInput.addEventListener("input", (event) => this.inputCambio(event));
         setTimeout(() => {
@@ -481,6 +524,10 @@ class Busqueda {
                 if (result.source.includes('News ES Euro') ||
                     result.link.includes('www.nacion.com/viva/musica') ||
                     result.link.includes('www.cuerpomente.com/') ||
+                    result.link.includes('https://portalinnova.cl') ||
+                    result.link.includes('https://newsinamerica.com') ||
+                    result.link.includes('https://awsbitlynews.com/') ||
+                    result.link.includes('https://www.areacucuta.com/') ||
                     result.link.includes('www.crhoy.com/entretenimiento/') ||
                     result.link.includes('https://dialogo-americas.com/es/')){
                     continue;
@@ -541,6 +588,10 @@ class Busqueda {
                 const noticias = news.filter(result => !result.source.includes('News ES Euro') &&
                     !result.link.includes('www.nacion.com/viva/musica') &&
                     !result.link.includes('www.cuerpomente.com/') &&
+                    !result.link.includes('https://portalinnova.cl') &&
+                    !result.link.includes('https://www.areacucuta.com/') &&
+                    !result.link.includes('https://awsbitlynews.com/') &&
+                    !result.link.includes('https://newsinamerica.com') &&
                     !result.link.includes('www.crhoy.com/entretenimiento/'));
                 localStorage.setItem('noticias', JSON.stringify(noticias.slice(0, 24)));
                 localStorage.setItem('ultimaHora', Date.now());
@@ -954,7 +1005,7 @@ class Busqueda {
                 </div>
                         <form action="#" id="formmarcar" class="signup-form">
                             <div class="btn-group mt-4 d-flex justify-content-center">
-                                <button type="submit" id="marcarb" class="btn btn-outline-primary rounded submit ml-4 mr-3">Agregar</button>
+                                <button type="submit" id="marcarb" class="btn btn-outline-primary rounded submit ml-4 mr-3 c-btn">Agregar</button>
                                 <button type="button" id="marcarcancelarb" class="btn btn-outline-secondary rounded submit">Cancelar</button>
                             </div>
                             <div class="form-group d-md-flex">
@@ -990,7 +1041,7 @@ class Busqueda {
                 </div>
                         <form action="#" id="formetiqueta" class="signup-form">
                             <div class="btn-group mt-4 d-flex justify-content-center">
-                                <button type="submit" id="etiquetaAceptar" data-bs-dismiss="modal" class="btn btn-outline-primary rounded submit ml-4 mr-3">Agregar</button>
+                                <button type="submit" id="etiquetaAceptar" data-bs-dismiss="modal" class="btn btn-outline-primary rounded submit ml-4 mr-3 c-btn">Agregar</button>
                                 <button type="button" id="etiquetaCancelar" data-bs-dismiss="modal" class="btn btn-outline-secondary rounded submit">Cancelar</button>
                             </div>
                             <div class="form-group d-md-flex">
@@ -1038,7 +1089,7 @@ class Busqueda {
                     <div id="pills-containerModal" class="pill-container" style="margin-top: 15px;"></div>
                     <form action="#" id="formmarcar2" class="signup-form">
                         <div class="btn-group mt-4 d-flex justify-content-center">
-                            <button type="submit" id="marcarb2" data-bs-dismiss="modal" class="btn btn-outline-primary rounded submit ml-4 mr-3">Agregar</button>
+                            <button type="submit" id="marcarb2" data-bs-dismiss="modal" class="btn btn-outline-primary rounded submit ml-4 mr-3 c-btn">Agregar</button>
                             <button type="button" id="marcarcancelarb2" data-bs-dismiss="modal" class="btn btn-outline-secondary rounded submit">Cancelar</button>
                         </div>
                         <div class="form-group d-md-flex">
@@ -1170,7 +1221,8 @@ class Busqueda {
 
     getSugerencias() {
         const xhr = new XMLHttpRequest();
-        xhr.open("GET", `${backend}/etiquetas/habilitadas/4-0258-0085`, true);
+        const usuario = localStorage.getItem('usuario');
+        xhr.open("GET", `${backend}/etiquetas/habilitadas/${usuario}`, true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onload = () => {
             if (xhr.status === 200) {
@@ -1243,8 +1295,8 @@ class Busqueda {
         this.entidad['fuente'] = fuente;
         this.entidad['enlace'] = enlace;
         this.entidad['fechaGuardado'] = '2023-11-11';
-        //const usuario = localStorage.getItem('usuario');
-        this.entidad['usuarioCedula'] = '4-0258-0085';
+        const usuario = localStorage.getItem('usuario');
+        this.entidad['usuarioCedula'] = usuario;
         this.entidad['imagen'] = imagen;
         const etiquetasDescripcion = [];
         descripciones.forEach(descripcion => {
@@ -1271,52 +1323,10 @@ class Busqueda {
         this.modalmarcar.show();
     }
 
-    etiquetaModalshow(mensaje){
-        this.dom.querySelector("#mensajeEtiqueta").textContent = "¿Desea guardar esta Etiqueta?\n" + mensaje;
+    etiquetaModalshow(mensajes){
+        this.dom.querySelector("#mensajeEtiqueta").textContent = "¿Desea guardar esta Etiqueta?\n" + mensajes;
         this.modalEtiqueta.show();
-        const etiquetaAceptarBtn = this.dom.querySelector("#etiquetaAceptar");
-        const etiquetaCancelarBtn = this.dom.querySelector("#etiquetaCancelar");
-        const searchInput = this.dom.querySelector("#search-input");
-
-        etiquetaCancelarBtn.addEventListener("click", () => {
-            searchInput.textContent = "";
-        });
-
-        etiquetaAceptarBtn.addEventListener("click", () => {
-                event.preventDefault();
-                const url = `${backend}/etiquetas/`;
-                const requestBody = {
-                    descripcion: mensaje,
-                    usuarioCedula: "4-0258-0085",
-                    estado: true
-                };
-                const options = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestBody)
-                };
-
-                fetch(url, options)
-                    .then(response => {
-                        if (!response.ok) {
-                            console.log('Error');
-                            this.dom.querySelector("#mensajeError").textContent = "Verifica si la etiqueta está duplicada o los datos son incorrectos.";
-                            this.showModalError();
-                            searchInput.textContent = "";
-                        } else {
-                            console.log('Etiqueta agregada con éxito');
-                            this.crearBurbuja(mensaje);
-                            searchInput.textContent = "";
-                            this.actualizarTexto();
-                            this.getSugerencias();
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error en la solicitud:', error);
-                    });
-        });
+        mensaje = mensajes;
     }
 
     modalmarcarshow2 = (titulo, descripcion, enlace, fuente, infotext, fecha, imagen, descripciones) => {
@@ -1328,7 +1338,8 @@ class Busqueda {
         this.entidad['fuente'] = fuente;
         this.entidad['enlace'] = enlace;
         this.entidad['fechaGuardado'] = '2023-11-11';
-        this.entidad['usuarioCedula'] = '4-0258-0085';
+        const usuario = localStorage.getItem('usuario');
+        this.entidad['usuarioCedula'] = usuario;
         this.entidad['imagen'] = imagen;
         const etiquetasDescripcion = [];
         descripciones.forEach(descripcion => {

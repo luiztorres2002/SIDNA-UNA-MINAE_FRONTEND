@@ -160,7 +160,13 @@ class Admin {
             const eliminarBtn = row.querySelector('.eliminarUsuarioBtn');
             eliminarBtn.addEventListener('click', () => {
                 document.getElementById('modalConfirmarMensaje').innerHTML = `¿Estás seguro de que deseas eliminar a este usuario?<br>${nombre} ${primerApellido} ${segundoApellido}`;
-                this.showModalBorrar(cedula);
+                const usuario = localStorage.getItem('usuarioNomb');
+                const nomb = `${nombre}`;
+                if(usuario === nomb ){
+                    this.showModalErrorGenerico("No puedes eliminar al usuario que está actualmente activo.");
+                }else{
+                    this.showModalBorrar(cedula);
+                }
             });
 
             const restablecerBtn = row.querySelector('.restablecerUsuarioBtn');
@@ -336,7 +342,7 @@ class Admin {
                         <ul class="ftco-footer-social p-0 text-center">
                         </ul>
                         <div class="btn-group mt-4 d-flex justify-content-center">
-                                <button type="submit" id="confirmarBtn" class="btn btn-outline-primary rounded submit ml-4 mr-3">Confirmar</button>
+                                <button type="submit" id="confirmarBtn" class="btn btn-outline-primary rounded submit ml-4 mr-3 c-btn">Confirmar</button>
                                 <button type="button"  data-bs-dismiss="modal" class="btn btn-outline-secondary rounded submit">Cancelar</button>
                         </div>
                     </div>
@@ -367,7 +373,7 @@ class Admin {
                          
                         <form action="#" id="formmarcar" class="signup-form">
                             <div class="btn-group mt-4 d-flex justify-content-center">
-                                <button type="submit" id="confirmarb" class="btn btn-outline-primary rounded submit ml-4 mr-3">Confirmar</button>
+                                <button type="submit" id="confirmarb" class="btn btn-outline-primary rounded submit ml-4 mr-3 c-btn">Confirmar</button>
                                 <button type="button" id="cancelarb" data-bs-dismiss="modal" class="btn btn-outline-secondary rounded submit">Cancelar</button>
                             </div>
                             <div class="form-group d-md-flex">

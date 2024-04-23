@@ -31,6 +31,12 @@ public class Etiqueta {
         this.estado = estado;
     }
 
+    public Etiqueta(int etiquetaId, String descripcion, boolean estado) {
+        this.etiquetaId = etiquetaId;
+        this.descripcion = descripcion;
+        this.estado = estado;
+    }
+
     public int getNoticiasAsociadas() {
         return noticiasAsociadas;
     }

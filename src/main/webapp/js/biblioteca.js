@@ -815,7 +815,7 @@ class Biblioteca {
                          
                         <form action="#" id="formmarcar" class="signup-form">
                             <div class="btn-group mt-4 d-flex justify-content-center">
-                                <button type="submit" id="confirmarb" class="btn btn-outline-primary rounded submit ml-4 mr-3">Confirmar</button>
+                                <button type="submit" id="confirmarb" class="btn btn-outline-primary rounded submit ml-4 mr-3 c-btn">Confirmar</button>
                                 <button type="button" id="cancelarb" class="btn btn-outline-secondary rounded submit">Cancelar</button>
                             </div>
                             <div class="form-group d-md-flex">
@@ -938,6 +938,14 @@ class Biblioteca {
         const bordeColores = ['#1c2858', '#cdab68'];
         const noticiasCoincidentes = document.getElementById('noticiasBiblioteca');
         noticiasCoincidentes.innerHTML = '';
+
+        if (this.state.noticias.length === 0) {
+            const spinner = document.querySelector('.spinner-border');
+            spinner.style.display = 'none';
+            noticiasCoincidentes.innerHTML = '<p style="margin-top: 25%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 24px;">No tienes noticias guardadas.</p>';
+            return;
+        }
+
         for (const [index, noticia] of this.state.noticias.entries()) {
             const {id, titulo, descripcion, prioridad, fuente, enlace, imagen, fechaGuardado, fecha} = noticia;
             const idNoticia = noticia.id;
@@ -1062,7 +1070,7 @@ class Biblioteca {
     cargarBiblioteca = async () => {
         const usuario = localStorage.getItem('usuario');
         try {
-            const response = await fetch(`${backend}/NoticiasMarcadas/4-0258-0085`);
+            const response = await fetch(`${backend}/NoticiasMarcadas/${usuario}`);
             const spinner = document.querySelector('.spinner-border');
             spinner.style.display = 'block';
             const data = await response.json();
@@ -1076,7 +1084,7 @@ class Biblioteca {
     cargarBiblioteca2 = async () => {
         const usuario = localStorage.getItem('usuario');
         try {
-            const response = await fetch(`${backend}/NoticiasMarcadas/4-0258-0085`);
+            const response = await fetch(`${backend}/NoticiasMarcadas/${usuario}`);
             const data = await response.json();
             this.state.noticias = data.reverse();
         } catch (error) {
@@ -1087,7 +1095,8 @@ class Biblioteca {
 
     actualizarPrioridad = (noticiaID, nuevaPrioridad) => {
         cambio = true;
-        const url = `${backend}/NoticiasMarcadas/4-0258-0085/${noticiaID}?input=${nuevaPrioridad}`;
+        const usuario = localStorage.getItem('usuario');
+        const url = `${backend}/NoticiasMarcadas/${usuario}/${noticiaID}?input=${nuevaPrioridad}`;
         fetch(url, {
             method: 'PUT',
             headers: {
@@ -1178,21 +1187,7 @@ class Biblioteca {
         this.modal.hide();
         this.modalexito.show();
     }
-    obtenerNumeroDeMes = async (nombreMes) => {
-        const meses = [
-            "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-            "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-        ];
-        // Busca el índice del nombre del mes en el array de meses
-        const indice = meses.indexOf(nombreMes);
-        // Si se encuentra el nombre del mes, devuelve su número (1 al 12)
-        // Si no se encuentra, devuelve -1 como valor predeterminado para indicar que no se encontró
-        if (indice !== -1) {
-            return indice + 1; // Agregamos 1 porque los meses comienzan desde 1 en lugar de 0
-        } else {
-            return -1;
-        }
-    }
+
     load = async () => {
         const form = this.dom.querySelector("#biblioteca #modal #form");
         const formData = new FormData(form);
@@ -1322,7 +1317,8 @@ class Biblioteca {
             this.entidad['fuente'] = this.entity.fuente;
             this.entidad['enlace'] = document.getElementById('enlace').value;
             this.entidad['fechaGuardado'] = '2023-10-09';
-            this.entidad['usuarioCedula'] = '4-0258-0085';
+            const usuario = localStorage.getItem('usuario');
+            this.entidad['usuarioCedula'] = usuario;
             this.entidad['imagen'] = imageUrl;
             const etiquetasDescripcion = [];
             descripciones.forEach(descripcion => {
@@ -1874,40 +1870,29 @@ class Biblioteca {
     reset = () => {
         this.state.entity = this.emptyEntity();
     }
-    deleteNoticia = async () => {
-        cambio = true;
+    deleteNoticia = async (event) => {
         event.preventDefault();
+        cambio = true;
+
         const entityId = this.deleteEntity;
-        const request = new Request(`${backend}/NoticiasMarcadas/EtiquetasExternaDelete/${entityId}`, {
+        const usuario = localStorage.getItem('usuario');
+
+        const requestUrl = `${backend}/NoticiasMarcadas/ExternaDelete/${entityId}/${usuario}`;
+        const requestOptions = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             }
-        });
+        };
+
         try {
-            const response = await fetch(request);
+            const response = await fetch(requestUrl, requestOptions);
             if (response.ok) {
-                const cedula = "4-0258-0085";
-                const request2 = new Request(`${backend}/NoticiasMarcadas/ExternaDelete/${entityId}/${cedula}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                try {
-                    const response2 = await fetch(request2);
-                    if (response2.ok) {
-                        this.hideModalBorrar();
-                        this.cargarBiblioteca();
-                        this.showModalSuccessBorrar();
-                    } else {
-                        this.hideModalBorrar();
-                        this.showModalErrorBorrar();
-                    }
-                } catch (error) {
-                    console.error("Error al eliminar la entidad:", error);
-                }
+                this.hideModalBorrar();
+                this.cargarBiblioteca();
+                this.showModalSuccessBorrar();
             } else {
+                this.hideModalBorrar();
                 this.showModalErrorBorrar();
             }
         } catch (error) {

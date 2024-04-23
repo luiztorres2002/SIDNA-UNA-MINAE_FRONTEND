@@ -30,8 +30,11 @@ public class Usuarios {
         }
     }
 
-    private String descifrarCedula(String cedulaCifrada) {
+    private static String descifrarCedula(String cedulaCifrada) {
         try {
+
+            cedulaCifrada = cedulaCifrada.replace('-', '/');
+
             byte[] cedulaCifradaBytes = Base64.getDecoder().decode(cedulaCifrada);
             byte[] claveBytes = CLAVE_SECRETA.getBytes("UTF-8");
 
@@ -42,14 +45,15 @@ public class Usuarios {
 
             byte[] cedulaDescifradaBytes = cifrador.doFinal(cedulaCifradaBytes);
 
-            return new String(cedulaDescifradaBytes, "UTF-8");
+            String cedulaDescifrada = new String(cedulaDescifradaBytes, "UTF-8");
+            return cedulaDescifrada;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    private String cifrarCedula(String cedula) {
+    public String cifrarCedula(String cedula) {
         try {
             byte[] claveBytes = CLAVE_SECRETA.getBytes("UTF-8");
             SecretKeySpec claveSecreta = new SecretKeySpec(claveBytes, "AES");
@@ -59,7 +63,11 @@ public class Usuarios {
 
             byte[] cedulaCifradaBytes = cifrador.doFinal(cedula.getBytes("UTF-8"));
 
-            return Base64.getEncoder().encodeToString(cedulaCifradaBytes);
+            String cedulaCifrada = Base64.getEncoder().encodeToString(cedulaCifradaBytes);
+
+            cedulaCifrada = cedulaCifrada.replace('/', '-');
+
+            return cedulaCifrada;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -101,7 +109,7 @@ public class Usuarios {
         try {
             Database db = new Database();
             UsuarioDao usuarioDao = new UsuarioDao(db);
-            usuarioDao.deleteUsuario(id);
+            usuarioDao.deleteUsuarioNB(id);
             return Response.ok().build();
 
         } catch (Exception e) {
@@ -133,6 +141,19 @@ public class Usuarios {
             return Response.ok().build();
 
         }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PUT
+    @Path("/cambiarcontrasena/{id}/{nuevaContrasena}")
+    public Response cambiarContrasena(@PathParam("id") String id, @PathParam("nuevaContrasena") String nuevaContrasena) {
+        try {
+            Database db = new Database();
+            UsuarioDao usuarioDao = new UsuarioDao(db);
+            usuarioDao.cambiarContrasenaUsuario(id, nuevaContrasena);
+            return Response.ok().build();
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

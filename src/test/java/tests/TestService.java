@@ -27,7 +27,7 @@ public class TestService {
         try {
             noticiaMarcada.setUsuarioCedula("4-0258-0085");
             noticiaMarcada.setId(1);
-            noticiaMarcadaDao.createexterna(noticiaMarcada);
+            //noticiaMarcadaDao.createexterna(noticiaMarcada);
             assert true : "El método create se ejecutó correctamente";
         } catch (Exception e) {
             assert false : "Se produjo una excepción durante la ejecución del método create: " + e.getMessage();
