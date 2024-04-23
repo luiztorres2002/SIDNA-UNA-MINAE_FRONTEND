@@ -1,7 +1,4 @@
-// Importa Jest
 const { test } = require('@jest/globals');
-
-// Configura el entorno para simular el DOM y localStorage
 const { JSDOM } = require('jsdom');
 const jsdom = new JSDOM('<!doctype html><html><body></body></html>');
 global.document = jsdom.window.document;
