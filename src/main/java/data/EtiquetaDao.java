@@ -202,53 +202,72 @@ public class EtiquetaDao {
 
     public void updateEtiqueta(Etiqueta etiqueta, String cedula) throws SQLException {
         String cedulaDes = db.descifrarCedula(cedula);
-        int etiquetaId = -1;
 
-        String sqlSelectEtiquetaId = "SELECT PK_EtiquetaId FROM ETIQUETA WHERE Descripcion = ?";
-        try (PreparedStatement stmSelectEtiquetaId = db.prepareStatement(sqlSelectEtiquetaId)) {
-            stmSelectEtiquetaId.setString(1, etiqueta.getDescripcion());
-            try (ResultSet rs = stmSelectEtiquetaId.executeQuery()) {
+        boolean noticiasAsociadas = false;
+        String sqlCheckNoticiasAsociadas = "SELECT COUNT(*) AS NumNoticias FROM NOTICIA_ETIQUETA NE " +
+                "JOIN Usuario_Noticia UN ON NE.FK_NOTICIAETIQUETA_NOTICIAID = UN.Fk_UsuarioNoticia_NoticiaId " +
+                "WHERE NE.FK_NOTICIAETIQUETA_ETIQUETAID = ? AND UN.Fk_UsuarioNoticia_UsuarioId = ?";
+        try (PreparedStatement stmCheckNoticiasAsociadas = db.prepareStatement(sqlCheckNoticiasAsociadas)) {
+            stmCheckNoticiasAsociadas.setInt(1, etiqueta.getEtiquetaId());
+            stmCheckNoticiasAsociadas.setString(2, cedulaDes);
+            try (ResultSet rs = stmCheckNoticiasAsociadas.executeQuery()) {
                 if (rs.next()) {
-                    etiquetaId = rs.getInt("PK_EtiquetaId");
-                }
-            }
-        }
-
-        if (etiquetaId != -1) {
-            String sqlCheckUsuarioAsociado = "SELECT COUNT(*) AS NumUsuarios FROM Usuario_Etiqueta WHERE Fk_UsuarioEtiqueta_EtiquetaId = ?";
-            try (PreparedStatement stmCheckUsuarioAsociado = db.prepareStatement(sqlCheckUsuarioAsociado)) {
-                stmCheckUsuarioAsociado.setInt(1, etiquetaId);
-                try (ResultSet rs = stmCheckUsuarioAsociado.executeQuery()) {
-                    rs.next();
-                    int numUsuarios = rs.getInt("NumUsuarios");
-                    if (numUsuarios > 1) {
-
-                        etiquetaId = insertEtiqueta(etiqueta);
+                    int numNoticias = rs.getInt("NumNoticias");
+                    if (numNoticias > 0) {
+                        noticiasAsociadas = true;
                     }
                 }
             }
+        }
+
+        if (noticiasAsociadas) {
+            throw new SQLException("No se puede actualizar la etiqueta porque hay noticias asociadas.");
         } else {
+            int etiquetaId = -1;
 
-            etiquetaId = insertEtiqueta(etiqueta);
-        }
-
-        if (etiquetaId != -1) {
-            String sqlUpdateUsuarioEtiqueta = "UPDATE Usuario_Etiqueta SET Fk_UsuarioEtiqueta_EtiquetaId = ? WHERE Fk_UsuarioEtiqueta_UsuarioId = ? AND Fk_UsuarioEtiqueta_EtiquetaId = ?";
-            try (PreparedStatement stmUpdateUsuarioEtiqueta = db.prepareStatement(sqlUpdateUsuarioEtiqueta)) {
-                stmUpdateUsuarioEtiqueta.setInt(1, etiquetaId);
-                stmUpdateUsuarioEtiqueta.setString(2, cedulaDes);
-                stmUpdateUsuarioEtiqueta.setInt(3, etiqueta.getEtiquetaId());
-                stmUpdateUsuarioEtiqueta.executeUpdate();
+            String sqlSelectEtiquetaId = "SELECT PK_EtiquetaId FROM ETIQUETA WHERE Descripcion = ?";
+            try (PreparedStatement stmSelectEtiquetaId = db.prepareStatement(sqlSelectEtiquetaId)) {
+                stmSelectEtiquetaId.setString(1, etiqueta.getDescripcion());
+                try (ResultSet rs = stmSelectEtiquetaId.executeQuery()) {
+                    if (rs.next()) {
+                        etiquetaId = rs.getInt("PK_EtiquetaId");
+                    }
+                }
+            }
+            if (etiquetaId != -1) {
+                String sqlCheckUsuarioAsociado = "SELECT COUNT(*) AS NumUsuarios FROM Usuario_Etiqueta WHERE Fk_UsuarioEtiqueta_EtiquetaId = ?";
+                try (PreparedStatement stmCheckUsuarioAsociado = db.prepareStatement(sqlCheckUsuarioAsociado)) {
+                    stmCheckUsuarioAsociado.setInt(1, etiquetaId);
+                    try (ResultSet rs = stmCheckUsuarioAsociado.executeQuery()) {
+                        rs.next();
+                        int numUsuarios = rs.getInt("NumUsuarios");
+                        if (numUsuarios > 1) {
+                            etiquetaId = insertEtiqueta(etiqueta);
+                        }
+                    }
+                }
+            } else {
+                etiquetaId = insertEtiqueta(etiqueta);
             }
 
-            String sqlDeleteOldUsuarioEtiqueta = "DELETE FROM Usuario_Etiqueta WHERE Fk_UsuarioEtiqueta_UsuarioId = ? AND Fk_UsuarioEtiqueta_EtiquetaId = ?";
-            try (PreparedStatement stmDeleteOldUsuarioEtiqueta = db.prepareStatement(sqlDeleteOldUsuarioEtiqueta)) {
-                stmDeleteOldUsuarioEtiqueta.setString(1, cedulaDes);
-                stmDeleteOldUsuarioEtiqueta.setInt(2, etiqueta.getEtiquetaId());
-                stmDeleteOldUsuarioEtiqueta.executeUpdate();
+            if (etiquetaId != -1) {
+                String sqlUpdateUsuarioEtiqueta = "UPDATE Usuario_Etiqueta SET Fk_UsuarioEtiqueta_EtiquetaId = ? WHERE Fk_UsuarioEtiqueta_UsuarioId = ? AND Fk_UsuarioEtiqueta_EtiquetaId = ?";
+                try (PreparedStatement stmUpdateUsuarioEtiqueta = db.prepareStatement(sqlUpdateUsuarioEtiqueta)) {
+                    stmUpdateUsuarioEtiqueta.setInt(1, etiquetaId);
+                    stmUpdateUsuarioEtiqueta.setString(2, cedulaDes);
+                    stmUpdateUsuarioEtiqueta.setInt(3, etiqueta.getEtiquetaId());
+                    stmUpdateUsuarioEtiqueta.executeUpdate();
+                }
+
+                String sqlDeleteOldUsuarioEtiqueta = "DELETE FROM Usuario_Etiqueta WHERE Fk_UsuarioEtiqueta_UsuarioId = ? AND Fk_UsuarioEtiqueta_EtiquetaId = ?";
+                try (PreparedStatement stmDeleteOldUsuarioEtiqueta = db.prepareStatement(sqlDeleteOldUsuarioEtiqueta)) {
+                    stmDeleteOldUsuarioEtiqueta.setString(1, cedulaDes);
+                    stmDeleteOldUsuarioEtiqueta.setInt(2, etiqueta.getEtiquetaId());
+                    stmDeleteOldUsuarioEtiqueta.executeUpdate();
+                }
+                limpiarEtiquetasHuerfanas();
             }
         }
-        limpiarEtiquetasHuerfanas();
     }
 
     public int getNumNoticiasAsociadas(int etiquetaId, String usuarioCedula) throws SQLException {
