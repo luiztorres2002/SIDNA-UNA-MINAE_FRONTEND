@@ -187,7 +187,7 @@ public class UsuarioDao {
         stm.setString(3, usuario.getPrimerApellido());
         stm.setString(4, usuario.getSegundoApellido());
         stm.setString(5, usuario.getEmail());
-        stm.setString(6, "STjWyF9ZXspiMnYdY/ijDA==");
+        stm.setString(6, "STjWyF9ZXspiMnYdY-ijDA==");
         stm.setInt(7, usuario.getRol().getId());
         stm.setInt(8, usuario.getDepartamento().getId());
         int count = db.executeUpdate(stm);
