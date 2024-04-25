@@ -384,8 +384,10 @@ class App {
                 this.dom.querySelector('#loginTxt2').value = '';
                 this.dom.querySelector('#loginTxt').value = '';
                 this.dom.querySelector('#passwordTxt').value = "";
+                this.dom.querySelector('#passwordTxt2').value = "";
                 this.dom.querySelector('#passwordActual').value = '';
                 this.dom.querySelector('#confpasswordTxt2').value = '';
+                this.dom.querySelector('#confpasswordTxt').value = '';
                 this.dom.querySelector('#passwordTxt3').value = '';
                 const banner = this.dom.querySelector('#successBanner');
                 banner.style.display = 'block';
